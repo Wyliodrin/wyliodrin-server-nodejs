@@ -10,6 +10,8 @@ var loadModules = null;
 var data_wyliodrin = null;
 var modulesDict = null;
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 /*
 * Start steps:
 *	1. search /boot/wyliodrin.json file
@@ -65,7 +67,6 @@ function load()
 	modulesDict.log.load (modulesDict);
 	modulesDict.wxmpp.load(modulesDict);	   
 	modulesDict.wxmpp.initConnection(modulesDict);
-	modulesDict.wxmpp.loadSettings();
 	modulesDict.files.load(modulesDict);
 	modulesDict.fuse.init(modulesDict, function()
 	{

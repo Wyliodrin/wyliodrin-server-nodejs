@@ -12,7 +12,7 @@ var settings =
 	},
 	
 	arduinogalileo:{
-		config_file: '/mnt/card/wyliodrin.json',
+		config_file: '/media/card/wyliodrin.json',
 		home: '/wyliodrin',
 		mountFile: '/wyliodrin/projects/mount',
 		buildFile: '/wyliodrin/projects/build',

@@ -58,3 +58,12 @@
 		<cpu model="" speed=""/>
 	</info>
 <-- <info xmlns="wyliodrin" data="running" uptime="" loadavg1="" loadavg5="" loadavg15="" freemem=""/>
+<-- <info xmlns="wyliodrin" data="ps">
+     <ps name="process name" pid="pid" cpu="cpu usage" mem="memory usage">
+    </info>
+
+--> <ps action="kill" pid="pid"/> - kill process
+--> <ps action="send" request="request id"/> - start sending ps 1 per 10 seconds to request id (do not send if no request id)
+--> <ps action="stop" request="request id"/> - stop sending ps to request id
+----------------------------------------------------------------------------------------
+

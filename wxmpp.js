@@ -38,10 +38,14 @@ function connect()
 {
 	if(!isConnected)
 	{
-		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:false, preferredSaslMechanism:'PLAIN'});
-		connection.connection.socket.setTimeout (0);
-		connection.connection.socket.setKeepAlive (true, 100);
+		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:false, preferred:'PLAIN', websocket: {url: 'wss://wxmpp.wyliodrin.org/ws/server?username='+config.jid+'&password='+config.password+'&resource=wyliodrin'}});
+		if (connection.connection && connection.connection.socket)
+		{
+			connection.connection.socket.setTimeout (0);
+			connection.connection.socket.setKeepAlive (true, 100);
+		}
 		connecting = false;
+		loadSettings ();
 		connection.on ('error', function(error)
 		{
 			console.log ('error');

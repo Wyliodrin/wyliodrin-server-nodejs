@@ -31,7 +31,7 @@ function init(modules, functie)
   {
   	child_process.exec(settings.umount+' '+mountFile, function (err, stdout, stderr)
     {
-      if (err == 0)
+	console.log (err);
       {
         log.putLog ('Creating fuse mounting directory in '+mountFile);
         mkdirp.sync (mountFile);

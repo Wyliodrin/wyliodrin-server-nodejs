@@ -18,7 +18,7 @@ function init(s, functie)
 {
 	settings = s;
 	console.log('Starting Wyliodrin');
-	var board;
+	var board = null;
 	try
 	{
 		board = fs.readFileSync ('board.type', 'utf8');
@@ -134,6 +134,7 @@ function findConfigFile(platform, functie)
 	}
 	else
 	{
+		console.log ('No configuration file');
 		start = false;
 	}
 	if (!start)
