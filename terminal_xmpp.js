@@ -1,6 +1,6 @@
 "use strict"
 var dict = require('dict');
-var log = require('log');
+var log = require('./log');
 var projectsDict = dict({});
 var xmpp = require('./xmpp_library.js').xmpp;
 var terminal = require('./terminal');

@@ -1,7 +1,6 @@
 var settings = require ('./conf/wyliodrin_settings.js');
 var child_process = require ('child_process');
 var fs = require ('fs');
-var log = require('log');
 
 var config = {config:null,
 				networkConfig:null};
@@ -51,11 +50,12 @@ exports.load = function (start)
 		{
 			var file_data_wyliodrin = fs.readFileSync(settings.config_file);
 			config.networkConfig = JSON.parse(file_data_wyliodrin);
+			config.networkConfig.owner = config.networkConfig.owner.toLowerCase();
 			config.config = settings;
 		}
 		catch(e)
 		{
-			log.putError("No configuration file");
+			console.log("No configuration file");
 		}
 		if (!config.config) setTimeout (function ()
 		{
@@ -74,7 +74,7 @@ exports.load = function (start)
 	}
 	catch (ex)
 	{
-		log.putError(ex);
+		console.error(ex);
 	}
 	if (board)
 	{

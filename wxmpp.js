@@ -15,7 +15,6 @@ var config = require('./settings').config;
 var XMPP = require('./xmpp_library');
 
 var available = false;
-var signal_xmpp = require('./signal_xmpp');
 var info = require('./info');
 var delay = 100;
 
@@ -125,12 +124,14 @@ function connect()
 				//console.log('presence');
 				if (stanza.attrs.type == 'subscribe')
 				{
+					console.log (networkConfig.owner+' '+stanza.toString());
 					if (from == networkConfig.owner)
 					{
+						console.log ('sending subscribed to '+networkConfig.owner);
 						connection.send(new xmpp.Element('presence',
 		  				{
 		  					type:'subscribed',
-		  					to:config.owner
+		  					to:networkConfig.owner
 		  				}));
 
 					}
@@ -167,10 +168,7 @@ function loadSettings()
 	connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
 	connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
 	connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.filesStanza);
-	connection.tag('signal', XMPP.WYLIODRIN_NAMESPACE, signal_xmpp.signalStanza);
 	connection.tag('info', XMPP.WYLIODRIN_NAMESPACE, info.infoStanza);
-	if(signal_xmpp != null)
-		signal_xmpp.sendSignalBuffer();
 }
 
 function ownerUnavailable()
