@@ -16,34 +16,22 @@ var networkConfig = require('./settings').config.networkConfig;
 
 var boardType = config.board;
 
-function load()
+function sendInfo(requestid)
 {	
-	setInterval(function(){
-		//if (projectSendDict.size > 0)
-		//{
-			if (wxmpp && wxmpp.checkConnected())
-			{
-				var t = wxmpp.getConnection();
-				//projectSendDict.forEach(function(value,key){
-					processes (function (ps)
-					{
-						var elem = new xmpp.Element('info',{data:'ps', loadavg:os.loadavg()[0]*100, totalmem:os.totalmem(), freemem:os.freemem()});
-						ps.forEach(function( item ){
-							elem.c('ps',{name:item.COMMAND,pid:item.PID,cpu:item['%CPU'],mem:item.VSZ}).up();
-						});
-							
-						  //console.log ("owner = "+networkConfig.owner);
-							t.sendWyliodrin(networkConfig.owner, elem);
-					//});
-					// value = value -1;
-					// if (value <= 0)
-					// {
-					// 	projectSendDict.delete(key);
-					// }						
-				});
-			}
-		//}
-	},10000000);
+	if (wxmpp && wxmpp.checkConnected())
+	{
+		var t = wxmpp.getConnection();
+		processes (function (ps)
+		{
+			console.log("\n\nps = "+ps.length);
+			var elem = new xmpp.Element('info',{request:requestid, data:'ps', loadavg:os.loadavg()[0]*100, totalmem:os.totalmem(), freemem:os.freemem()});
+			ps.forEach(function( item ){
+				elem.c('ps',{name:item.COMMAND,pid:item.PID,cpu:item['%CPU'],mem:item.VSZ}).up();
+			});
+				
+			t.sendWyliodrin(networkConfig.owner, elem);					
+	});
+	}
 }
 
 function sendStartInfo(from)
@@ -58,7 +46,6 @@ function sendStartInfo(from)
 		{
 			tag.c('cpu', {model:cpus[i].model, speed:cpus[i].speed});
 		}
-		//console.log("from start info = "+from);
 		t.sendWyliodrin(from, tag);
 	}
 }
@@ -94,15 +81,15 @@ function info_stanza(t, from, to, es, error)
 		{
 			//send
 			var request_id = es.attrs.request;
-			projectSendDict.set(request_id.toString(),30);
+			sendInfo(request_id);
 			
 		}
-		else if (action == 'stop')
-		{
-			//stop sending
-			var request_id = es.attrs.request;
-			projectSendDict.delete(request_id.toString());
-		}
+		// else if (action == 'stop')
+		// {
+		// 	//stop sending
+		// 	var request_id = es.attrs.request;
+		// 	projectSendDict.delete(request_id.toString());
+		// }
 	}
 }
 
@@ -163,5 +150,4 @@ function listprocesse (psls, pslist)
 
 
 exports.sendStartInfo = sendStartInfo;
-exports.load = load;
 exports.sendInfo = sendInfo;

@@ -7,7 +7,7 @@ var requests = dict();
 
 var config = require ('./settings.js').config;
 var mountFile = config.mountFile;
-var owner = config.owner;
+var owner = config.networkConfig.owner;
 
 
 function files_stanza(t, from, to, es, error)

@@ -19,10 +19,15 @@ var config = require ('./settings.js').config.config;
 var buildFile = config.buildFile;
 var mountPath = config.mountFile;
 
-var gadget = config.platform;
-var port = require('./settings').config.networkConfig;
+var gadget = config.board;
 
-var signalTimeout = parseInt(config.timeout);
+console.log("gadget = "+gadget);
+//process.exit(1);
+
+var networkConfig = require('./settings').config.networkConfig;
+var port = networkConfig.port;
+
+var signalTimeout = parseInt(networkConfig.timeout);
 
 log.putLog ('Creating build directory in '+buildFile);
 mkdirp.sync (buildFile);
@@ -37,9 +42,10 @@ function validatePath(id, returnPath)
 	returnPath(validPath,id);
 } 
 
-function startBuildProcess(command, args, path, sendOutput, done, id)
+function startBuildProcess(command, args, path, sendOutput, done, id, userid)
 {
-	var makeProcess = child_process.spawn(command,args,{cwd:path, env:_.extend(process.env,{wyliodrin_project:id, wyliodrinport:port})});
+	var makeProcess = child_process.spawn(command,args,{cwd:path, env:_.extend(process.env,{wyliodrin_project:id,
+		wyliodrinport:port, wyliodrin_userid:userid})});
 	processArray[id] = makeProcess;
 	makeProcess.stdout.on('data', function(data){
 		// var out = new Buffer(data).toString('base64');
@@ -56,7 +62,7 @@ function startBuildProcess(command, args, path, sendOutput, done, id)
 	// done();
 } 
 
-function make(id, command, args, address, sendOutput)
+function make(id, command, args, address, userid, sendOutput)
 {
 	validatePath(id, function(buildPath,id)
 	{
@@ -78,7 +84,7 @@ function make(id, command, args, address, sendOutput)
 								{
 									if (!error)
 									{
-										startBuildProcess(command,args,buildPath,sendOutput, id);
+										startBuildProcess(command,args,buildPath,sendOutput, id, userid);
 									}
 									else
 									{
@@ -122,7 +128,7 @@ function make(id, command, args, address, sendOutput)
 											{
 												if (!error)
 												{
-													startBuildProcess(command,args,buildPath,sendOutput, id);
+													startBuildProcess(command,args,buildPath,sendOutput, id, userid);
 												}
 												else
 												{

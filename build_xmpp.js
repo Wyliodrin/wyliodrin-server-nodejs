@@ -9,7 +9,8 @@ function buildStanza(t, from, to, es, error)
 	{
 		if(es.attrs.action == "build")
 		{
-			build.make(es.attrs.projectid, "make", ["build"], es.attrs.address, function(data,source, code)
+			build.make(es.attrs.projectid, "make", ["build"], es.attrs.address, es.attrs.userid,
+				function(data,source, code)
 			{
 				if (data) data = new Buffer (data).toString ('base64');
 				if(source)

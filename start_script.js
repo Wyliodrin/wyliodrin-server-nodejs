@@ -7,9 +7,6 @@ settings.load (start);
 var config;
 var networkConfig;
 
-
-//wifi.init();
-
 function start ()
 {
 	config = settings.config.config;
@@ -21,10 +18,11 @@ function start ()
 		wxmpp.initConnection();
 		var fuse = require('./fuse');
 		fuse.init();
-		var info = require('./info');
-		info.load();
 		var signal = require('./signal');
 		signal.connectRedis();
+		var signal_http = require('./signal_http');
+		signal_http.load();
+		//signal_http.sendSignal("skf");
 	});
 }
 

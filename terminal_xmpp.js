@@ -4,7 +4,8 @@ var dict = require('dict');
 var projectsDict = dict({});
 var xmpp = require('./xmpp_library.js').xmpp;
 var terminal = require('./terminal');
-var config = require('./settings').config;
+var config = require('./settings').config.config;
+//var settings = config.config;
 
 var sys = require ('child_process');
 
@@ -18,6 +19,7 @@ var home = config.home;
 
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
+	console.log('make terminal');
 	var term = terminal.allocTerminal(from);
 	var width;
 	var height;
@@ -44,17 +46,19 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		}
 	catch(e){}
 	}
-	var rc = terminal.startTerminal(term.id, es.attrs.projectid, command, args, width, height, env, function (data, from)
+	var rc = terminal.startTerminal(term.id, es.attrs.projectid, command, args, width, height, term.request,
+			es.attrs.userid, env, function (data, from)
 		{
 			if (from) for(var i=0; i<from.length; i++)
 			{
+				console.log('started terminal with from = '+from[i]);
 				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",request:term.request}).t(data);
 				t.sendWyliodrin(from[i], tag, false);
 			}
 		});
 	if(rc == terminal.TERMINAL_OK)
 	{
-		// console.log('terminal ok');
+		console.log('terminal ok');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:term.request, shellid:term.id});
 		// console.log(tag.root().toString());
@@ -62,7 +66,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	}
 	else
 	{
-		// console.log('terminal error');
+		console.log('terminal error');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:term.request});
 		t.sendWyliodrin(from, tag, false);
@@ -82,28 +86,36 @@ function shell_stanza(t, from, to, es, error)
 		{
 			if(!es.attrs.projectid)
 			{
-				// console.log('open');
+				console.log('open terminal '+home);
 				makeTerminal(t, from, to, es, error, COMMAND, [], home);		
 			}
 			else
 			{
 				if(es.attrs.projectid.indexOf('/') == -1)
 				{
+					console.log("hos not /");
 					if(projectsDict.has(es.attrs.projectid))
 					{
 						// console.log('attachTerminal');
+						console.log('terminal in dict');
 						var id = projectsDict.get(es.attrs.projectid);
 						// terminal.attachTerminal(from, id);	
 						terminal.destroyTerminal(id, from, 'stop', function(code, from){
-							var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, code:code});
+							var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, code:code, projectid:es.attrs.projectid});
 							t.sendWyliodrin(from, tag);
-							var term = makeTerminal(t, from, to, es, error, settings.run[0], settings.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
+							try{
+							var term = makeTerminal(t, from, to, es, error, config.run[0], config.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
+							}catch(e){throw e;}
 							projectsDict.set(es.attrs.projectid,term.id);
 						});
 					}
 					else
 					{
-						var term = makeTerminal(t, from, to, es, error, settings.run[0], settings.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
+						console.log('no terminal in dict');
+						try{
+							console.log (buildFile+'/'+es.attrs.projectid);
+						var term = makeTerminal(t, from, to, es, error, config.run[0], config.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
+						} catch(e){console.log (e);}
 						projectsDict.set(es.attrs.projectid,term.id);
 					}					
 					
@@ -128,7 +140,7 @@ function shell_stanza(t, from, to, es, error)
 				terminal.destroyTerminal(id, from, es.attrs.action, function(code, from){
 					if (from) for(var i = 0; i<from.length; i++)
 					{
-						var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, request:es.attrs.request, code:code});
+						var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, request:es.attrs.request, code:code, projectid:es.attrs.projectid});
 						t.sendWyliodrin(from[i], tag);
 					}
 				});

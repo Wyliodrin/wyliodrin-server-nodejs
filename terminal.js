@@ -17,6 +17,7 @@ var networkConfig = settings.networkConfig;
 var terminals=[];
 var port = parseInt(networkConfig.port);
 var home = config.home;
+console.log("home = "+home);
 
 for(var i=0; i<MAX_TERMINALS; i++)
 {
@@ -100,9 +101,9 @@ function destroy_terminal(id,from,action, sendResponse)
 	else sendResponse(TERMINAL_E_NOT_FOUND);	
 }
 
-function start_terminal(id, projectId, command, args, width, height, env, send_data)
+function start_terminal(id, projectId, command, args, width, height, requestid, userid, env, send_data)
 {
-	// console.log('start terminal');
+	console.log('start terminal with env = '+env);
 	var t = find_terminal_by_id(id);
 	//console.log(t.id);
 	var termWidth = TERMINAL_COLS;
@@ -119,7 +120,8 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 		  cols: termWidth,
 		  rows: termHeight,
 		  cwd: env,
-		  env:_.extend(process.env,{HOME:home,wyliodrin_id:projectId, wyliodrin_port:port})
+		  env:_.extend(process.env,{HOME:home,wyliodrin_project:projectId, wyliodrin_port:port,
+		  		wyliodrin_session:requestid, wyliodrin_userid:userid})
 		});
 	
 		t.terminal = term;
