@@ -1,6 +1,7 @@
 "use strict";
 
 var os = require('os');
+var dict = require ('dict');
 
 var boardType = null;
 var xmpp = null;
@@ -9,6 +10,7 @@ var child_process = require('child_process');
 
 
 var count = 1;
+var projectSendDict = dict();
 var timer;
 
 function load(modules)
@@ -17,24 +19,32 @@ function load(modules)
 	xmpp = modules.xmpp;
 	wxmpp = modules.wxmpp;
 	
-	
-
-		setInterval(function(){
-			var t = wxmpp.getConnection();
-			if (t)
+	setInterval(function(){
+		if (projectSendDict.size > 0)
+		{
+			if (wxmpp && wxmpp.checkConnected())
 			{
-				processes (function (ps)
-				{
-					var elem = new xmpp.Element('info',{data:'ps'});
-					ps.forEach(function( item ){
-						elem.c('ps',{name:'',pid:item.pid,cpu:item['%CPU'],mem:item.VSZ}).up();
+				var t = wxmpp.getConnection();
+				projectSendDict.forEach(function(value,key){
+					processes (function (ps)
+					{
+						var elem = new xmpp.Element('info',{data:'ps'});
+						ps.forEach(function( item ){
+							elem.c('ps',{name:item.COMMAND,pid:item.PID,cpu:item['%CPU'],mem:item.VSZ}).up();
+						});
+							
+						  // console.log (ps);
+						 t.sendWyliodrin(modules.config.owner, elem);
 					});
-						
-					  console.log (ps);
-					 t.sendWyliodrin(modules.config.owner, elem);
-					});
+					value = value -1;
+					if (value <= 0)
+					{
+						projectSendDict.delete(key);
+					}						
+				});
 			}
-			},1000);
+		}
+	},3000);
 }
 
 function sendStartInfo(from)
@@ -83,34 +93,22 @@ function info_stanza(t, from, to, es, error)
 		else if (action == 'send')
 		{
 			//send
-			timer = setInterval(function(){
-				if (count <= 30 && es.attrs.action == 'send')
-				{
-					processes (function (ps)
-					{
-						var elem = new xmpp.Element('info',{data:'ps', request:'request id'});
-						ps.forEach(function( item ){
-							elem.c('ps',{name:'',pid:item.pid,cpu:item.CPU,mem:item.VSZ}).up();
-						});
-						
-					    //console.log (ps);
-					    if (t)
-					    {
-					    	t.sendWyliodrin(from, elem);
-					    }
-					});
-					count = count + 1;
-				}
-			},10000);
-			
+			var request_id = es.attrs.request;
+			projectSendDict.set(request_id.toString(),30);
 			
 		}
 		else if (action == 'stop')
 		{
 			//stop sending
-			clearInterval(timer);
+			var request_id = es.attrs.request;
+			projectSendDict.delete(request_id.toString());
 		}
 	}
+}
+
+function filter_attr (str)
+{
+
 }
 
 
@@ -118,24 +116,17 @@ function processes (list)
 {
     child_process.exec ('ps -eo pid,%cpu,vsz,comm | tr -s \' \'', function (error, stdout, stderr)
     {
-        var ps = []; 
-        var lines = stdout.split ('\n');
-        var columns = lines[0].trim().split (' ');
-        lines.splice (0,1);
-        lines.forEach (function (process)
+        if (stdout.trim().length==0)
         {
-            if (process!='')
-            {
-                var pscolumns = process.trim().split (' ');
-                var pss = {};
-                for (var i=0; i<columns.length; i++)
-                {
-                    pss[columns[i]] = pscolumns[i];
-                }
-                ps.push (pss);
-            }
-        });
-        list (ps);
+        	child_process.exec ('ps | tr -s \' \'', function (error, stdout, stderr)
+        	{
+        		listprocesse (stdout, list);
+        	});
+        }
+        else
+        {
+        	listprocesse (stdout, list);
+        }
     });
 }
 
@@ -145,6 +136,29 @@ function kill (pid)
     {
         if (done) done (err);
     });
+}
+
+function listprocesse (psls, pslist)
+{
+	// console.log (psls);
+	var ps = []; 
+    var lines = psls.split ('\n');
+    var columns = lines[0].trim().split (' ');
+    lines.splice (0,1);
+    lines.forEach (function (process)
+    {
+        if (process!='')
+        {
+            var pscolumns = process.trim().split (' ');
+            var pss = {};
+            for (var i=0; i<columns.length; i++)
+            {
+                pss[columns[i]] = pscolumns[i];
+            }
+            ps.push (pss);
+        }
+    });
+    pslist (ps);
 }
 
 
