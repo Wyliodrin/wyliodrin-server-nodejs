@@ -1,37 +1,67 @@
 var pty = require('pty.js');
-var MAX_TERMINALS = 1024;
+MAX_TERMINALS = 1024;
+TERMINAL_ROWS = 24;
+TERMINAL_COLS = 80;
+var terminals=[];
 
-function terminal(id)
+
+function alloc_terminal()
 {
+	var id = find_terminal_id();
 	var t = {id:id};
+	terminals[id] = t;
 	return t;
 }
 
-function init_terminal()
+function init_terminals()
 {
-	var term[];
 	for(var i=0; i<MAX_TERMINALS; i++)
 	{
-		term[i] = null;
+		terminals[i] = null;
 	}
-	return term;
 }
 
 function find_terminal_id()
 {
 	var i = 0;
-	var found = 0;
-	while(i<MAX_TERMINALS && found==0)
+	while(i<MAX_TERMINALS)
 	{
-		if
+		if(terminals[i]==null)
+		{
+			return i;
+		}
+		i++;
 	}
 }
 
-var term = pty.spawn('bash',[],{
-	name: 'xterm-color',
-	cols:80,
-	rows:24,
-	cwd:process.env.HOME,
-	env:process.env
-});
+function delete_terminal(id)
+{
+	terminals[id] = null;
+}
+
+function start_terminal(id, command)
+{
+	var term = pty.spawn(command, [], {
+	  name: 'xterm-color',
+	  cols: TERMINAL_COLS,
+	  rows: TERMINAL_ROWS,
+	  cwd: process.env.HOME,
+	  env: process.env
+	});
+}
+
+init_terminals();
+console.log(alloc_terminal(find_terminal_id()).id);
+console.log(alloc_terminal(find_terminal_id()).id);
+delete_terminal(1);
+console.log(alloc_terminal(find_terminal_id()).id);
+console.log(alloc_terminal(find_terminal_id()).id);
+var term = pty.spawn('vi', [], {
+	  name: 'xterm-color',
+	  cols: TERMINAL_COLS,
+	  rows: TERMINAL_ROWS,
+	  cwd: process.env.HOME,
+	  env: process.env
+	});
+//start_terminal(1,'vi');
 
