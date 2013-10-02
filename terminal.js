@@ -8,7 +8,8 @@ var terminals=[];
 function alloc_terminal()
 {
 	var id = find_terminal_id();
-	var t = {id:id};
+	var t = {id:id
+			terminal:null};
 	terminals[id] = t;
 	return t;
 }
@@ -48,6 +49,12 @@ function start_terminal(id, command)
 	  cwd: process.env.HOME,
 	  env: process.env
 	});
+	terminals[id].terminal = term;
+}
+
+function send_keys(data,id)
+{
+
 }
 
 init_terminals();
@@ -56,12 +63,6 @@ console.log(alloc_terminal(find_terminal_id()).id);
 delete_terminal(1);
 console.log(alloc_terminal(find_terminal_id()).id);
 console.log(alloc_terminal(find_terminal_id()).id);
-var term = pty.spawn('vi', [], {
-	  name: 'xterm-color',
-	  cols: TERMINAL_COLS,
-	  rows: TERMINAL_ROWS,
-	  cwd: process.env.HOME,
-	  env: process.env
-	});
-//start_terminal(1,'vi');
+
+start_terminal(1,'vi');
 
