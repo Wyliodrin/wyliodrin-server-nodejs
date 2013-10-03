@@ -1,4 +1,5 @@
 var pty = require('pty.js');
+var xmpp = require('node-xmpp');
 MAX_TERMINALS = 1024;
 TERMINAL_ROWS = 24;
 TERMINAL_COLS = 80;
@@ -8,8 +9,8 @@ var terminals=[];
 function alloc_terminal()
 {
 	var id = find_terminal_id();
-	var t = {id:id
-			terminal:null};
+	var t = {id:id,
+				terminal:null};
 	terminals[id] = t;
 	return t;
 }
@@ -35,8 +36,30 @@ function find_terminal_id()
 	}
 }
 
-function delete_terminal(id)
+function find_terminal_by_id(id)
 {
+	var i=0;
+	while(i<terminals.length)
+	{
+		if(terminals[i].id == id)
+			return terminals[i];
+		i++;
+	}
+	//eroare; nu gaseste terminalul; ce fac????
+}
+
+function destroy_terminal(id)
+{
+	var t = find_terminal_by_id(id);
+	//verific daca exista!!!!
+
+	//verific daca s-a facut terminalul sau doar s-a alocat
+	if(t.terminal != null)
+	{
+		//console.log("not null");
+		t.terminal.kill();
+	}
+	//console.log("destroy");
 	terminals[id] = null;
 }
 
@@ -49,10 +72,12 @@ function start_terminal(id, command)
 	  cwd: process.env.HOME,
 	  env: process.env
 	});
-	terminals[id].terminal = term;
+	var t = find_terminal_by_id(id);
+	t.terminal = term;
+	term.on('data', send_terminal_output(data,id));	
 }
 
-function send_keys(data,id)
+function send_terminal_output(data,id)
 {
 
 }
@@ -60,9 +85,12 @@ function send_keys(data,id)
 init_terminals();
 console.log(alloc_terminal(find_terminal_id()).id);
 console.log(alloc_terminal(find_terminal_id()).id);
-delete_terminal(1);
-console.log(alloc_terminal(find_terminal_id()).id);
+//console.log(alloc_terminal(find_terminal_id()).id);
 console.log(alloc_terminal(find_terminal_id()).id);
 
+
 start_terminal(1,'vi');
+//destroy_terminal(1);
+//setTimeout(destroy_terminal(1), 10000);
+//console.log("end");
 

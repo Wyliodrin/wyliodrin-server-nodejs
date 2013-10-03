@@ -6,6 +6,7 @@
     "start": "node startup.js"
 },
 "dependencies": {
-	"pty.js": "*"
+	"pty.js": "*",
+	"node-xmpp":"*"
 	}
 	}
