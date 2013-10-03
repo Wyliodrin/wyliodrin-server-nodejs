@@ -74,12 +74,10 @@ function start_terminal(id, command)
 	});
 	var t = find_terminal_by_id(id);
 	t.terminal = term;
-	term.on('data', send_terminal_output(data,id));	
-}
-
-function send_terminal_output(data,id)
-{
-
+	term.on('data', function(data)
+		{
+			
+		});	
 }
 
 init_terminals();
