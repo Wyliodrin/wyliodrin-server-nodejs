@@ -1,5 +1,5 @@
 var pty = require('pty.js');
-var xmpp = require('node-xmpp');
+var terminal_xmpp = require('terminal-xmpp.js');
 MAX_TERMINALS = 1024;
 TERMINAL_ROWS = 24;
 TERMINAL_COLS = 80;
@@ -76,7 +76,7 @@ function start_terminal(id, command)
 	t.terminal = term;
 	term.on('data', function(data)
 		{
-			
+			terminal_xmpp.send_data(data,id);
 		});	
 }
 
