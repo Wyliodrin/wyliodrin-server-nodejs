@@ -1,0 +1,42 @@
+<message>
+-->	<shells xmlns="wyliodrin" action="open" request="id"/>
+<--	<shells xmlns="wyliodrin" action="done" request="id"/>
+<--	<shells xmlns="wyliodrin" action="error" request="id"/>
+
+-->	<shells xmlns="wyliodrin" id="" action="close" request="id"/>
+
+-->	<shells xmlns="wyliodrin" id="" action="keys">data</shell>
+<--	<shells xmlns="wyliodrin" id="" action="keys">data</shell>
+
+-->	<shells xmlns="wyliodrin" id="" action="list">data</shell>
+<--	<shells xmlns="wyliodrin" id="" action="list">
+		<shell id="" command=""/>
+	</shells>
+
+--> <files xmlns="wyliodrin" action="list" path="" id=""/>
+<-- <files xmlns="wyliodrin" id="" error="">
+        <directory name=""/>
+		<file name=""/>
+		<pipe name=""/>
+		<character_device name=""/>
+		<block_device name=""/>
+		<link name=""/>
+		<socket name=""/>
+		<unknown name=""/>
+	</files>
+
+--> <files xmlns="wyliodrin" action="delete" path="" id=""/>
+<-- <files xmlns="wyliodrin" id="" error=""/>
+
+--> <files xmlns="wyliodrin" action="create" type="file/folder" path="" permissions="" id=""/>
+<-- <files xmlns="wyliodrin" id="" error=""/>
+
+--> <files xmlns="wyliodrin" action="write" mode="a/w" path="" id="">data</files>
+<-- <files xmlns="wyliodrin" id="" error=""/>
+
+--> <files xmlns="wyliodrin" action="details" path="" id=""/>
+<-- <files xmlns="wyliodrin" id="" type="directory/file/character_device/block_device/link/socket/unknown" atime="" stime="" mtime="" size="" permissions=""/>
+
+--> <make xmlns="wyliodrin" action="build" id="" path=""/>
+<-- <make xmlns="wyliodrin" action="build" id="" source="stdout/stderr">data</make>
+<-- <make xmlns="wyliodrin" action="build" id="" type="make/system" error_code=""/>
