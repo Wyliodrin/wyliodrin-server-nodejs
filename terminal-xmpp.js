@@ -1,5 +1,11 @@
-var xmpp = require("node-xmpp");
+var xmpp = require('./xmpp.js');
 
+
+function shell_stanza(stanza, from, to, es, error)
+{
+	var action = stanza.getChild('action');
+	
+}
 
 function send_data(data,id)
 {

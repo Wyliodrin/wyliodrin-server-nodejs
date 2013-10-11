@@ -80,6 +80,10 @@ function start_terminal(id, command)
 		});	
 }
 
+exports initTerminals = init_terminals();
+exports allocTerminal = alloc_terminal();
+exports destroyTerminal(id) = destroy_terminal(id);
+exports startTerminal(id, command) = start_terminal(id, command);
 init_terminals();
 console.log(alloc_terminal(find_terminal_id()).id);
 console.log(alloc_terminal(find_terminal_id()).id);
