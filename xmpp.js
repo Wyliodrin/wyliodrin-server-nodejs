@@ -62,4 +62,4 @@ function send(stanza, to, id)
 	wxmpp.send(new wxmpp.Element('message',{to:to, id:id}).c(stanza);
 }
 
-connect();
+//connect();
