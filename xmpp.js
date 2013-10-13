@@ -1,53 +1,59 @@
-var xmpp = require('node-xmpp');
+var wxmpp = require('node-xmpp');
 var fs = require('fs');
-var config_file = require('/boot/wyliodrin.json');
+
+var isConnected = false;
 
 function connect()
 {
-	console.log(JSON.parse(config_file));
-	var jid
-	var password
-	if(!isConnected(jid))
+	var file_data = fs.readFileSync('/boot/wyliodrin.json');
+	var d = JSON.parse(file_data);
+	var jid = d.jid;
+	var password = d.password;
+
+	if(!isConnected)
 	{
 		
-		var connection = new xmpp.Client({jid:jid,password:password,preferredSaslMechanism:'PLAIN'});
+		var connection = new wxmpp.Client({jid:jid,password:password,preferredSaslMechanism:'PLAIN'});
+		isConnected = true;
 		
-		wxmpp.on ('error', function(error)
+		connection.on ('error', function(error)
 		{
 		  console.error (error);
-		  disconnect (jid);
 		});
 
-		wxmpp.on ('online', function()
+		connection.on ('online', function()
 		{
 		  console.log (jid+"> online");
-		  wxmpp.send(new wxmpp.Element('presence',
+		  connection.send(new wxmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
 		     );
 		});
 
-		wxmpp.on ('rawStanza', function (stanza)
+		connection.on ('rawStanza', function (stanza)
 		{
-		  console.log (this.jid+'>'+stanza.root().toString());
+		  console.log (jid+'>'+stanza.root().toString());
 		});
 
-		wxmpp.on ('stanza', function (stanza)
+		connection.on('stanza', function(stanza)
 		{
-		  console.log (this.jid+'>'+stanza.root().toString());
-		  if (stanza.is('message') && stanza.attrs.type !== 'error')
-		  {
-		  	shells = stanza.getChild ('shells', 'wyliodrin');
-		  	if (shells!=undefined)
-		  	{
-		  		// keys = x16_decode (shells.getText ());
-		  		keys = new Buffer (shells.getText (), 'base64').toString ('utf8');
-		  		ws.emit ('keys', keys);
-		  	}
-		  }
+
 		});
+	}
+	return connection;
+}
+
+function disconnect(connection)
+{
+	if(isConnected)
+	{
+		console.log('disconnect');
+		connection.end();
+		isConnected = false;
 	}
 }
 
-connect();
+var connection = connect();
+
+//disconnect(connection);
