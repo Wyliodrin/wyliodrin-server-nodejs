@@ -1,8 +1,10 @@
-var wxmpp = require('node-xmpp');
+var wxmpp = require('./xmpp_library').xmpp;
+var dict = require('dict');
 var fs = require('fs');
 
 var isConnected = false;
 
+var isConnected = false;
 function connect()
 {
 	var file_data = fs.readFileSync('/boot/wyliodrin.json');
@@ -35,25 +37,29 @@ function connect()
 		{
 		  console.log (jid+'>'+stanza.root().toString());
 		});
-
-		connection.on('stanza', function(stanza)
-		{
-
-		});
+	//	wxmpp.on ('stanza', function (stanza)
+	//	{
+	//	  console.log (this.jid+'>'+stanza.root().toString());
+	//	  if (stanza.is('message') && stanza.attrs.type !== 'error')
+	//	  {
+	//	  	shells = stanza.getChild ('shells', 'wyliodrin');
+	//	 } 			  
+	//	});
+		wxmpp.load();		
+		isConnected = true;
 	}
-	return connection;
 }
 
-function disconnect(connection)
+function disconnect(jid)
 {
 	if(isConnected)
 	{
-		console.log('disconnect');
-		connection.end();
+		wxmpp.end(jid);
 		isConnected = false;
 	}
+} 
+
+function send(stanza, to, t)
+{
+	t.send(new wxmpp.Element('message',{to:to}).c(stanza);
 }
-
-var connection = connect();
-
-//disconnect(connection);
