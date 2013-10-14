@@ -95,10 +95,10 @@ function start_terminal(id, command, send_data)
 			{
 				console.log(b[i]);
 			}
-			console.log('on data'+data);
-			var data64 = new Buffer(data).toString('base64');*/
-			// send_data(data64);
-			send_data(data);
+			console.log('on data'+data);*/
+			var data64 = new Buffer(data).toString('base64');
+			send_data(data64);
+			// send_data(data);
 		});	
 		// term.write('blabla\r');
 		return TERMINAL_OK

@@ -16,7 +16,7 @@ xterm.startTerminal (t.id, "bash", function (data)
 
 setTimeout (function ()
 	{
-		// t.terminal.write ('ls\n');
+		t.terminal.write ('ls\n');
 	}, 1000);
 
 
