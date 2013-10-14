@@ -14,19 +14,25 @@ xmpp.Client.prototype.load = function ()
 		var p = stanza.getChild ('ping', 'urn:xmpp:ping');
 		if (p && p.type == 'get')
 		{
-			t.send (new xmpp.Element ('iq', {to:p.attrs.from, id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
+			t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
 		}
 	});
 
 	this.on ('stanza', function (stanza)
 	{
+		console.log (stanza.root().toString());
 		if (stanza.is('message'))
 		{
-			_.each (stanza.getChildren (null, WYLIODRIN_NAMESPACE), function (es)
+			_.each (stanza.children, function (es)
 			{
-				var name = es.getName ();
-				var error = stanza.attrs.type !== 'error';
-				if (tags().has(name)) tags.get(name)(t, stanza.attrs.from, stanza.attrs.to, es, error);
+				console.log (es);
+				if (es.getNS() == WYLIODRIN_NAMESPACE)
+				{
+					var name = es.getName ();
+					console.log (name);
+					var error = stanza.attrs.type == 'error';
+					if (t.tags().has(name)) t.tags().get(name)(t, stanza.attrs.from, stanza.attrs.to, es, error);
+				}
 			});
 		}
 	});
@@ -34,14 +40,25 @@ xmpp.Client.prototype.load = function ()
 
 xmpp.Client.prototype.tags = function ()
 {
-	if (_.isUndefined (this.tags)) this.tags = dict ();
-	return this.tags;
+	if (_.isUndefined (this.tagslist)) this.tagslist = dict ();
+	return this.tagslist;
 }
 
 xmpp.Client.prototype.tag = function (name, namespace, activity)
 {
-	tags().set (name, activity);
+	this.tags().set (name, activity);
+}
+
+xmpp.Client.prototype.sendWyliodrin = function (to, stanza)
+{
+	stanza.attrs.xmlns = WYLIODRIN_NAMESPACE;
+	console.log (stanza.root().toString());
+	//console.log (this);
+	s = new xmpp.Element ('message', {to: to}).cnode(stanza);
+	console.log (s.root().toString());
+	this.send (s);
 }
 
 exports.xmpp = xmpp;
+exports.WYLIODRIN_NAMESPACE = WYLIODRIN_NAMESPACE;
 

@@ -1,43 +1,54 @@
-var xmpp = require('./xmpp.js');
-var terminal = require('terminal.js');
+var xmpp = require('./xmpp_library.js').xmpp;
+var terminal = require('./terminal.js');
+
+var COMMAND = '/bin/bash';
 
 
 function shell_stanza(t, from, to, es, error)
 {
+	console.log('shell_stanza');
+	console.log('error='+error);
 	if(error == 0)
 	{
-		var action = es.getChild('action');
-		if(action == 'open')
+		if(es.attrs.action == 'open')
 		{
-			var term = allocTerminal();
-			var rc = startTerminal(term.id, "/bin/bash", function send_data(data,id)
+			console.log('open');
+			var term = terminal.allocTerminal();
+			console.log('term allocated');
+			var rc = terminal.startTerminal(term.id, COMMAND, function (data)
 				{
-					var tag = new xmpp.Element('shells',{xmlns:'wyliodrin',id:id,action:"keys",}).c(data);
-					xmpp.send(tag, to, t);
+					var tag = new xmpp.Element('shells',{id:term.id,action:"keys",}).t(data);
+					t.sendWyliodrin(from, tag);
 				});
 			if(rc == terminal.TERMINAL_OK)
 			{
-				var id = es.getChild('request');
-				var tag = new xmpp.Element('shells', {xmlns:'wyliodrin',action:'done', request:id});
-				xmpp.send(tag, to, t);
+				console.log('terminal ok');
+				var id = es.attrs.request;
+				var tag = new xmpp.Element('shells', {action:'done', request:id, id:term.id});
+				console.log(tag.root().toString());
+				t.sendWyliodrin(from, tag);
 			}
 			else
 			{
-				var id = es.getChild('request');
-				var tag = new xmpp.Element('shells', {xmlns:'wyliodrin',action:'error', request:id});
-				xmpp.send(tag, to, t);
+				console.log('terminal error');
+				var id = es.attrs.request;
+				var tag = new xmpp.Element('shells', {action:'error', request:id});
+				t.sendWyliodrin(from, tag);
 			}
 		}
-		if(action == 'close')
+		if(es.attrs.action == 'close')
 		{
-			var id = parseInt(es.getChild('id'));
-			var rc = destroyTerminal(id);
+			var id = parseInt(es.attrs.id);
+			var rc = terminal.destroyTerminal(id);
 		}
-		if(action == 'keys')
+		if(es.attrs.action == 'keys')
 		{
-			var id = parseInt(es.getChild('id'));
-			var rc = sendKeysToTerminal(id, es.getText());
+			var id = parseInt(es.attrs.id);
+			var rc = terminal.sendKeysToTerminal(id, es.getText());
 		}
 	}
 	
 }
+
+
+exports.shellStanza = shell_stanza;

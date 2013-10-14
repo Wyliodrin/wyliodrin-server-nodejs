@@ -7,6 +7,9 @@
 },
 "dependencies": {
 	"pty.js": "*",
-	"node-xmpp":"*"
+	"node-xmpp":"*",
+	"dict":"*",
+	"underscore":"*",
+	"node-stringprep":"*"
 	}
 	}

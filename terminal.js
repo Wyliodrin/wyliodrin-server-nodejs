@@ -1,5 +1,5 @@
 var pty = require('pty.js');
-var terminal_xmpp = require('terminal-xmpp.js');
+var terminal_xmpp = require('./terminal-xmpp.js');
 MAX_TERMINALS = 1024;
 TERMINAL_ROWS = 24;
 TERMINAL_COLS = 80;
@@ -73,11 +73,14 @@ function destroy_terminal(id)
 
 function start_terminal(id, command, send_data)
 {
+	console.log('start terminal');
 	var t = find_terminal_by_id(id);
+	//console.log(t.id);
 	if(t != null)
 	{
+		console.log('not null');
 		var term = pty.spawn(command, [], {
-		  name: 'xterm-color',
+		  name: 'xterm',
 		  cols: TERMINAL_COLS,
 		  rows: TERMINAL_ROWS,
 		  cwd: process.env.HOME,
@@ -87,9 +90,16 @@ function start_terminal(id, command, send_data)
 		t.terminal = term;
 		term.on('data', function(data)
 		{
-			var data64 = new Buffer(data, 'base64');
-			send_data(data64,id);
+			var b=	new Buffer(data);
+			for(i=0; i<b.length; i++)
+			{
+				console.log(b[i]);
+			}
+			console.log('on data'+data);
+			var data64 = new Buffer(data).toString('base64');
+			send_data(data64);
 		});	
+		term.write('blabla\r');
 		return TERMINAL_OK
 	}
 	return TERMINAL_E_NOT_FOUND;
@@ -100,7 +110,10 @@ function sendKeysToTerminal(id, keys)
 	var t = find_terminal_by_id(id);
 	if(t != null)
 	{
-		t.terminal.write(keys);
+		for (i=0; i<keys.length; i++)
+		{
+			t.terminal.write(keys[i]);
+		}
 		return TERMINAL_OK;
 	}
 	else
@@ -111,7 +124,8 @@ exports.initTerminals = init_terminals;
 exports.allocTerminal = alloc_terminal;
 exports.destroyTerminal = destroy_terminal;
 exports.startTerminal = start_terminal;
-exprots.sendKeysToTerminal = sendKeysToTerminal;
+exports.sendKeysToTerminal = sendKeysToTerminal;
+exports.TERMINAL_OK = TERMINAL_OK;
 // init_terminals();
 // console.log(alloc_terminal(find_terminal_id()).id);
 // console.log(alloc_terminal(find_terminal_id()).id);

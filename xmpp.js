@@ -1,6 +1,8 @@
-var wxmpp = require('./xmpp_library').xmpp;
+var XMPP = require('./xmpp_library');
+var wxmpp = XMPP.xmpp;
 var dict = require('dict');
 var fs = require('fs');
+var txmpp = require('./terminal-xmpp');
 
 var isConnected = false;
 
@@ -21,6 +23,11 @@ function connect()
 		connection.on ('error', function(error)
 		{
 		  console.error (error);
+		});
+
+		connection.on ('disconnect', function()
+		{
+		  console.error ('disconnect');
 		});
 
 		connection.on ('online', function()
@@ -45,7 +52,9 @@ function connect()
 	//	  	shells = stanza.getChild ('shells', 'wyliodrin');
 	//	 } 			  
 	//	});
-		wxmpp.load();		
+		connection.load();		
+		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, txmpp.shellStanza);
+		console.log(XMPP.WYLIODRIN_NAMESPACE);
 		isConnected = true;
 	}
 }
@@ -59,7 +68,9 @@ function disconnect(jid)
 	}
 } 
 
-function send(stanza, to, t)
-{
-	t.send(new wxmpp.Element('message',{to:to}).c(stanza);
-}
+// function send(stanza, to, t)
+// {
+// 	t.send(new wxmpp.Element('message',{to:to})).c(stanza);
+// }
+
+exports.connect = connect;
