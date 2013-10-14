@@ -1,6 +1,6 @@
 <message>
 -->	<shells xmlns="wyliodrin" action="open" request="id"/>
-<--	<shells xmlns="wyliodrin" action="done" request="id"/>
+<--	<shells xmlns="wyliodrin" action="done" id="" request="id"/>
 <--	<shells xmlns="wyliodrin" action="error" request="id"/>
 
 -->	<shells xmlns="wyliodrin" id="" action="close" request="id"/>
