@@ -1,40 +1,49 @@
-var wxmpp = require('./xmpp_library').xmpp;
+var XMPP = require('./xmpp_library');
+var wxmpp = XMPP.xmpp;
 var dict = require('dict');
 var fs = require('fs');
-var config_file = require('/boot/wyliodrin.json');
+var txmpp = require('./terminal-xmpp');
+
+var isConnected = false;
 
 var isConnected = false;
 function connect()
 {
-	console.log(JSON.parse(config_file));
-	var jid
-	var password
+	var file_data = fs.readFileSync('/boot/wyliodrin.json');
+	var d = JSON.parse(file_data);
+	var jid = d.jid;
+	var password = d.password;
+
 	if(!isConnected)
 	{
 		
-		var connection = new xmpp.Client({jid:jid,password:password,preferredSaslMechanism:'PLAIN'});
+		var connection = new wxmpp.Client({jid:jid,password:password,preferredSaslMechanism:'PLAIN'});
+		isConnected = true;
 		
-		wxmpp.on ('error', function(error)
+		connection.on ('error', function(error)
 		{
 		  console.error (error);
-		  disconnect (jid);
 		});
 
-		wxmpp.on ('online', function()
+		connection.on ('disconnect', function()
+		{
+		  console.error ('disconnect');
+		});
+
+		connection.on ('online', function()
 		{
 		  console.log (jid+"> online");
-		  wxmpp.send(new wxmpp.Element('presence',
+		  connection.send(new wxmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
 		     );
 		});
 
-		wxmpp.on ('rawStanza', function (stanza)
+		connection.on ('rawStanza', function (stanza)
 		{
-		  console.log (this.jid+'>'+stanza.root().toString());
+		  console.log (jid+'>'+stanza.root().toString());
 		});
-
 	//	wxmpp.on ('stanza', function (stanza)
 	//	{
 	//	  console.log (this.jid+'>'+stanza.root().toString());
@@ -43,7 +52,9 @@ function connect()
 	//	  	shells = stanza.getChild ('shells', 'wyliodrin');
 	//	 } 			  
 	//	});
-		wxmpp.load();		
+		connection.load();		
+		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, txmpp.shellStanza);
+		console.log(XMPP.WYLIODRIN_NAMESPACE);
 		isConnected = true;
 	}
 }
@@ -57,9 +68,9 @@ function disconnect(jid)
 	}
 } 
 
-function send(stanza, to, id)
-{
-	wxmpp.send(new wxmpp.Element('message',{to:to, id:id}).c(stanza);
-}
+// function send(stanza, to, t)
+// {
+// 	t.send(new wxmpp.Element('message',{to:to})).c(stanza);
+// }
 
-//connect();
+exports.connect = connect;
