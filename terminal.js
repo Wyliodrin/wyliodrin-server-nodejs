@@ -90,16 +90,17 @@ function start_terminal(id, command, send_data)
 		t.terminal = term;
 		term.on('data', function(data)
 		{
-			var b=	new Buffer(data);
+			/*var b=	new Buffer(data);
 			for(i=0; i<b.length; i++)
 			{
 				console.log(b[i]);
 			}
 			console.log('on data'+data);
-			var data64 = new Buffer(data).toString('base64');
-			send_data(data64);
+			var data64 = new Buffer(data).toString('base64');*/
+			// send_data(data64);
+			send_data(data);
 		});	
-		term.write('blabla\r');
+		// term.write('blabla\r');
 		return TERMINAL_OK
 	}
 	return TERMINAL_E_NOT_FOUND;
