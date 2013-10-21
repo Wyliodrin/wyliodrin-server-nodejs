@@ -3,6 +3,7 @@ var wxmpp = XMPP.xmpp;
 var dict = require('dict');
 var fs = require('fs');
 var txmpp = require('./terminal-xmpp');
+var mxmpp = require('./build-xmpp');
 
 var isConnected = false;
 
@@ -61,7 +62,7 @@ function connect()
 	//	});
 		connection.load();		
 		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, txmpp.shellStanza);
-		console.log(XMPP.WYLIODRIN_NAMESPACE);
+		connection.tag('make', XMPP>WYLIODRIN_NAMESPACE, mxmpp.buildStanza);
 		isConnected = true;
 	}
 }

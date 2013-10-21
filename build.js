@@ -26,19 +26,30 @@ function validatePath(id, returnPath)
 	});
 } 
 
-function build(id)
+function make(id, command, sendOutput)
 {
-	validatePath(id, function(path){
-		console.log(path);
-		child_process.exec('make build', {maxBuffer: 200*1024,cwd: path},
+	validatePath(id, function(path)
+	{
+		if(path)
+		{
+			child_process.exec('make '+command, {maxBuffer: 200*1024,cwd: path},
 			function (error, stdout, stderr) {
-					console.log('forked');
-				    console.log('stdout: ' + stdout);
-				    console.log('stderr: ' + stderr);
-				    if (error !== null) {
-				      console.log('exec error: ' + error);
-				    }});
+				if(stdout != '')
+				{
+					sendOutput(stdout);
+				}
+				if(stderr != '')
+				{
+					sendOutput(stderr);
+				}   
+				if (error !== null) {
+				  	console.log('exec error: ' + error);
+				}});
+		}
+		else
+		{
+			console.log('wrong path');
+		}
 	});
 }
-
-build('123');
+make('123','build');
