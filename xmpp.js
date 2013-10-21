@@ -13,6 +13,8 @@ function connect()
 	var d = JSON.parse(file_data);
 	var jid = d.jid;
 	var password = d.password;
+	var owner = d.owner;
+	console.log('owner = '+owner);
 
 	if(!isConnected)
 	{
@@ -38,6 +40,11 @@ function connect()
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
 		     );
+		  connection.send(new wxmpp.Element('presence',
+		  {
+		  	type:'subscribe',
+		  	to:owner
+		  }));
 		});
 
 		connection.on ('rawStanza', function (stanza)

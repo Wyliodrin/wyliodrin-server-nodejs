@@ -61,7 +61,7 @@ function destroy_terminal(id)
 		//verific daca s-a facut terminalul sau doar s-a alocat
 		if(t.terminal != null)
 		{
-			t.terminal.kill();
+			t.terminal.destroy();
 			terminals[id] = null;
 			return TERMINAL_OK;
 		}

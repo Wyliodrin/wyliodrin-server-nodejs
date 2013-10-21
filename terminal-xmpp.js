@@ -44,7 +44,7 @@ function shell_stanza(t, from, to, es, error)
 		if(es.attrs.action == 'keys')
 		{
 			var id = parseInt(es.attrs.id);
-			var rc = terminal.sendKeysToTerminal(id, es.getText());
+			var rc = terminal.sendKeysToTerminal(id, new Buffer(es.getText(),'base64').toString());
 		}
 	}
 	
