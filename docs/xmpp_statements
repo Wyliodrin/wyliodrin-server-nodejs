@@ -37,6 +37,10 @@
 --> <files xmlns="wyliodrin" action="details" path="" id=""/>
 <-- <files xmlns="wyliodrin" id="" type="directory/file/character_device/block_device/link/socket/unknown" atime="" stime="" mtime="" size="" permissions=""/>
 
---> <make xmlns="wyliodrin" action="build" id=""/>
-<-- <make xmlns="wyliodrin" action="build" id="" source="stdout/stderr">data</make>
-<-- <make xmlns="wyliodrin" action="build" id="" type="make/system" error_code=""/>
+--> <make xmlns="wyliodrin" action="build" id="" request="id"/>
+<-- <make xmlns="wyliodrin" action="build" response="done" request="id" source="stdout/stderr">data</make>
+<-- <make xmlns="wyliodrin" action="build" response="error" request="id" code="" signal=""/>
+
+--> <make xmlns="wyliodrin" action="clean" id="" request="id"/>
+<-- <make xmlns="wyliodrin" action="clean" response="done" request="id" source="stdout/stderr">data</make>
+<-- <make xmlns="wyliodrin" action="clean" response="error" request="id" code="" signal=""/>

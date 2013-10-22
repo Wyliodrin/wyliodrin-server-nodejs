@@ -32,24 +32,22 @@ function make(id, command, sendOutput)
 	{
 		if(path)
 		{
-			child_process.exec('make '+command, {maxBuffer: 200*1024,cwd: path},
+			child_process.exec(command, {maxBuffer: 200*1024,cwd: path},
 			function (error, stdout, stderr) {
-				if(stdout != '')
-				{
-					sendOutput(stdout);
-				}
-				if(stderr != '')
-				{
-					sendOutput(stderr);
-				}   
-				if (error !== null) {
-				  	console.log('exec error: ' + error);
+				var out = new Buffer(stdout).toString('base64');
+				var err = new Buffer(stderr).toString('base64');
+				sendOutput(out,"stdout", null, null);
+				sendOutput(err, "stderr", null, null);   
+				if (!error) {
+				  	sendOutput(null, "system", error.code, error.signal);
 				}});
 		}
 		else
 		{
-			console.log('wrong path');
+			sendOutput("Invalid path", "system",null,null);
 		}
 	});
 }
-make('123','build');
+
+make("123","make build");
+exports.make = make;
