@@ -60,9 +60,26 @@ function connect()
 	//	  	shells = stanza.getChild ('shells', 'wyliodrin');
 	//	 } 			  
 	//	});
-		connection.load();		
+		connection.load(function (xmpp, from, to, stanza, error)
+		{
+			if (stanza.getName()=='presence')
+			{
+				if (stanza.attrs.type == 'subscribe')
+				{
+					if (from == owner)
+					{
+						connection.send(new wxmpp.Element('presence',
+		  				{
+		  					type:'subscribed',
+		  					to:owner
+		  				}));
+
+					}
+				}
+			}
+		});		
 		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, txmpp.shellStanza);
-		connection.tag('make', XMPP>WYLIODRIN_NAMESPACE, mxmpp.buildStanza);
+		connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, mxmpp.buildStanza);
 		isConnected = true;
 	}
 }

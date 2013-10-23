@@ -49,5 +49,5 @@ function make(id, command, sendOutput)
 	});
 }
 
-make("123","make build");
+// make("123","make build");
 exports.make = make;
