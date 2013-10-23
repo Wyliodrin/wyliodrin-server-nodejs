@@ -4,21 +4,24 @@ var dict = require ('dict');
 var _ = require ('underscore');
 
 var WYLIODRIN_NAMESPACE = "wyliodrin";
+var other = undefined;
 
-xmpp.Client.prototype.load = function ()
+xmpp.Client.prototype.load = function (wother)
 {
 	t = this;
 
-	this.on ('iq', function (stanza)
-	{
-		var p = stanza.getChild ('ping', 'urn:xmpp:ping');
-		console.log ('stanza');
-		if (p && p.type == 'get')
-		{
-			console.log ('ping');
-			t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
-		}
-	});
+	other = wother;
+
+	// this.on ('iq', function (stanza)
+	// {
+	// 	var p = stanza.getChild ('ping', 'urn:xmpp:ping');
+	// 	console.log ('stanza');
+	// 	if (p && p.type == 'get')
+	// 	{
+	// 		console.log ('ping');
+	// 		t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
+	// 	}
+	// });
 
 	this.on ('stanza', function (stanza)
 	{
@@ -29,7 +32,7 @@ xmpp.Client.prototype.load = function ()
 			// console.log (stanza);
 			if (p && stanza.type == 'get')
 			{
-				console.log ('ping');
+				// console.log ('ping');
 				t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
 			}
 		}
@@ -45,8 +48,17 @@ xmpp.Client.prototype.load = function ()
 					// console.log (name);
 					var error = stanza.attrs.type == 'error';
 					if (t.tags().has(name)) t.tags().get(name)(t, stanza.attrs.from, stanza.attrs.to, es, error);
+					else if (other) other (t, stanza.attrs.from, stanza.attrs.to, es, error);
 				}
 			});
+		}
+		else
+		if (stanza.is('presence'))
+		{
+			var name = stanza.getName ();
+			var error = stanza.attrs.type == 'error';
+			if (t.tags().has(name)) t.tags().get(name)(t, stanza.attrs.from, stanza.attrs.to, stanza, error);
+			else if (other) other (t, stanza.attrs.from, stanza.attrs.to, stanza, error);
 		}
 	});
 }
@@ -65,7 +77,9 @@ xmpp.Client.prototype.tag = function (name, namespace, activity)
 xmpp.Client.prototype.sendWyliodrin = function (to, stanza)
 {
 	stanza.attrs.xmlns = WYLIODRIN_NAMESPACE;
-	this.send (new xmpp.Element ('message', {to: to}).cnode(stanza));
+	s=new xmpp.Element ('message', {to: to}).cnode(stanza);
+	console.log (s.root().toString());
+	this.send (s);
 }
 
 exports.xmpp = xmpp;
