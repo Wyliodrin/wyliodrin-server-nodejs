@@ -17,14 +17,14 @@ function shell_stanza(t, from, to, es, error)
 			console.log('term allocated');
 			var rc = terminal.startTerminal(term.id, COMMAND, function (data)
 				{
-					var tag = new xmpp.Element('shells',{id:term.id,action:"keys",}).t(data);
+					var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
 					t.sendWyliodrin(from, tag);
 				});
 			if(rc == terminal.TERMINAL_OK)
 			{
 				console.log('terminal ok');
 				var id = es.attrs.request;
-				var tag = new xmpp.Element('shells', {action:'open', response:'done', request:id, id:term.id});
+				var tag = new xmpp.Element('shells', {action:'open', response:'done', request:id, shellid:term.id});
 				console.log(tag.root().toString());
 				t.sendWyliodrin(from, tag);
 			}
@@ -38,12 +38,12 @@ function shell_stanza(t, from, to, es, error)
 		}
 		if(es.attrs.action == 'close')
 		{
-			var id = parseInt(es.attrs.id);
+			var id = parseInt(es.attrs.shellid);
 			var rc = terminal.destroyTerminal(id);
 		}
 		if(es.attrs.action == 'keys')
 		{
-			var id = parseInt(es.attrs.id);
+			var id = parseInt(es.attrs.shellid);
 			var rc = terminal.sendKeysToTerminal(id, new Buffer(es.getText(),'base64').toString());
 		}
 	}
