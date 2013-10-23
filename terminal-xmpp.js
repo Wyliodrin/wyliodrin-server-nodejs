@@ -1,9 +1,13 @@
-var start_script = require('./start_script');
-
-var xmpp = start_script.modules.xmpp;
-var terminal = start_script.modules.terminal;
+var xmpp = null;
+var terminal = null;
 
 var COMMAND = '/bin/bash';
+
+function load(modules)
+{
+	xmpp = modules.xmpp;
+	terminal = modules.terminal;
+}
 
 
 function shell_stanza(t, from, to, es, error)
@@ -54,3 +58,4 @@ function shell_stanza(t, from, to, es, error)
 
 
 exports.shellStanza = shell_stanza;
+exports.load = load;

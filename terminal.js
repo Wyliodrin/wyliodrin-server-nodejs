@@ -133,15 +133,7 @@ exports.destroyTerminal = destroy_terminal;
 exports.startTerminal = start_terminal;
 exports.sendKeysToTerminal = sendKeysToTerminal;
 exports.TERMINAL_OK = TERMINAL_OK;
-// init_terminals();
-// console.log(alloc_terminal(find_terminal_id()).id);
-// console.log(alloc_terminal(find_terminal_id()).id);
-// //console.log(alloc_terminal(find_terminal_id()).id);
-// console.log(alloc_terminal(find_terminal_id()).id);
 
+exports.load = load;
 
-// start_terminal(1,'vi');
-// //destroy_terminal(1);
-// //setTimeout(destroy_terminal(1), 10000);
-// //console.log("end");
 

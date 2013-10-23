@@ -1,8 +1,13 @@
 var f4js = require('fuse4js');
-var start_script = require('./start_script');
-var files_xmpp = start_script.modules.files_xmpp;
+
+var files_xmpp =null;
 
 var ERROR = -2;
+
+function load(modules)
+{
+	files_xmpp = modules.files_xmpp;
+}
 
 
 /*
@@ -454,3 +459,5 @@ function readdir(path, cb)
 //     usage();
 //   }
 // })();
+
+exports.load = load;

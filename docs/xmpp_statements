@@ -19,6 +19,7 @@
 <-- <files xmlns="wyliodrin" action="list" path=""/>
 --> <files xmlns="wyliodrin" action="list" path="" error="">
 		<file name=""/>
+		<directory name=""/>
 	</files>
 
 --> <make xmlns="wyliodrin" action="build" id="" request="id"/>

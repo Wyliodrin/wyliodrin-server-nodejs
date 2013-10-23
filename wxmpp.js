@@ -1,14 +1,20 @@
-var start_script = require('./start_script');
-
-var xmpp = start_script.modules.xmpp;
+var xmpp = null;
 var dict = require('dict');
 var fs = require('fs');
-var terminal_xmpp = start_script.modules.terminal_xmpp;
-var build_xmpp = start_script.modules.build_xmpp;
+var terminal_xmpp = null;
+var build_xmpp = null;
 
 var isConnected = false;
 
 var connection;
+
+function load(modules)
+{
+	xmpp = modules.xmpp;
+	terminal_xmpp = modules.terminal_xmpp;
+	build_xmpp = modules.build_xmpp;
+}
+
 function connect()
 {
 	if(!isConnected)
@@ -100,4 +106,5 @@ function checkConnected()
 exports.connect = connect;
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;
+exports.load = load;
 
