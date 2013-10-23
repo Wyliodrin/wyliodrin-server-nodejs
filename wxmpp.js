@@ -1,26 +1,20 @@
-var XMPP = require('./xmpp_library');
-var wxmpp = XMPP.xmpp;
+var start_script = require('./start_script');
+
+var xmpp = start_script.modules.xmpp;
 var dict = require('dict');
 var fs = require('fs');
-var txmpp = require('./terminal-xmpp');
-var mxmpp = require('./build-xmpp');
+var terminal_xmpp = start_script.modules.terminal_xmpp;
+var build_xmpp = start_script.modules.build_xmpp;
 
 var isConnected = false;
 
-var isConnected = false;
+var connection;
 function connect()
 {
-	var file_data = fs.readFileSync('/boot/wyliodrin.json');
-	var d = JSON.parse(file_data);
-	var jid = d.jid;
-	var password = d.password;
-	var owner = d.owner;
-	console.log('owner = '+owner);
-
 	if(!isConnected)
 	{
 		
-		var connection = new wxmpp.Client({jid:jid,password:password,preferredSaslMechanism:'PLAIN'});
+		connection = new xmpp.Client({jid:jid,password:password,preferredSaslMechanism:'PLAIN'});
 		isConnected = true;
 		
 		connection.on ('error', function(error)
@@ -36,12 +30,12 @@ function connect()
 		connection.on ('online', function()
 		{
 		  console.log (jid+"> online");
-		  connection.send(new wxmpp.Element('presence',
+		  connection.send(new xmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
 		     );
-		  connection.send(new wxmpp.Element('presence',
+		  connection.send(new xmpp.Element('presence',
 		  {
 		  	type:'subscribe',
 		  	to:owner
@@ -60,7 +54,7 @@ function connect()
 	//	  	shells = stanza.getChild ('shells', 'wyliodrin');
 	//	 } 			  
 	//	});
-		connection.load(function (xmpp, from, to, stanza, error)
+		connection.load(function (connection, from, to, stanza, error)
 		{
 			if (stanza.getName()=='presence')
 			{
@@ -68,7 +62,7 @@ function connect()
 				{
 					if (from == owner)
 					{
-						connection.send(new wxmpp.Element('presence',
+						connection.send(new xmpp.Element('presence',
 		  				{
 		  					type:'subscribed',
 		  					to:owner
@@ -78,8 +72,8 @@ function connect()
 				}
 			}
 		});		
-		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, txmpp.shellStanza);
-		connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, mxmpp.buildStanza);
+		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
+		connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
 		isConnected = true;
 	}
 }
@@ -93,9 +87,17 @@ function disconnect(jid)
 	}
 } 
 
-// function send(stanza, to, t)
-// {
-// 	t.send(new wxmpp.Element('message',{to:to})).c(stanza);
-// }
+function getConnection()
+{
+	return connection;
+}
+
+function checkConnected()
+{
+	return isConnected;
+}
 
 exports.connect = connect;
+exports.getConnection = getConnection;
+exports.checkConnected = checkConnected;
+

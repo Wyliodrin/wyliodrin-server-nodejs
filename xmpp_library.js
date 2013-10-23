@@ -6,6 +6,8 @@ var _ = require ('underscore');
 var WYLIODRIN_NAMESPACE = "wyliodrin";
 var other = undefined;
 
+
+
 xmpp.Client.prototype.load = function (wother)
 {
 	t = this;

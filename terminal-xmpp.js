@@ -1,5 +1,7 @@
-var xmpp = require('./xmpp_library.js').xmpp;
-var terminal = require('./terminal.js');
+var start_script = require('./start_script');
+
+var xmpp = start_script.modules.xmpp;
+var terminal = start_script.modules.terminal;
 
 var COMMAND = '/bin/bash';
 

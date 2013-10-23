@@ -1,5 +1,11 @@
-var xmpp = require('./xmpp_library.js').xmpp;
-var build = require('./build.js');
+var xmpp = null;
+var build = null;
+
+function load(modules)
+{
+	xmpp = modules.xmpp;
+	build = modules.build;
+}
 
 function buildStanza(t, from, to, es, error)
 {
@@ -27,3 +33,4 @@ function buildStanza(t, from, to, es, error)
 }
 
 exports.buildStanza = buildStanza;
+exports.load = load;

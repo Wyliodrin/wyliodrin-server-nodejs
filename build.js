@@ -8,6 +8,11 @@ PATH_OK = 0;
 
 var PATH = '/home/pi/projects';
 
+function load()
+{
+
+}
+
 function validatePath(id, returnPath)
 {
 	resultPath = path.join(PATH,id);
@@ -48,6 +53,5 @@ function make(id, command, sendOutput)
 		}
 	});
 }
-
-// make("123","make build");
 exports.make = make;
+exports.load = load;

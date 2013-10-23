@@ -10,6 +10,7 @@
 	"node-xmpp":"*",
 	"dict":"*",
 	"underscore":"*",
-	"node-stringprep":"*"
+	"node-stringprep":"*",
+	"fuse4js":"*"
 	}
 	}

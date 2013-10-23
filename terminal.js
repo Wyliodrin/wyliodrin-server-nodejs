@@ -1,5 +1,6 @@
 var pty = require('pty.js');
-var terminal_xmpp = require('./terminal-xmpp.js');
+
+var terminal_xmpp = null;
 MAX_TERMINALS = 1024;
 TERMINAL_ROWS = 24;
 TERMINAL_COLS = 80;
@@ -9,6 +10,11 @@ TERMINAL_OK = 0;
 TERMINAL_E_NOT_ALLOC = 2;
 
 var terminals=[];
+
+function load(modules)
+{
+	terminal_xmpp = modules.terminal_xmpp;
+}
 
 
 function alloc_terminal()
