@@ -47,8 +47,8 @@ xmpp.Client.prototype.load = function (wother)
 					var name = es.getName ();
 					// console.log (name);
 					var error = stanza.attrs.type == 'error';
-					if (t.tags().has(name)) t.tags().get(name)(t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toLowerCase(), es, error);
-					else if (other) other (t, new xmpp.JID (stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toLowerCase(), es, error);
+					if (t.tags().has(name)) t.tags().get(name)(t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), es, error);
+					else if (other) other (t, new xmpp.JID (stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), es, error);
 				}
 			});
 		}
@@ -57,8 +57,8 @@ xmpp.Client.prototype.load = function (wother)
 		{
 			var name = stanza.getName ();
 			var error = stanza.attrs.type == 'error';
-			if (t.tags().has(name)) t.tags().get(name)(t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toLowerCase(), stanza, error);
-			else if (other) other (t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toLowerCase(), stanza, error);
+			if (t.tags().has(name)) t.tags().get(name)(t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), stanza, error);
+			else if (other) other (t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), stanza, error);
 		}
 	});
 }
