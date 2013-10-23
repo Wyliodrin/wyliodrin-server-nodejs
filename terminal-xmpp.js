@@ -24,7 +24,7 @@ function shell_stanza(t, from, to, es, error)
 			{
 				console.log('terminal ok');
 				var id = es.attrs.request;
-				var tag = new xmpp.Element('shells', {action:'done', request:id, id:term.id});
+				var tag = new xmpp.Element('shells', {action:'open', response:'done', request:id, id:term.id});
 				console.log(tag.root().toString());
 				t.sendWyliodrin(from, tag);
 			}
@@ -32,7 +32,7 @@ function shell_stanza(t, from, to, es, error)
 			{
 				console.log('terminal error');
 				var id = es.attrs.request;
-				var tag = new xmpp.Element('shells', {action:'error', request:id});
+				var tag = new xmpp.Element('shells', {action:'open', response:'error', request:id});
 				t.sendWyliodrin(from, tag);
 			}
 		}
