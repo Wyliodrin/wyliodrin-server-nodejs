@@ -444,7 +444,7 @@ function statfs(cb) {
 function main() {
   
   console.log('main');
-      f4js.start('/home/pi/projects/mount', handlers, false);
+      f4js.start('/home/pi/projects/mount', handlers, true);
     };
 
 exports.main = main;
