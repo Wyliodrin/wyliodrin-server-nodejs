@@ -6,7 +6,7 @@ var build_xmpp = null;
 
 var isConnected = false;
 
-var connection;
+var connection = null;
 
 function load(modules)
 {
@@ -88,7 +88,7 @@ function disconnect(jid)
 {
 	if(isConnected)
 	{
-		wxmpp.end(jid);
+		connection.end(jid);
 		isConnected = false;
 	}
 } 
