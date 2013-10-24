@@ -18,10 +18,11 @@ function load(modules)
  */
 function getattr(path, cb) 
 {    
-  console.log('path = '+path);
+  console.log('get attr path = '+path);
    var stat = {};
 
    files_xmpp.getAttr(path,function(err, attrs){
+   	console.log ('responding get attr');
    	if(err == 0)
    	{
    		stat.size = attrs.size;
@@ -43,9 +44,9 @@ function getattr(path, cb)
  */
 function readdir(path, cb) 
 {
-	console.log ('path = '+path);
-	console.log ('readdir');
+	console.log ('read dir path = '+path);
   files_xmpp.readDir(path,function(err, names){
+  	console.log ('responding read dir');
   	if(err != 0)
   		err = ERROR;
   		console.log ('names: '+names);
