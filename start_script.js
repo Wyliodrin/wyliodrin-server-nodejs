@@ -9,7 +9,7 @@ function load()
 	var file_data = fs.readFileSync(CONFIG_FILE);
 	d = JSON.parse(file_data);
 	var xmpp_temp = require('./xmpp_library.js');
-	modulesDict = {	terminal:require('./terminal'),
+	modulesDict = {	config:d, terminal:require('./terminal'),
 							wxmpp:require('./wxmpp'),
 							build_xmpp:require('./build-xmpp'),
 							files_xmpp:require('./files-xmpp'),
