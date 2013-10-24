@@ -43,6 +43,8 @@ function getattr(path, cb)
  */
 function readdir(path, cb) 
 {
+	console.log ('path = '+path);
+	console.log ('readdir');
   files_xmpp.readDir(path,function(err, names){
   	if(err != 0)
   		err = ERROR;
