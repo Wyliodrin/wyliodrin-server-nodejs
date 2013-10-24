@@ -85,7 +85,7 @@ function connect()
 		});		
 		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
 		connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
-		connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmppfiles_stanza);
+		connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.files_stanza);
 		isConnected = true;
 	}
 }
