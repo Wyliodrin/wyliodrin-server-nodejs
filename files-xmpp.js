@@ -35,7 +35,7 @@ function files_stanza(t, from, to, es, error)
 			{
 				err = parseInt(es.attrs.error);
 				var stats = {};
-				stats.attrs = 0;
+				stats.mode = 0;
 				stats.size = 0;
 				console.log (err);
 				if(err == 0)
@@ -45,12 +45,12 @@ function files_stanza(t, from, to, es, error)
 					{
 						//TODO atributele trebuie primite, nu sunt implicite
 						stats.size = es.attrs.size;
-						stats.attrs = 0100400;
+						stats.mode = 0100400;
 					}
 					else
 					{
 						stats.size = 4096;
-						stats.attrs = 040500;
+						stats.mode = 040500;
 					}
 				}
 				_.each (requests.get ('attributes '+es.attrs.path), function (sendResult)
