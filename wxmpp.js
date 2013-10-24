@@ -8,11 +8,14 @@ var isConnected = false;
 
 var connection = null;
 
+var config = null;
+
 function load(modules)
 {
 	xmpp = modules.xmpp;
 	terminal_xmpp = modules.terminal_xmpp;
 	build_xmpp = modules.build_xmpp;
+	config = modules.config;
 }
 
 function connect()
@@ -20,7 +23,7 @@ function connect()
 	if(!isConnected)
 	{
 		
-		connection = new xmpp.Client({jid:jid,password:password,preferredSaslMechanism:'PLAIN'});
+		connection = new xmpp.Client({jid:config.jid,password:config.password,preferredSaslMechanism:'PLAIN'});
 		isConnected = true;
 		
 		connection.on ('error', function(error)
@@ -44,7 +47,7 @@ function connect()
 		  connection.send(new xmpp.Element('presence',
 		  {
 		  	type:'subscribe',
-		  	to:owner
+		  	to:config.owner
 		  }));
 		});
 
@@ -66,12 +69,12 @@ function connect()
 			{
 				if (stanza.attrs.type == 'subscribe')
 				{
-					if (from == owner)
+					if (from == config.owner)
 					{
 						connection.send(new xmpp.Element('presence',
 		  				{
 		  					type:'subscribed',
-		  					to:owner
+		  					to:config.owner
 		  				}));
 
 					}
