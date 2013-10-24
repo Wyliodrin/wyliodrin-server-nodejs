@@ -6,6 +6,7 @@ var wxmpp = null;
 
 var requests = null;
 var owner = null;
+var config = null;
 
 function load(modules)
 {
@@ -13,6 +14,8 @@ function load(modules)
 	wxmpp = modules.wxmpp;
 
 	requests = dict();
+	
+	config = modules.config;
 }
 
 function loadConfig(confs)
@@ -85,7 +88,7 @@ function getAttr(path, sendResult)
 	{
 		var t = wxmpp.getConnection();
 		var tag = new xmpp.Element('files',{action:"attributes", path:path});
-		t.send(tag);
+		t.sendWyliodrin(config.owner, tag);
 		addToRequests('attributes '+path, sendResult);	
 	}
 }
@@ -96,7 +99,7 @@ function readDir(path, sendResult)
 	{
 		var t = wxmpp.getConnection();
 		var tag = new xmpp.Element('files', {action:'list', path:path});
-		t.send(tag);
+		t.sendWyliodrin(config.owner, tag);
 		addToRequests('list '+path, sendResult);
 	}
 }
@@ -115,7 +118,7 @@ function open(path, sendResult)
 	{
 		var t = wxmpp.getConnection();
 		var tag = new xmpp.Element('files', {action:'open', path:path});
-		t.send(tag);
+		t.sendWyliodrin(config.owner,tag);
 		addToRequests('open '+path, sendResult);
 	}
 }
