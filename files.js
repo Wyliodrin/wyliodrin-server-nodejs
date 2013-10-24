@@ -379,7 +379,7 @@ function open(path, flags, cb) {
  var handlers = {
    getattr: getattr,
    readdir: readdir,
-   open: open,
+//   open: open,
 //   read: read,
 //   write: write,
 //   release: release,
@@ -391,7 +391,7 @@ function open(path, flags, cb) {
 //   init: init,
 //   destroy: destroy,
 //   setxattr: setxattr,
-//   statfs: statfs
+   statfs: statfs
 };
 
 // //---------------------------------------------------------------------------
