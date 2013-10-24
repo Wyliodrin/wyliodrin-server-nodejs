@@ -54,7 +54,7 @@ function files_stanza(t, from, to, es, error)
 				}
 				_.each (requests.get ('attributes '+es.attrs.path), function (sendResult)
 				{
-					sendResult (err, attrs);
+					sendResult (err, stats);
 				});
 				requests.delete ('attributes '+es.attrs.path);
 			}
