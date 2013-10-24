@@ -30,7 +30,7 @@ function load()
 }
 
 load();
-modulesDict.xmpp.connect ();
+modulesDict.wxmpp.connect ();
 modulesDict.files.main();
 
 
