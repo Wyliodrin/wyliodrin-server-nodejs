@@ -41,12 +41,16 @@ function files_stanza(t, from, to, es, error)
 				{
 					type = es.attrs.type;
 					if(type == 'file')
+					{
 						//TODO atributele trebuie primite, nu sunt implicite
 						stats.size = es.attrs.size;
 						stats.attrs = 0100400;
+					}
 					else
+					{
 						stats.size = 4096;
 						stats.attrs = 040500;
+					}
 				}
 				_.each (requests.get ('attributes '+es.attrs.path), function (sendResult)
 				{
