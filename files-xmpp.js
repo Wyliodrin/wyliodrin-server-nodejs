@@ -83,7 +83,7 @@ function getAttr(path, sendResult)
 	console.log('get attr');
 	if(wxmpp.checkConnected)
 	{
-		var t = wxmpp.getConnection;
+		var t = wxmpp.getConnection();
 		var tag = new xmpp.Element('files',{action:"attributes", path:path});
 		t.send(tag);
 		addToRequests('attributes '+path, sendResult);	
@@ -94,7 +94,7 @@ function readDir(path, sendResult)
 {
 	if(wxmpp.checkConnected)
 	{
-		var t = wxmpp.getConnection;
+		var t = wxmpp.getConnection();
 		var tag = new xmpp.Element('files', {action:'list', path:path});
 		t.send(tag);
 		addToRequests('list '+path, sendResult);
@@ -113,7 +113,7 @@ function open(path, sendResult)
 {
 	if(wxmpp.checkConnected)
 	{
-		var t = wxmpp.getConnection;
+		var t = wxmpp.getConnection();
 		var tag = new xmpp.Element('files', {action:'open', path:path});
 		t.send(tag);
 		addToRequests('open '+path, sendResult);
