@@ -71,8 +71,10 @@ function files_stanza(t, from, to, es, error)
 					_.each (es.children, function(child){
 						if (child.getName()=='file' || child.getName()=='directory')
 						names.push(child.attrs.filename);
+						console.log ('names.push: '+names);
 					});
 					_.each(requests.get('list '+es.attrs.path), function(sendResult){
+						console.log ('sendResult:names: '+names);
 						sendResult(err, names);
 					});
 				}
