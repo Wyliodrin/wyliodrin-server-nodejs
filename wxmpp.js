@@ -42,7 +42,7 @@ function connect()
 
 		connection.on ('online', function()
 		{
-		  console.log (conifg.jid+"> online");
+		  console.log (config.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
