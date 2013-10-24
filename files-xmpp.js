@@ -66,11 +66,14 @@ function files_stanza(t, from, to, es, error)
 			{
 				err = parseInt(es.attrs.error);
 				names=[];
+				i = 0;
 				if(err == 0)
 				{
 					_.each (es.children, function(child){
 						if (child.getName()=='file' || child.getName()=='directory')
-						names.push(child.attrs.filename);
+						names.push(i+'');
+						i++;
+						// names.push(child.attrs.filename);
 						console.log ('names.push: '+names);
 					});
 					_.each(requests.get('list '+es.attrs.path), function(sendResult){
