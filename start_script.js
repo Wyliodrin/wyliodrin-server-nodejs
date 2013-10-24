@@ -37,6 +37,12 @@ function load()
 load();
 modulesDict.wxmpp.connect();
 modulesDict.files.main();
+// setTimeout(function(){
+// 	modulesDict.build.make("4634cf49-e469-4d18-95c0-e86bf753fb3c" ,'make build', function(a,b,c,d){
+// 	console.log('make '+a);
+// });
+// }, 5000);
+
 
 
 exports.config = d;

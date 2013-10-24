@@ -6,12 +6,13 @@ child_process = require('child_process');
 PATH_ERROR = 1;
 PATH_OK = 0;
 
-var PATH = '/home/pi/projects/mount';
+var mountPath = null;
 var buildFile = null;
 
 function loadConfig(configs)
 {
 	buildFile = configs.buildFile;
+	mountPath = configs.mountFile;
 	console.log(buildFile);
 }
 
@@ -31,12 +32,15 @@ function validatePath(id, returnPath)
 
 function make(id, command, sendOutput)
 {
+	console.log('make');
 	validatePath(id, function(path,id)
 	{
 		if(path)
 		{
-			child_process.exec('cp -r '+PATH+'/'+id+' '+buildFile, {maxBuffer: 30*1024, cwd:path}, 
+			child_process.exec('cp -r '+mountPath+'/'+id+' '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
 				function(error, stdout, stderr){
+					console.log('copy error = '+error+' '+stderr);
+
 					if(!error)
 					{
 						console.log('copied successfully');
