@@ -14,8 +14,8 @@
 
 <-- <files xmlns="wyliodrin" action="list" path=""/>
 --> <files xmlns="wyliodrin" action="list" path="" error="">
-		<file name=""/>
-		<directory name=""/>
+		<file filename=""/>
+		<directory filename=""/>
 	</files>
 
 <-- <files xmlns="wyliodrin" action="open" path=""/>  //deocamdata e open doar pt citire
