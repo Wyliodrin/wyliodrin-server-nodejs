@@ -6,46 +6,51 @@ child_process = require('child_process');
 PATH_ERROR = 1;
 PATH_OK = 0;
 
-var PATH = '/home/pi/projects';
+var PATH = '/home/pi/projects/mount';
+var buildFile = null;
 
-function load()
+function loadConfig(configs)
+{
+	buildFile = configs.buildFile;
+	console.log(buildFile);
+}
+
+function load(modules)
 {
 
 }
 
 function validatePath(id, returnPath)
 {
-	resultPath = path.join(PATH,id);
-	//TODO cache for improvement
-	var errorCode;
-	fs.realpath(resultPath, function(err, resolvedPath){
-		if(err)
-			returnPath(null);
-		else
-		{
-			if(resolvedPath.indexOf(PATH) == 0)
-				returnPath(resolvedPath);
-			else
-				returnPath(null);
-		}
-	});
+	if(id.indexOf('/') == -1)
+		validPath = path.join(buildFile, id)
+	else
+		validPath = null;
+	returnPath(validPath,id);
 } 
 
 function make(id, command, sendOutput)
 {
-	validatePath(id, function(path)
+	validatePath(id, function(path,id)
 	{
 		if(path)
 		{
-			child_process.exec(command, {maxBuffer: 200*1024,cwd: path},
-			function (error, stdout, stderr) {
-				var out = new Buffer(stdout).toString('base64');
-				var err = new Buffer(stderr).toString('base64');
-				sendOutput(out,"stdout", null, null);
-				sendOutput(err, "stderr", null, null);   
-				if (!error) {
-				  	sendOutput(null, "system", error.code, error.signal);
-				}});
+			child_process.exec('cp -r '+PATH+'/'+id+' '+buildFile, {maxBuffer: 30*1024, cwd:path}, 
+				function(error, stdout, stderr){
+					if(!error)
+					{
+						console.log('copied successfully');
+						child_process.exec(command, {maxBuffer: 200*1024,cwd: path},
+						function (error, stdout, stderr) {
+							var out = new Buffer(stdout).toString('base64');
+							var err = new Buffer(stderr).toString('base64');
+							sendOutput(out,"stdout", null, null);
+							sendOutput(err, "stderr", null, null);   
+							if (!error) {
+							  	sendOutput(null, "system", error.code, error.signal);
+							}});
+					}
+				});			
 		}
 		else
 		{
@@ -55,3 +60,4 @@ function make(id, command, sendOutput)
 }
 exports.make = make;
 exports.load = load;
+exports.loadConfig = loadConfig;

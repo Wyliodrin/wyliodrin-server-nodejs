@@ -44,7 +44,9 @@ function files_stanza(t, from, to, es, error)
 					if(type == 'file')
 					{
 						//TODO atributele trebuie primite, nu sunt implicite
-						stats.size = es.attrs.size;
+						try{
+						stats.size = parseInt(es.attrs.size);}
+						catch(e){}
 						stats.mode = 0100400;
 					}
 					else
@@ -110,10 +112,10 @@ function files_stanza(t, from, to, es, error)
 
 function getAttr(path, sendResult)
 {
-	console.log('files-xmpp.js get attr: '+path);
+	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
 	if(wxmpp.checkConnected)
 	{
-		if(wxmpp.ownerIsSubscribed)
+		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files',{action:"attributes", path:path});
@@ -127,10 +129,10 @@ function getAttr(path, sendResult)
 
 function readDir(path, sendResult)
 {
-	console.log ('files-xmpp.js read dir: '+path);
+	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
 	if(wxmpp.checkConnected)
 	{
-		if(wxmpp.ownerIsSubscribed)
+		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'list', path:path});
@@ -154,7 +156,7 @@ function open(path, sendResult)
 {
 	if(wxmpp.checkConnected)
 	{
-		if(ownerIsSubscribed)
+		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'open', path:path});
@@ -166,10 +168,11 @@ function open(path, sendResult)
 	}
 }
 
-function ownerUnsubscribed()
+function ownerUnavailable()
 {
-	requests.forEach(function(request){
-		request(-2);
+	requests.forEach(function(value,key){
+		for(var i=0; i<value.length; i++)
+			value[i](-2);
 	});
 	requests.clear();
 	
@@ -179,7 +182,7 @@ function read(path,offset,len,sendResult)
 {
 	if(wxmpp.checkConnected)
 	{
-		if(wxmpp.ownerIsSubscribed)
+		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'read', path:path, offset:offset, length:len});
@@ -192,7 +195,7 @@ function read(path,offset,len,sendResult)
 }
 
 exports.read = read;
-exports.ownerUnsubscribed = ownerUnsubscribed;
+exports.ownerUnavailable = ownerUnavailable;
 exports.load = load;
 exports.loadConfig = loadConfig;
 exports.files_stanza = files_stanza;

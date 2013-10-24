@@ -16,7 +16,8 @@ function load()
 							files:require('./files'),
 							terminal_xmpp:require('./terminal-xmpp'),							
 							xmpp:xmpp_temp.xmpp,
-							XMPP:xmpp_temp
+							XMPP:xmpp_temp,
+							build:require('./build')
 						};
 
 	modulesDict.terminal.load(modulesDict);
@@ -27,12 +28,15 @@ function load()
 	modulesDict.terminal_xmpp.load(modulesDict);
 	// xmpp_temp.load(modulesDict);
 	modulesDict.files_xmpp.loadConfig(d);
+	modulesDict.build.loadConfig(d);
+
+	console.log('loaded');
 
 }
 
 load();
-// modulesDict.wxmpp.connect ();
-// modulesDict.files.main();
+modulesDict.wxmpp.connect();
+modulesDict.files.main();
 
 
 exports.config = d;

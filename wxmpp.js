@@ -12,7 +12,7 @@ var connection = null;
 var config = null;
 var XMPP = null;
 
-var subscribed = null;
+var available = false;
 
 function load(modules)
 {
@@ -73,9 +73,9 @@ function connect()
 		{
 			if (stanza.getName()=='presence')
 			{
+				console.log('presence');
 				if (stanza.attrs.type == 'subscribe')
 				{
-					subscribed = true;
 					if (from == config.owner)
 					{
 						connection.send(new xmpp.Element('presence',
@@ -86,10 +86,16 @@ function connect()
 
 					}
 				}
-				else if(!stanza.attrs.type || stanza.attrs.type == 'unsubscribe')
+				else if(!stanza.attrs.type || stanza.attrs.type == 'available')
 				{
-					subscribed = false;
-					files_xmpp.ownerUnsubscribed();
+					console.log('available');
+					available = true;
+				}
+				else if(stanza.attrs.type == 'unavailable')
+				{
+					console.log('unavailable');
+					available = false;
+					files_xmpp.ownerUnavailable();
 				}
 			}
 		});		
@@ -100,9 +106,9 @@ function connect()
 	}
 }
 
-function ownerIsSubscribed()
+function ownerIsAvailable()
 {
-	return subscribed;
+	return available;
 }
 
 function disconnect(jid)
@@ -128,5 +134,5 @@ exports.connect = connect;
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;
 exports.load = load;
-exports.ownerIsSubscribed = ownerIsSubscribed;
+exports.ownerIsAvailable = ownerIsAvailable;
 

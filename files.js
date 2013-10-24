@@ -89,11 +89,15 @@ function read(path, offset, len, buf, fh, cb) {
   files_xmpp.read(path,offset,len, function(err,data,length){
     if(err == 0)
     {
+      console.log('err = 0');
       err = length;
       buf.write(data, 0, length, 'ascii');
     }
     else
+    {
+      console.log('else error');
       err = ERROR;
+    }
     cb(err);
   });
 }
@@ -352,8 +356,8 @@ function destroy(cb) {
  var handlers = {
    getattr: getattr,
    readdir: readdir,
-//   open: open,
-//   read: read,
+   open: open,
+   read: read,
 //   write: write,
 //   release: release,
 //   create: create,
@@ -361,55 +365,12 @@ function destroy(cb) {
 //   rename: rename,
 //   mkdir: mkdir,
 //   rmdir: rmdir,
-//   init: init,
-//   destroy: destroy,
-//   setxattr: setxattr,
+   init: init,
+   destroy: destroy,
+   setxattr: setxattr,
    statfs: statfs
 };
 
-// //---------------------------------------------------------------------------
-
-// function usage() {
-//   console.log();
-//   console.log("Usage: node jsonFS.js [options] inputJsonFile mountPoint");
-//   console.log("(Ensure the mount point is empty and you have wrx permissions to it)\n")
-//   console.log("Options:");
-//   console.log("-o outputJsonFile  : save modified data to new JSON file. Input file is never modified.");
-//   console.log("-d                 : make FUSE print debug statements.");
-//   console.log();
-//   console.log("Example:");
-//   console.log("node example/jsonFS.fs -d -o /tmp/output.json example/sample.json /tmp/mnt");
-//   console.log();
-// }
-
-// //---------------------------------------------------------------------------
-
-// function parseArgs() {
-//   var i, remaining;
-//   var args = process.argv;
-//   if (args.length < 4) {
-//     return false;
-//   }
-//   options.mountPoint = args[args.length - 1];
-//   options.inJson = args[args.length - 2];
-//   remaining = args.length - 4;
-//   i = 2;
-//   while (remaining--) {
-//     if (args[i] === '-d') {
-//       options.debugFuse = true;
-//       ++i;
-//     } else if (args[i] === '-o') {
-//       if (remaining) {
-//         options.outJson = args[i+1];
-//         i += 2;
-//         --remaining;
-//       } else return false;
-//     } else return false;
-//   }
-//   return true;
-// }
-
-// //---------------------------------------------------------------------------
 
 function main() {
   
@@ -418,5 +379,4 @@ function main() {
     };
 
 exports.main = main;
-
 exports.load = load;
