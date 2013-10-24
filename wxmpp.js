@@ -3,6 +3,7 @@ var dict = require('dict');
 var fs = require('fs');
 var terminal_xmpp = null;
 var build_xmpp = null;
+var files_xmpp = null;
 
 var isConnected = false;
 
@@ -16,6 +17,7 @@ function load(modules)
 	xmpp = modules.xmpp;
 	terminal_xmpp = modules.terminal_xmpp;
 	build_xmpp = modules.build_xmpp;
+	files_xmpp = modules.files_xmpp;
 	config = modules.config;
 	XMPP = modules.XMPP;
 }
