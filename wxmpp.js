@@ -9,6 +9,7 @@ var isConnected = false;
 var connection = null;
 
 var config = null;
+var XMPP = null;
 
 function load(modules)
 {
@@ -16,6 +17,7 @@ function load(modules)
 	terminal_xmpp = modules.terminal_xmpp;
 	build_xmpp = modules.build_xmpp;
 	config = modules.config;
+	XMPP = modules.XMPP;
 }
 
 function connect()
@@ -83,6 +85,7 @@ function connect()
 		});		
 		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
 		connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
+		connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmppfiles_stanza);
 		isConnected = true;
 	}
 }
