@@ -37,6 +37,7 @@ function files_stanza(t, from, to, es, error)
 				var stats = {};
 				stats.attrs = 0;
 				stats.size = 0;
+				console.log (err);
 				if(err == 0)
 				{
 					type = es.attrs.type;
@@ -49,7 +50,7 @@ function files_stanza(t, from, to, es, error)
 					else
 					{
 						stats.size = 4096;
-						stats.attrs = 0400500;
+						stats.attrs = 040500;
 					}
 				}
 				_.each (requests.get ('attributes '+es.attrs.path), function (sendResult)
