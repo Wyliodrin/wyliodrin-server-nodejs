@@ -15,7 +15,8 @@ function load()
 							files_xmpp:require('./files-xmpp'),
 							files:require('./files'),
 							terminal_xmpp:require('./terminal-xmpp'),							
-							xmpp:xmpp_temp.xmpp
+							xmpp:xmpp_temp.xmpp,
+							XMPP:xmpp_temp
 						};
 
 	modulesDict.terminal.load(modulesDict);
