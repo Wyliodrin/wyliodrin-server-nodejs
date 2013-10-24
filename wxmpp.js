@@ -12,6 +12,8 @@ var connection = null;
 var config = null;
 var XMPP = null;
 
+var subscribed = null;
+
 function load(modules)
 {
 	xmpp = modules.xmpp;
@@ -73,6 +75,7 @@ function connect()
 			{
 				if (stanza.attrs.type == 'subscribe')
 				{
+					subscribed = true;
 					if (from == config.owner)
 					{
 						connection.send(new xmpp.Element('presence',
@@ -83,6 +86,11 @@ function connect()
 
 					}
 				}
+				else if(!stanza.attrs.type || stanza.attrs.type == 'unsubscribe')
+				{
+					subscribed = false;
+					files_xmpp.ownerUnsubscribed();
+				}
 			}
 		});		
 		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
@@ -90,6 +98,11 @@ function connect()
 		connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.files_stanza);
 		isConnected = true;
 	}
+}
+
+function ownerIsSubscribed()
+{
+	return subscribed;
 }
 
 function disconnect(jid)
@@ -115,4 +128,5 @@ exports.connect = connect;
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;
 exports.load = load;
+exports.ownerIsSubscribed = ownerIsSubscribed;
 

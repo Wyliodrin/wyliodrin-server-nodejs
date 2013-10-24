@@ -66,57 +66,37 @@ function readdir(path, cb)
  */
 function open(path, flags, cb) {
   
-  files_xmpp.open(path, function(err){
-    cb(err);
-  });
-  cb(err); // we don't return a file handle, so fuse4js will initialize it to 0
+  // files_xmpp.open(path, function(err){
+  //   cb(err);
+  // });
+  cb(0); // we don't return a file handle, so fuse4js will initialize it to 0
 }
 
 //---------------------------------------------------------------------------
 
-// /*
-//  * Handler for the read() system call.
-//  * path: the path to the file
-//  * offset: the file offset to read from
-//  * len: the number of bytes to read
-//  * buf: the Buffer to write the data to
-//  * fh:  the optional file handle originally returned by open(), or 0 if it wasn't
-//  * cb: a callback of the form cb(err), where err is the Posix return code.
-//  *     A positive value represents the number of bytes actually read.
-//  */
-// function read(path, offset, len, buf, fh, cb) {
-//   var err = 0; // assume success
-//   var info = lookup(obj, path);
-//   var file = info.node;
-//   var maxBytes;
-//   var data;
-  
-//   switch (typeof file) {
-//   case 'undefined':
-//     err = -2; // -ENOENT
-//     break;
+/*
+ * Handler for the read() system call.
+ * path: the path to the file
+ * offset: the file offset to read from
+ * len: the number of bytes to read
+ * buf: the Buffer to write the data to
+ * fh:  the optional file handle originally returned by open(), or 0 if it wasn't
+ * cb: a callback of the form cb(err), where err is the Posix return code.
+ *     A positive value represents the number of bytes actually read.
+ */
 
-//   case 'object': // directory
-//     err = -1; // -EPERM
-//     break;
-      
-//   case 'string': // a string treated as ASCII characters
-//     if (offset < file.length) {
-//       maxBytes = file.length - offset;
-//       if (len > maxBytes) {
-//         len = maxBytes;
-//       }
-//       data = file.substring(offset, len);
-//       buf.write(data, 0, len, 'ascii');
-//       err = len;
-//     }
-//     break;
-  
-//   default:
-//     break;
-//   }
-//   cb(err);
-// }
+function read(path, offset, len, buf, fh, cb) {
+  files_xmpp.read(path,offset,len, function(err,data,length){
+    if(err == 0)
+    {
+      err = length;
+      buf.write(data, 0, length, 'ascii');
+    }
+    else
+      err = ERROR;
+    cb(err);
+  });
+}
 
 // //---------------------------------------------------------------------------
 
@@ -308,34 +288,31 @@ function open(path, flags, cb) {
 
 // //---------------------------------------------------------------------------
 
-// /*
-//  * Handler for the init() FUSE hook. You can initialize your file system here.
-//  * cb: a callback to call when you're done initializing. It takes no arguments.
-//  */
-// function init(cb) {
-//   console.log("File system started at " + options.mountPoint);
-//   console.log("To stop it, type this in another shell: fusermount -u " + options.mountPoint);
-//   cb();
-// }
+/*
+ * Handler for the init() FUSE hook. You can initialize your file system here.
+ * cb: a callback to call when you're done initializing. It takes no arguments.
+ */
+function init(cb) {
+  cb();
+}
 
 // //---------------------------------------------------------------------------
 
-// /*
-//  * Handler for the setxattr() FUSE hook. 
-//  * The arguments differ between different operating systems.
-//  * Darwin(Mac OSX):
-//  *  * a = position
-//  *  * b = options
-//  *  * c = cmd
-//  * Other:
-//  *  * a = flags
-//  *  * b = cmd
-//  *  * c = undefined
-//  */
-// function setxattr(path, name, value, size, a, b, c) {
-//   console.log("Setxattr called:", path, name, value, size, a, b, c)
-//   cb(0);
-// }
+/*
+ * Handler for the setxattr() FUSE hook. 
+ * The arguments differ between different operating systems.
+ * Darwin(Mac OSX):
+ *  * a = position
+ *  * b = options
+ *  * c = cmd
+ * Other:
+ *  * a = flags
+ *  * b = cmd
+ *  * c = undefined
+ */
+function setxattr(path, name, value, size, a, b, c) {
+  cb(0);
+}
 
 // //---------------------------------------------------------------------------
 
@@ -360,25 +337,17 @@ function statfs(cb) {
   });
 }
 
-// //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
-// /*
-//  * Handler for the destroy() FUSE hook. You can perform clean up tasks here.
-//  * cb: a callback to call when you're done. It takes no arguments.
-//  */
-// function destroy(cb) {
-//   if (options.outJson) {
-//     try {
-//       fs.writeFileSync(options.outJson, JSON.stringify(obj, null, '  '), 'utf8');
-//     } catch (e) {
-//       console.log("Exception when writing file: " + e);
-//     }
-//   }
-//   console.log("File system stopped");      
-//   cb();
-// }
+/*
+ * Handler for the destroy() FUSE hook. You can perform clean up tasks here.
+ * cb: a callback to call when you're done. It takes no arguments.
+ */
+function destroy(cb) { 
+  cb();
+}
 
-// //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
  var handlers = {
    getattr: getattr,

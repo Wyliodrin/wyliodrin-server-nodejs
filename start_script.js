@@ -31,8 +31,8 @@ function load()
 }
 
 load();
-modulesDict.wxmpp.connect ();
-modulesDict.files.main();
+// modulesDict.wxmpp.connect ();
+// modulesDict.files.main();
 
 
 exports.config = d;

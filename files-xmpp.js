@@ -89,6 +89,20 @@ function files_stanza(t, from, to, es, error)
 				_.each(requests.get('open '+es.attrs.path), function(sendResult){
 						sendResult(err);
 					});
+				requests.delete('list '+es.attrs.path);
+			}
+		}
+		else if(action == 'read')
+		{
+			if(requests.has('read '+es.attrs.path))
+			{
+				err = parseInt(es.attrs.error);
+				data = new Buffer(es.getText(),'base64').toString();
+				length = parseInt(es.attrs.length);
+				_.each(requests.get('read '+es.attrs.path), function(sendResult){
+					sendResult(err, data, length);
+				});
+				requests.delete('read '+es.attrs.path);
 			}
 		}
 	}
@@ -99,10 +113,15 @@ function getAttr(path, sendResult)
 	console.log('files-xmpp.js get attr: '+path);
 	if(wxmpp.checkConnected)
 	{
-		var t = wxmpp.getConnection();
-		var tag = new xmpp.Element('files',{action:"attributes", path:path});
-		t.sendWyliodrin(config.owner, tag);
-		addToRequests('attributes '+path, sendResult);	
+		if(wxmpp.ownerIsSubscribed)
+		{
+			var t = wxmpp.getConnection();
+			var tag = new xmpp.Element('files',{action:"attributes", path:path});
+			t.sendWyliodrin(config.owner, tag);
+			addToRequests('attributes '+path, sendResult);	
+		}
+		else
+			sendResult(-2, null);
 	}
 }
 
@@ -111,10 +130,15 @@ function readDir(path, sendResult)
 	console.log ('files-xmpp.js read dir: '+path);
 	if(wxmpp.checkConnected)
 	{
-		var t = wxmpp.getConnection();
-		var tag = new xmpp.Element('files', {action:'list', path:path});
-		t.sendWyliodrin(config.owner, tag);
-		addToRequests('list '+path, sendResult);
+		if(wxmpp.ownerIsSubscribed)
+		{
+			var t = wxmpp.getConnection();
+			var tag = new xmpp.Element('files', {action:'list', path:path});
+			t.sendWyliodrin(config.owner, tag);
+			addToRequests('list '+path, sendResult);
+		}
+		else
+			sendResult(-2,null);
 	}
 }
 
@@ -130,13 +154,45 @@ function open(path, sendResult)
 {
 	if(wxmpp.checkConnected)
 	{
-		var t = wxmpp.getConnection();
-		var tag = new xmpp.Element('files', {action:'open', path:path});
-		t.sendWyliodrin(config.owner,tag);
-		addToRequests('open '+path, sendResult);
+		if(ownerIsSubscribed)
+		{
+			var t = wxmpp.getConnection();
+			var tag = new xmpp.Element('files', {action:'open', path:path});
+			t.sendWyliodrin(config.owner,tag);
+			addToRequests('open '+path, sendResult);
+		}
+		else
+			sendResult(-2);
 	}
 }
 
+function ownerUnsubscribed()
+{
+	requests.forEach(function(request){
+		request(-2);
+	});
+	requests.clear();
+	
+}
+
+function read(path,offset,len,sendResult)
+{
+	if(wxmpp.checkConnected)
+	{
+		if(wxmpp.ownerIsSubscribed)
+		{
+			var t = wxmpp.getConnection();
+			var tag = new xmpp.Element('files', {action:'read', path:path, offset:offset, length:len});
+			t.sendWyliodrin(config.owner, tag);
+			addToRequests('read '+path, sendResult);
+		}
+		else
+			sendResult(-2,null,null);
+	}
+}
+
+exports.read = read;
+exports.ownerUnsubscribed = ownerUnsubscribed;
 exports.load = load;
 exports.loadConfig = loadConfig;
 exports.files_stanza = files_stanza;

@@ -21,6 +21,9 @@
 <-- <files xmlns="wyliodrin" action="open" path=""/>  //deocamdata e open doar pt citire
 --> <files xmlns="wyliodrin" action="open" path="" error=""/>
 
+<-- <files xmlns="wyliodrin" action="read" path="" offset="" length=""/>
+--> <files xmlns="wyliodrin" action="read" path="" length="">data</files>
+
 ------------------------------------------------------------------------------------------------------
 
 --> <make xmlns="wyliodrin" action="build" id="" request="id"/>
