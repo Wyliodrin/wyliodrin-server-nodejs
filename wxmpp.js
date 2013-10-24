@@ -42,7 +42,7 @@ function connect()
 
 		connection.on ('online', function()
 		{
-		  console.log (jid+"> online");
+		  console.log (conifg.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
@@ -57,7 +57,7 @@ function connect()
 
 		connection.on ('rawStanza', function (stanza)
 		{
-		  console.log (jid+'>'+stanza.root().toString());
+		  console.log (config.jid+'>'+stanza.root().toString());
 		});
 	//	wxmpp.on ('stanza', function (stanza)
 	//	{
