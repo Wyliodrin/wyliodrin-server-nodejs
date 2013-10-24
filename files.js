@@ -48,7 +48,7 @@ function readdir(path, cb)
   files_xmpp.readDir(path,function(err, names){
   	if(err != 0)
   		err = ERROR;
-  		console.log ('names: '+name);
+  		console.log ('names: '+names);
   		cb(err, names);
   });
 }
