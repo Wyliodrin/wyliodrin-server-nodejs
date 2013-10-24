@@ -78,6 +78,7 @@ function files_stanza(t, from, to, es, error)
 						sendResult(err, names);
 					});
 				}
+				requests.delete ('list '+es.attrs.path);
 			}
 		}
 		else if(action == 'open')
