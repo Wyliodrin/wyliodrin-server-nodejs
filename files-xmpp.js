@@ -34,7 +34,7 @@ function files_stanza(t, from, to, es, error)
 			if(requests.has('attributes '+es.attrs.path))
 			{
 				err = parseInt(es.attrs.error);
-				stats = {};
+				var stats = {};
 				stats.attrs = 0;
 				stats.size = 0;
 				if(err == 0)
