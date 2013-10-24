@@ -55,7 +55,7 @@ function files_stanza(t, from, to, es, error)
 				}
 				_.each (requests.get ('attributes '+es.attrs.path), function (sendResult)
 				{
-					console.log ('sending result for attributes');
+					console.log ('files-xmpp.js sending result for attributes');
 					sendResult (err, stats);
 				});
 				requests.delete ('attributes '+es.attrs.path);
@@ -74,7 +74,7 @@ function files_stanza(t, from, to, es, error)
 						names.push(child.attrs.filename);
 					});
 					_.each(requests.get('list '+es.attrs.path), function(sendResult){
-						console.log ('sending result for list');
+						console.log ('files-xmpp.js sending result for list');
 						sendResult(err, names);
 					});
 				}
@@ -95,7 +95,7 @@ function files_stanza(t, from, to, es, error)
 
 function getAttr(path, sendResult)
 {
-	console.log('get attr: '+path);
+	console.log('files-xmpp.js get attr: '+path);
 	if(wxmpp.checkConnected)
 	{
 		var t = wxmpp.getConnection();
@@ -107,7 +107,7 @@ function getAttr(path, sendResult)
 
 function readDir(path, sendResult)
 {
-	console.log ('read dir: '+path);
+	console.log ('files-xmpp.js read dir: '+path);
 	if(wxmpp.checkConnected)
 	{
 		var t = wxmpp.getConnection();
