@@ -24,12 +24,13 @@ function load()
 	modulesDict.files_xmpp.load(modulesDict);
 	modulesDict.files.load(modulesDict);
 	modulesDict.terminal_xmpp.load(modulesDict);
-	xmpp_temp.load(modulesDict);
+	// xmpp_temp.load(modulesDict);
 	modulesDict.files_xmpp.loadConfig(d);
 
 }
 
 load();
+modulesDict.xmpp.connect ();
 modulesDict.files.main();
 
 
