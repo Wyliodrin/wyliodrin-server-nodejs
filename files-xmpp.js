@@ -1,10 +1,11 @@
 var dict = require('dict');
-var _ = request('underscore');
+var _ = require('underscore');
 
 var xmpp = null;
 var wxmpp = null;
 
 var requests = null;
+var owner = null;
 
 function load(modules)
 {
@@ -12,6 +13,11 @@ function load(modules)
 	wxmpp = modules.wxmpp;
 
 	requests = dict();
+}
+
+function loadConfig(confs)
+{
+	owner = confs.owner;
 }
 
 function files_stanza(t, from, to, es, error)
@@ -30,6 +36,7 @@ function files_stanza(t, from, to, es, error)
 				{
 					type = es.attrs.type;
 					if(type == 'file')
+						//TODO atributele trebuie primite, nu sunt implicite
 						attrs = 0100400;
 					else
 						attrs = 040500;
@@ -41,26 +48,80 @@ function files_stanza(t, from, to, es, error)
 				requests.delete ('attributes '+es.attrs.path);
 			}
 		}
+		else if(action == 'list')
+		{
+			if(requests.has('list '+es.attrs.path))
+			{
+				err = parseInt(es.attrs.error);
+				names=[];
+				if(err == 0)
+				{
+					es.forEachChild(es,null,function(child){
+						names.push(child.name);
+					});
+					_.each(requests.get('list '+es.attrs.path), function(sendResult){
+						sendResult(err, names);
+					});
+				}
+			}
+		}
+		else if(action == 'open')
+		{
+			if(requests.has('open '+es.attrs.path))
+			{
+				err = parseInt(es.attrs.error);
+				_.each(requests.get('open '+es.attrs.path), function(sendResult){
+						sendResult(err);
+					});
+			}
+		}
 	}
 }
 
 function getAttr(path, sendResult)
 {
-	if(xmpp.checkConnected)
+	console.log('get attr');
+	if(wxmpp.checkConnected)
 	{
-		var t = xmpp.getConnection;
-		var tag = new wxmpp.Element('files',{action:"attributes", path:path});
-		t.sendWyliodrin();
-		if(!requests.has('attributes '+path))
-		{			
-			requests.set("attributes "+path, [sendResult]);
-		}
-		else
-		{
-			requests.get('attributes '+path).push(sendResult);
-		}
-		
+		var t = wxmpp.getConnection;
+		var tag = new xmpp.Element('files',{action:"attributes", path:path});
+		t.send(tag);
+		addToRequests('attributes '+path, sendResult);	
+	}
+}
+
+function readDir(path, sendResult)
+{
+	if(wxmpp.checkConnected)
+	{
+		var t = wxmpp.getConnection;
+		var tag = new xmpp.Element('files', {action:'list', path:path});
+		t.send(tag);
+		addToRequests('list '+path, sendResult);
+	}
+}
+
+function addToRequests(key, value)
+{
+	if(!requests.has(key))
+		requests.set(key, [value]);
+	else
+		requests.get(key).push(value);
+}
+
+function open(path, sendResult)
+{
+	if(wxmpp.checkConnected)
+	{
+		var t = wxmpp.getConnection;
+		var tag = new xmpp.Element('files', {action:'open', path:path});
+		t.send(tag);
+		addToRequests('open '+path, sendResult);
 	}
 }
 
 exports.load = load;
+exports.loadConfig = loadConfig;
+exports.readDir = readDir;
+exports.getAttr = getAttr;
+exports.open = open;

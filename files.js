@@ -18,10 +18,10 @@ function load(modules)
  */
 function getattr(path, cb) 
 {    
-
+  console.log('path = '+path);
    var stat = {};
 
-   fxmpp.getAttr(path,function(err, attrs){
+   files_xmpp.getAttr(path,function(err, attrs){
    	if(err == 0)
    	{
    		stat.size = attrs.size;
@@ -43,34 +43,32 @@ function getattr(path, cb)
  */
 function readdir(path, cb) 
 {
-  fxmpp.readDir(path,function(err, names){
+  files_xmpp.readDir(path,function(err, names){
   	if(err != 0)
   		err = ERROR;
   		cb(err, names);
   });
 }
 
-// //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
-// /*
-//  * Handler for the open() system call.
-//  * path: the path to the file
-//  * flags: requested access flags as documented in open(2)
-//  * cb: a callback of the form cb(err, [fh]), where err is the Posix return code
-//  *     and fh is an optional numerical file handle, which is passed to subsequent
-//  *     read(), write(), and release() calls.
-//  */
-// function open(path, flags, cb) {
-//   var err = 0; // assume success
-//   var info = lookup(obj, path);
+/*
+ * Handler for the open() system call.
+ * path: the path to the file
+ * flags: requested access flags as documented in open(2)
+ * cb: a callback of the form cb(err, [fh]), where err is the Posix return code
+ *     and fh is an optional numerical file handle, which is passed to subsequent
+ *     read(), write(), and release() calls.
+ */
+function open(path, flags, cb) {
   
-//   if (typeof info.node === 'undefined') {
-//     err = -2; // -ENOENT
-//   }
-//   cb(err); // we don't return a file handle, so fuse4js will initialize it to 0
-// }
+  files_xmpp.open(path, function(err){
+    cb(err);
+  });
+  cb(err); // we don't return a file handle, so fuse4js will initialize it to 0
+}
 
-// //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 
 // /*
 //  * Handler for the read() system call.
@@ -378,10 +376,10 @@ function readdir(path, cb)
 
 // //---------------------------------------------------------------------------
 
-// var handlers = {
-//   getattr: getattr,
-//   readdir: readdir,
-//   open: open,
+ var handlers = {
+   getattr: getattr,
+   readdir: readdir,
+   open: open,
 //   read: read,
 //   write: write,
 //   release: release,
@@ -394,7 +392,7 @@ function readdir(path, cb)
 //   destroy: destroy,
 //   setxattr: setxattr,
 //   statfs: statfs
-// };
+};
 
 // //---------------------------------------------------------------------------
 
@@ -440,24 +438,12 @@ function readdir(path, cb)
 
 // //---------------------------------------------------------------------------
 
-// (function main() {
-//   if (parseArgs()) {
-//     console.log("\nInput file: " + options.inJson);
-//     console.log("Mount point: " + options.mountPoint);
-//     if (options.outJson)
-//       console.log("Output file: " + options.outJson);
-//     if (options.debugFuse)
-//       console.log("FUSE debugging enabled");
-//     content = fs.readFileSync(options.inJson, 'utf8');
-//     obj = JSON.parse(content);
-//     try {
-//       f4js.start(options.mountPoint, handlers, options.debugFuse, ['-o', 'allow_other']);
-//     } catch (e) {
-//       console.log("Exception when starting file system: " + e);
-//     }
-//   } else {
-//     usage();
-//   }
-// })();
+function main() {
+  
+  console.log('main');
+      f4js.start('/home/pi/projects/mount', handlers, false);
+    };
+
+exports.main = main;
 
 exports.load = load;

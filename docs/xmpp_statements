@@ -1,4 +1,3 @@
-<message>
 -->	<shells xmlns="wyliodrin" action="open" request="id"/>
 <--	<shells xmlns="wyliodrin" action="open" response="done" id="" request="id"/>
 <--	<shells xmlns="wyliodrin" action="open" response="error" request="id"/>
@@ -8,10 +7,7 @@
 -->	<shells xmlns="wyliodrin" id="" action="keys">data</shell>
 <--	<shells xmlns="wyliodrin" id="" action="keys">data</shell>
 
--->	<shells xmlns="wyliodrin" id="" action="list">data</shell>
-<--	<shells xmlns="wyliodrin" id="" action="list">
-		<shell id="" command=""/>
-	</shells>
+------------------------------------------------------------------------------------------------------
 
 <-- <files xmlns="wyliodrin" action="attributes" path=""/>
 --> <files xmlns="wyliodrin" action="attributes" path="" error="" type="directory/file" attributes=""/>
@@ -21,6 +17,11 @@
 		<file name=""/>
 		<directory name=""/>
 	</files>
+
+<-- <files xmlns="wyliodrin" action="open" path=""/>  //deocamdata e open doar pt citire
+--> <files xmlns="wyliodrin" action="open" path="" error=""/>
+
+------------------------------------------------------------------------------------------------------
 
 --> <make xmlns="wyliodrin" action="build" id="" request="id"/>
 <-- <make xmlns="wyliodrin" action="build" response="done" request="id" source="stdout/stderr">data</make>

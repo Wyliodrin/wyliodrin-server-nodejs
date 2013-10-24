@@ -25,10 +25,12 @@ function load()
 	modulesDict.files.load(modulesDict);
 	modulesDict.terminal_xmpp.load(modulesDict);
 	xmpp_temp.load(modulesDict);
+	modulesDict.files_xmpp.loadConfig(d);
 
 }
 
-load()
+load();
+modulesDict.files.main();
 
 
 exports.config = d;
