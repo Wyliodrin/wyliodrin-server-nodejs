@@ -125,6 +125,7 @@ function open(path, sendResult)
 
 exports.load = load;
 exports.loadConfig = loadConfig;
+exports.files_stanza = files_stanza;
 exports.readDir = readDir;
 exports.getAttr = getAttr;
 exports.open = open;
