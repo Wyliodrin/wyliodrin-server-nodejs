@@ -365,9 +365,9 @@ function destroy(cb) {
 //   rename: rename,
 //   mkdir: mkdir,
 //   rmdir: rmdir,
-   init: init,
-   destroy: destroy,
-   setxattr: setxattr,
+   // init: init,
+   // destroy: destroy,
+   // setxattr: setxattr,
    statfs: statfs
 };
 

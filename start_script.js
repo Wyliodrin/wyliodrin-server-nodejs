@@ -29,6 +29,7 @@ function load()
 	// xmpp_temp.load(modulesDict);
 	modulesDict.files_xmpp.loadConfig(d);
 	modulesDict.build.loadConfig(d);
+	modulesDict.terminal_xmpp.loadConfig(d);
 
 	console.log('loaded');
 

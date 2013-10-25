@@ -73,7 +73,7 @@ function destroy_terminal(id)
 	else return TERMINAL_E_NOT_FOUND;	
 }
 
-function start_terminal(id, command, width, height, send_data)
+function start_terminal(id, command, args, width, height, env, send_data)
 {
 	console.log('start terminal');
 	var t = find_terminal_by_id(id);
@@ -87,11 +87,11 @@ function start_terminal(id, command, width, height, send_data)
 		if(height != 0)
 			termHeight = height;
 		console.log('not null');
-		var term = pty.spawn(command, [], {
+		var term = pty.spawn(command, args, {
 		  name: 'xterm',
 		  cols: termWidth,
 		  rows: termHeight,
-		  cwd: process.env.HOME,
+		  cwd: env,
 		  env: process.env
 		});
 	

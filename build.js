@@ -37,24 +37,27 @@ function make(id, command, sendOutput)
 	{
 		if(path)
 		{
-			child_process.exec('cp -r '+mountPath+'/'+id+' '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
+			child_process.exec('rm -r '+path, {maxBuffer:10*1024, cwd:buildFile},
 				function(error, stdout, stderr){
-					console.log('copy error = '+error+' '+stderr);
+					child_process.exec('cp -r '+mountPath+'/'+id+' '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
+					function(error, stdout, stderr){
+						console.log('copy error = '+error+' '+stderr);
 
-					if(!error)
-					{
-						console.log('copied successfully');
-						child_process.exec(command, {maxBuffer: 200*1024,cwd: path},
-						function (error, stdout, stderr) {
-							var out = new Buffer(stdout).toString('base64');
-							var err = new Buffer(stderr).toString('base64');
-							sendOutput(out,"stdout", null, null);
-							sendOutput(err, "stderr", null, null);   
-							if (!error) {
-							  	sendOutput(null, "system", error.code, error.signal);
-							}});
-					}
-				});			
+						if(!error)
+						{
+							console.log('copied successfully');
+							child_process.exec(command, {maxBuffer: 200*1024,cwd: path},
+							function (error, stdout, stderr) {
+								var out = new Buffer(stdout).toString('base64');
+								var err = new Buffer(stderr).toString('base64');
+								sendOutput(out,"stdout", null, null);
+								sendOutput(err, "stderr", null, null);   
+								if (!error) {
+								  	sendOutput(null, "system", error.code, error.signal);
+								}});
+						}
+					});	
+				});							
 		}
 		else
 		{
