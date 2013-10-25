@@ -21,7 +21,27 @@ function shell_stanza(t, from, to, es, error)
 			console.log('open');
 			var term = terminal.allocTerminal();
 			console.log('term allocated');
-			var rc = terminal.startTerminal(term.id, COMMAND, function (data)
+			if(!es.attrs.height)
+				height = 0;
+			else
+			{
+				try
+				{
+				height = parseInt(es.attrs.height);
+				}
+			catch(e){}
+			}
+			if(!es.attrs.width)
+				width = 0;
+			else
+			{
+				try
+				{
+				width = parseInt(es.attrs.width);
+				}
+			catch(e){}
+			}
+			var rc = terminal.startTerminal(term.id, COMMAND, width, height, function (data)
 				{
 					var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
 					t.sendWyliodrin(from, tag);

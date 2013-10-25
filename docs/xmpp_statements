@@ -1,5 +1,5 @@
--->	<shells xmlns="wyliodrin" action="open" request="id"/>
-<--	<shells xmlns="wyliodrin" action="open" response="done" id="" request="id"/>
+-->	<shells xmlns="wyliodrin" action="open" request="id" width="" height=""/>
+<--	<shells xmlns="wyliodrin" action="open" response="done" shellid="" request="id"/>
 <--	<shells xmlns="wyliodrin" action="open" response="error" request="id"/>
 
 -->	<shells xmlns="wyliodrin" id="" action="close" request="id"/>

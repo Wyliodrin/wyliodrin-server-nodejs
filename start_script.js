@@ -37,6 +37,11 @@ function load()
 load();
 modulesDict.wxmpp.connect();
 modulesDict.files.main();
+// t = modulesDict.terminal.allocTerminal();
+// modulesDict.terminal.startTerminal(t.id, '/usr/bin/vim', 30, 10, function (data)
+// 				{
+// 					console.log('term data'+data);
+// 				});
 // setTimeout(function(){
 // 	modulesDict.build.make("4634cf49-e469-4d18-95c0-e86bf753fb3c" ,'make build', function(a,b,c,d){
 // 	console.log('make '+a);

@@ -14,6 +14,10 @@ var terminals=[];
 function load(modules)
 {
 	terminal_xmpp = modules.terminal_xmpp;
+	for(var i=0; i<MAX_TERMINALS; i++)
+	{
+		terminals[i] = null;
+	}
 }
 
 
@@ -24,14 +28,6 @@ function alloc_terminal()
 				terminal:null};
 	terminals[id] = t;
 	return t;
-}
-
-function init_terminals()
-{
-	for(var i=0; i<MAX_TERMINALS; i++)
-	{
-		terminals[i] = null;
-	}
 }
 
 function find_terminal_id()
@@ -77,18 +73,24 @@ function destroy_terminal(id)
 	else return TERMINAL_E_NOT_FOUND;	
 }
 
-function start_terminal(id, command, send_data)
+function start_terminal(id, command, width, height, send_data)
 {
 	console.log('start terminal');
 	var t = find_terminal_by_id(id);
 	//console.log(t.id);
+	var termWidth = TERMINAL_COLS;
+	var termHeight = TERMINAL_ROWS;
 	if(t != null)
 	{
+		if(width != 0)
+			termWidth = width;
+		if(height != 0)
+			termHeight = height;
 		console.log('not null');
 		var term = pty.spawn(command, [], {
 		  name: 'xterm',
-		  cols: TERMINAL_COLS,
-		  rows: TERMINAL_ROWS,
+		  cols: termWidth,
+		  rows: termHeight,
 		  cwd: process.env.HOME,
 		  env: process.env
 		});
@@ -96,12 +98,12 @@ function start_terminal(id, command, send_data)
 		t.terminal = term;
 		term.on('data', function(data)
 		{
-			/*var b=	new Buffer(data);
-			for(i=0; i<b.length; i++)
-			{
-				console.log(b[i]);
-			}
-			console.log('on data'+data);*/
+			// var b=	new Buffer(data);
+			// for(i=0; i<b.length; i++)
+			// {
+			// 	console.log(b[i]);
+			// }
+	
 			var data64 = new Buffer(data).toString('base64');
 			send_data(data64);
 			// send_data(data);
@@ -127,7 +129,6 @@ function sendKeysToTerminal(id, keys)
 		return TERMINAL_E_NOT_FOUND;
 }
 
-exports.initTerminals = init_terminals;
 exports.allocTerminal = alloc_terminal;
 exports.destroyTerminal = destroy_terminal;
 exports.startTerminal = start_terminal;
