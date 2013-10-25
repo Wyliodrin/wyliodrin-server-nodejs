@@ -30,6 +30,7 @@ function load()
 	modulesDict.files_xmpp.loadConfig(d);
 	modulesDict.build.loadConfig(d);
 	modulesDict.terminal_xmpp.loadConfig(d);
+	modulesDict.files.loadConfig(d);
 
 	console.log('loaded');
 

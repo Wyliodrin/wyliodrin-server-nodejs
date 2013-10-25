@@ -4,9 +4,16 @@ var files_xmpp =null;
 
 var ERROR = -2;
 
+var mountFile = null;
+
 function load(modules)
 {
 	files_xmpp = modules.files_xmpp;
+}
+
+function loadConfig(configs)
+{
+  mountFile = configs.mountFile;
 }
 
 
@@ -375,8 +382,9 @@ function destroy(cb) {
 function main() {
   
   console.log('main');
-      f4js.start('/home/pi/projects/mount', handlers, true);
+      f4js.start(mountFile, handlers, true);
     };
 
 exports.main = main;
 exports.load = load;
+exports.loadConfig = loadConfig;

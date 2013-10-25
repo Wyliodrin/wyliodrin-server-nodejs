@@ -39,7 +39,7 @@ function make(id, command, sendOutput)
 		{
 			child_process.exec('rm -r '+path, {maxBuffer:10*1024, cwd:buildFile},
 				function(error, stdout, stderr){
-					child_process.exec('cp -r '+mountPath+'/'+id+' '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
+					child_process.exec('cp -rv '+mountPath+'/'+id+' '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
 					function(error, stdout, stderr){
 						console.log('copy error = '+error+' '+stderr);
 
