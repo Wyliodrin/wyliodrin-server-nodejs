@@ -30,7 +30,7 @@ function validatePath(id, returnPath)
 	returnPath(validPath,id);
 } 
 
-function make(id, command, sendOutput)
+function make(id, command, args, sendOutput)
 {
 	console.log('make');
 	validatePath(id, function(path,id)
@@ -42,26 +42,28 @@ function make(id, command, sendOutput)
 					child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
 					function(error, stdout, stderr){
 						console.log('copy error = '+error+' '+stderr);
-
 						if(!error)
 						{
 							console.log('copied successfully');
-							child_process.exec(command, {maxBuffer: 200*1024,cwd: path},
-							function (error, stdout, stderr) {
-								var out = new Buffer(stdout).toString('base64');
-								var err = new Buffer(stderr).toString('base64');
-								sendOutput(out,"stdout", null, null);
-								sendOutput(err, "stderr", null, null);   
-								if (error) {
-								  	sendOutput(null, "system", error.code, error.signal);
-								}});
+							var makeProcess = child_process.spawn(command,args,{cwd:path});
+							makeProcess.stdout.on('data', function(data){
+								var out = new Buffer(data).toString('base64');
+								sendOutput(out, 'stdout', null);
+							});
+							makeProcess.stderr.on('data', function(data){
+								var err = new Buffer(data).toString('base64');
+								sendOutput(err, 'stderr', null);
+							});
+							makeProcess.on('close', function(code){
+								sendOutput(null, null, code);
+							});
 						}
 					});	
 				});							
 		}
 		else
 		{
-			sendOutput("Invalid path", "system",null,null);
+			sendOutput("Invalid path", "system",null);
 		}
 	});
 }

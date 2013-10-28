@@ -27,5 +27,5 @@
 ------------------------------------------------------------------------------------------------------
 
 --> <make xmlns="wyliodrin" action="build" id="" request="id"/>
-<-- <make xmlns="wyliodrin" action="build" response="done" request="id" id="" source="stdout/stderr">data</make>
-<-- <make xmlns="wyliodrin" action="build" response="error" request="id" id="" code="" signal=""/>
+<-- <make xmlns="wyliodrin" action="build" response="working" request="id" id="" source="stdout/stderr/system">data</make>
+<-- <make xmlns="wyliodrin" action="build" response="done" request="id" id="" code=""/>

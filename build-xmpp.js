@@ -13,18 +13,18 @@ function buildStanza(t, from, to, es, error)
 	{
 		if(es.attrs.action == "build")
 		{
-			build.make(es.attrs.projectid, "make build", function(data,source, code, signal)
+			build.make(es.attrs.projectid, "make", ["build"], function(data,source, code)
 			{
-				if(source == "stdout" || source == "stderr")
+				if(source)
 				{
-					var tag = new xmpp.Element("make", {action:es.attrs.action, response:"done",
+					var tag = new xmpp.Element("make", {action:es.attrs.action, response:"working",
 						request:es.attrs.request, projectid:es.attrs.projectid, source:source}).t(data);
 					t.sendWyliodrin(from, tag);
 				}
 				else
 				{
-					var tag = new xmpp.Element("make",{action:es.attrs.action, response:"error",
-						request:es.attrs.request, projectid:es.attrs.projectid, code:code, signal:signal});
+					var tag = new xmpp.Element("make",{action:es.attrs.action, response:"done",
+						request:es.attrs.request, projectid:es.attrs.projectid, code:code});
 					t.sendWyliodrin(from, tag);
 				}
 			});
