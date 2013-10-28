@@ -4,10 +4,13 @@ fs = require('fs');
 child_process = require('child_process');
 
 PATH_ERROR = 1;
+COPY_ERROR = 2;
+WGET_ERROR = 3;
 PATH_OK = 0;
 
 var mountPath = null;
 var buildFile = null;
+var files = null;
 
 function loadConfig(configs)
 {
@@ -18,7 +21,9 @@ function loadConfig(configs)
 
 function load(modules)
 {
-
+	console.log('load files');
+	files = modules.files;
+	console.log('files = '+files);
 }
 
 function validatePath(id, returnPath)
@@ -30,40 +35,79 @@ function validatePath(id, returnPath)
 	returnPath(validPath,id);
 } 
 
-function make(id, command, args, sendOutput)
+function startBuildProcess(command, args, path, sendOutput, done)
+{
+	var makeProcess = child_process.spawn(command,args,{cwd:path});
+	makeProcess.stdout.on('data', function(data){
+		var out = new Buffer(data).toString('base64');
+		sendOutput(out, 'stdout', null);
+	});
+	makeProcess.stderr.on('data', function(data){
+		var err = new Buffer(data).toString('base64');
+		sendOutput(err, 'stderr', null);
+	});
+	makeProcess.on('close', function(code){
+		sendOutput(null, null, code);
+	});
+	done();
+}
+
+function make(id, command, args, address, sendOutput)
 {
 	console.log('make');
-	validatePath(id, function(path,id)
+	validatePath(id, function(buildPath,id)
 	{
-		if(path)
+		if(buildPath)
 		{
-			child_process.exec('rm -rf '+path, {maxBuffer:10*1024, cwd:buildFile},
+			child_process.exec('rm -rf '+buildPath, {maxBuffer:10*1024, cwd:buildFile},
 				function(error, stdout, stderr){
-					child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
-					function(error, stdout, stderr){
-						console.log('copy error = '+error+' '+stderr);
-						if(!error)
-						{
-							console.log('copied successfully');
-							var makeProcess = child_process.spawn(command,args,{cwd:path});
-							makeProcess.stdout.on('data', function(data){
-								var out = new Buffer(data).toString('base64');
-								sendOutput(out, 'stdout', null);
-							});
-							makeProcess.stderr.on('data', function(data){
-								var err = new Buffer(data).toString('base64');
-								sendOutput(err, 'stderr', null);
-							});
-							makeProcess.on('close', function(code){
-								sendOutput(null, null, code);
-							});
-						}
-					});	
-				});							
+					if(files.canMount())
+					{
+						child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
+						function(error, stdout, stderr){						
+							if(!error)
+							{
+								startBuildProcess(command, args, buildPath, sendOutput);
+							}
+							else
+							{
+								sendOutput("Copy error", "system", error.code);
+							}
+						});
+					}
+					else
+					{
+						console.log('address = '+address);
+						child_process.exec('wget '+address, {maxBuffer:30*1024, cwd:buildFile},function(error,stdout,stderr){
+							if(!error)
+							{
+								console.log("fisier = "+path.basename(address));
+								child_process.exec('tar xf '+path.basename(address), {maxBuffer:30*1024, cwd:buildFile},
+									function(error, stdout, stderr){
+										child_process.exec('rm -rf '+path.basename(address), {maxBuffer:30:1024, cwd:buildFile},
+											function(error,stdout,stderr){
+
+											});
+										if(!error)
+										{
+											startBuildProcess(command,args,buildPath,sendOutput);
+										}
+										else
+											sendOutput("tar error", "system", error.code);
+									});
+
+							}
+							else
+							{
+								sendOutput("Wget error", "system", error.code);
+							}
+						});
+					}
+			});						
 		}
 		else
 		{
-			sendOutput("Invalid path", "system",null);
+			sendOutput("Invalid path", "system",PATH_ERROR);
 		}
 	});
 }

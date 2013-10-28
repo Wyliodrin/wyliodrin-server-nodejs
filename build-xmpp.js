@@ -13,7 +13,7 @@ function buildStanza(t, from, to, es, error)
 	{
 		if(es.attrs.action == "build")
 		{
-			build.make(es.attrs.projectid, "make", ["build"], function(data,source, code)
+			build.make(es.attrs.projectid, "make", ["build"], es.attrs.address, function(data,source, code)
 			{
 				if(source)
 				{

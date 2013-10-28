@@ -6,6 +6,13 @@ var ERROR = -2;
 
 var mountFile = null;
 
+var mount = false;
+
+function canMount()
+{
+  return mount;
+}
+
 function load(modules)
 {
 	files_xmpp = modules.files_xmpp;
@@ -388,3 +395,4 @@ function main() {
 exports.main = main;
 exports.load = load;
 exports.loadConfig = loadConfig;
+exports.canMount = canMount;

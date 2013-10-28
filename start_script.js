@@ -26,6 +26,7 @@ function load()
 	modulesDict.files_xmpp.load(modulesDict);
 	modulesDict.files.load(modulesDict);
 	modulesDict.terminal_xmpp.load(modulesDict);
+	modulesDict.build.load(modulesDict);
 	// xmpp_temp.load(modulesDict);
 	modulesDict.files_xmpp.loadConfig(d);
 	modulesDict.build.loadConfig(d);
@@ -38,7 +39,7 @@ function load()
 
 load();
 modulesDict.wxmpp.connect();
-modulesDict.files.main();
+//modulesDict.files.main();
 // t = modulesDict.terminal.allocTerminal();
 // modulesDict.terminal.startTerminal(t.id, '/usr/bin/vim', 30, 10, function (data)
 // 				{
