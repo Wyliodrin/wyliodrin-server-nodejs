@@ -47,12 +47,12 @@ function files_stanza(t, from, to, es, error)
 						try{
 						stats.size = parseInt(es.attrs.size);}
 						catch(e){}
-						stats.mode = 0100400;
+						stats.mode = 0100600;
 					}
 					else
 					{
 						stats.size = 4096;
-						stats.mode = 040500;
+						stats.mode = 040700;
 					}
 				}
 				_.each (requests.get ('attributes '+es.attrs.path), function (sendResult)

@@ -37,9 +37,9 @@ function make(id, command, sendOutput)
 	{
 		if(path)
 		{
-			child_process.exec('rm -r '+path, {maxBuffer:10*1024, cwd:buildFile},
+			child_process.exec('rm -rf '+path, {maxBuffer:10*1024, cwd:buildFile},
 				function(error, stdout, stderr){
-					child_process.exec('cp -rv '+mountPath+'/'+id+' '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
+					child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
 					function(error, stdout, stderr){
 						console.log('copy error = '+error+' '+stderr);
 
@@ -52,7 +52,7 @@ function make(id, command, sendOutput)
 								var err = new Buffer(stderr).toString('base64');
 								sendOutput(out,"stdout", null, null);
 								sendOutput(err, "stderr", null, null);   
-								if (!error) {
+								if (error) {
 								  	sendOutput(null, "system", error.code, error.signal);
 								}});
 						}
