@@ -84,7 +84,7 @@ function make(id, command, args, address, sendOutput)
 								console.log("fisier = "+path.basename(address));
 								child_process.exec('tar xf '+path.basename(address), {maxBuffer:30*1024, cwd:buildFile},
 									function(error, stdout, stderr){
-										child_process.exec('rm -rf '+path.basename(address), {maxBuffer:30:1024, cwd:buildFile},
+										child_process.exec('rm -rf '+path.basename(address), {maxBuffer:30*1024, cwd:buildFile},
 											function(error,stdout,stderr){
 
 											});

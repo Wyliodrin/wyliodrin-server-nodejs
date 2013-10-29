@@ -1,26 +1,39 @@
 var f4js = require('fuse4js');
 
 var files_xmpp =null;
+var xmpp = null;
+var wxmpp = null;
 
 var ERROR = -2;
 
 var mountFile = null;
+var fuse = null;
+var owner = null;
 
-var mount = false;
 
 function canMount()
 {
-  return mount;
+  return fuse;
 }
 
 function load(modules)
 {
 	files_xmpp = modules.files_xmpp;
+  xmpp = modules.xmpp;
+  wxmpp = modules.wxmpp;
 }
 
 function loadConfig(configs)
 {
   mountFile = configs.mountFile;
+  try{
+  fuse = parseInt(configs.fuse);}
+  catch(e)
+  {
+    fuse = 0;
+  }
+  owner = configs.owner;
+
 }
 
 
@@ -386,11 +399,22 @@ function destroy(cb) {
 };
 
 
-function main() {
-  
-  console.log('main');
-      f4js.start(mountFile, handlers, true);
-    };
+function main()
+{
+  if(canMount())
+  {
+    f4js.start(mountFile, handlers, true);
+  }
+  if(wxmpp.checkConnected)
+  {
+    if(wxmpp.ownerIsAvailable())
+    {
+      var t = wxmpp.getConnection();
+      var tag = new xmpp.Element('status',{fuse:canMount()});
+      t.sendWyliodrin(owner, tag);  
+    }
+  }
+}
 
 exports.main = main;
 exports.load = load;

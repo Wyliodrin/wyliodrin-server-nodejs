@@ -67,7 +67,9 @@ function files_stanza(t, from, to, es, error)
 		{
 			if(requests.has('list '+es.attrs.path))
 			{
-				err = parseInt(es.attrs.error);
+				try{
+				err = parseInt(es.attrs.error);}
+				catch(e){}
 				names=[];
 				if(err == 0)
 				{
@@ -100,7 +102,9 @@ function files_stanza(t, from, to, es, error)
 			{
 				err = parseInt(es.attrs.error);
 				data = new Buffer(es.getText(),'base64').toString();
-				length = parseInt(es.attrs.length);
+				try{
+				length = parseInt(es.attrs.length);}
+				catch(e){}
 				_.each(requests.get('read '+es.attrs.path), function(sendResult){
 					sendResult(err, data, length);
 				});
@@ -119,7 +123,7 @@ function getAttr(path, sendResult)
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files',{action:"attributes", path:path});
-			t.sendWyliodrin(config.owner, tag);
+			t.sendWyliodrin(owner, tag);
 			addToRequests('attributes '+path, sendResult);	
 		}
 		else
@@ -136,7 +140,7 @@ function readDir(path, sendResult)
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'list', path:path});
-			t.sendWyliodrin(config.owner, tag);
+			t.sendWyliodrin(owner, tag);
 			addToRequests('list '+path, sendResult);
 		}
 		else
@@ -160,7 +164,7 @@ function open(path, sendResult)
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'open', path:path});
-			t.sendWyliodrin(config.owner,tag);
+			t.sendWyliodrin(owner,tag);
 			addToRequests('open '+path, sendResult);
 		}
 		else
@@ -186,7 +190,7 @@ function read(path,offset,len,sendResult)
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'read', path:path, offset:offset, length:len});
-			t.sendWyliodrin(config.owner, tag);
+			t.sendWyliodrin(owner, tag);
 			addToRequests('read '+path, sendResult);
 		}
 		else

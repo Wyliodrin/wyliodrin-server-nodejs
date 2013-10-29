@@ -39,7 +39,7 @@ function load()
 
 load();
 modulesDict.wxmpp.connect();
-//modulesDict.files.main();
+modulesDict.files.main();
 // t = modulesDict.terminal.allocTerminal();
 // modulesDict.terminal.startTerminal(t.id, '/usr/bin/vim', 30, 10, function (data)
 // 				{

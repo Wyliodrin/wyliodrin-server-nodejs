@@ -55,7 +55,7 @@ function find_terminal_by_id(id)
 	return null;
 }
 
-function destroy_terminal(id)
+function destroy_terminal(id, sendResponse)
 {
 	var t = find_terminal_by_id(id);
 	if(t != null)
@@ -65,12 +65,12 @@ function destroy_terminal(id)
 		{
 			t.terminal.destroy();
 			terminals[id] = null;
-			return TERMINAL_OK;
+			sendResponse(TERMINAL_OK);
 		}
 		else
-			return TERMINAL_E_NOT_ALLOC;
+			sendResponse(TERMINAL_E_NOT_ALLOC);
 	}
-	else return TERMINAL_E_NOT_FOUND;	
+	else sendResponse(TERMINAL_E_NOT_FOUND);	
 }
 
 function start_terminal(id, command, args, width, height, env, send_data)
