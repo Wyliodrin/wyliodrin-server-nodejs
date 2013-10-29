@@ -11,12 +11,14 @@ PATH_OK = 0;
 var mountPath = null;
 var buildFile = null;
 var files = null;
+var gadget = null;
 
 function loadConfig(configs)
 {
 	buildFile = configs.buildFile;
 	mountPath = configs.mountFile;
 	console.log(buildFile);
+	gadget = configs.gadget;
 }
 
 function load(modules)
@@ -49,7 +51,7 @@ function startBuildProcess(command, args, path, sendOutput, done)
 	makeProcess.on('close', function(code){
 		sendOutput(null, null, code);
 	});
-	done();
+	// done();
 }
 
 function make(id, command, args, address, sendOutput)
@@ -64,15 +66,29 @@ function make(id, command, args, address, sendOutput)
 					if(files.canMount())
 					{
 						child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
-						function(error, stdout, stderr){						
-							if(!error)
+						function(error, stdout, stderr){	
+							console.log ('ln -s Makefile.'+gadget+' Makefile '+buildPath+'/'+id);
+							child_process.exec ('ln -s Makefile.'+gadget+' Makefile', {cwd: buildPath}, function (err, stdout, stderr)
+							{
+								if (!error)
+								{
+									startBuildProcess(command,args,buildPath,sendOutput);
+								}
+								else
+								{
+									console.log ('ln error: '+error);
+									sendOutput ("ln error", "system", error.code);
+								}
+							});
+					
+							/*if(!error)
 							{
 								startBuildProcess(command, args, buildPath, sendOutput);
 							}
 							else
 							{
 								sendOutput("Copy error", "system", error.code);
-							}
+							}*/
 						});
 					}
 					else
@@ -90,7 +106,17 @@ function make(id, command, args, address, sendOutput)
 											});
 										if(!error)
 										{
-											startBuildProcess(command,args,buildPath,sendOutput);
+											child_process.exec ('ln -s Makefile.'+gadget+' Makefile', {cwd: buildPath}, function (err, stdout, stderr)
+											{
+												if (!error)
+												{
+													startBuildProcess(command,args,buildPath,sendOutput);
+												}
+												else
+												{
+													sendOutput ("ln error", "system", error.code);
+												}
+											});
 										}
 										else
 											sendOutput("tar error", "system", error.code);
