@@ -48,10 +48,13 @@ function find_terminal_by_id(id)
 	var i=0;
 	while(i<terminals.length)
 	{
+		if(terminals[i])
+{
 		if(terminals[i].id == id)
 			return terminals[i];
 		i++;
 	}
+}
 	return null;
 }
 
