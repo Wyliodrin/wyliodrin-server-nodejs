@@ -62,3 +62,4 @@ client.on('data', function(data) {
 exports.startSocketServer = startSocketServer;
 exports.PORT = PORT;
 exports.startSocketClient = startSocketClient;
+exports.load = load;

@@ -29,3 +29,4 @@ function sendSignal(signal, value, id, time)
 }
 
 exports.sendSignal = sendSignal;
+exports.load = load;

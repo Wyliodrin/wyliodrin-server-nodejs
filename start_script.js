@@ -18,8 +18,7 @@ function load()
 							xmpp:xmpp_temp.xmpp,
 							XMPP:xmpp_temp,
 							build:require('./build'),
-							socket:require('./socket'),
-							signal_xmpp:require('./signal_xmpp'),
+							signal_xmpp:require('./signal-xmpp'),
 							signal:require('./signal')
 						};
 
@@ -45,8 +44,8 @@ function load()
 load();
 //modulesDict.wxmpp.connect();
 //modulesDict.files.main();
-modulesDict.socket.startSocketServer();
-setTimeout(modulesDict.socket.startSocketClient, 5000);
+modulesDict.signal.startSocketServer();
+setTimeout(modulesDict.signal.startSocketClient, 5000);
 
 
 

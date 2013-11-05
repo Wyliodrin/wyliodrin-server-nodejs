@@ -37,9 +37,9 @@ function validatePath(id, returnPath)
 	returnPath(validPath,id);
 } 
 
-function startBuildProcess(command, args, path, sendOutput, done)
+function startBuildProcess(command, args, path, sendOutput, done, id)
 {
-	var makeProcess = child_process.spawn(command,args,{cwd:path});
+	var makeProcess = child_process.spawn(command,args,{cwd:path, env:{id:id}});
 	makeProcess.stdout.on('data', function(data){
 		var out = new Buffer(data).toString('base64');
 		sendOutput(out, 'stdout', null);
@@ -72,7 +72,7 @@ function make(id, command, args, address, sendOutput)
 							{
 								if (!error)
 								{
-									startBuildProcess(command,args,buildPath,sendOutput);
+									startBuildProcess(command,args,buildPath,sendOutput, id);
 								}
 								else
 								{
@@ -110,7 +110,7 @@ function make(id, command, args, address, sendOutput)
 											{
 												if (!error)
 												{
-													startBuildProcess(command,args,buildPath,sendOutput);
+													startBuildProcess(command,args,buildPath,sendOutput, id);
 												}
 												else
 												{
