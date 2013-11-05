@@ -1,5 +1,5 @@
 var fs = require('fs');
-var CONFIG_FILE ='/boot/wyliodrin.json';
+var CONFIG_FILE ='wyliodrin.json';
 
 var d;
 var modulesDict;
