@@ -28,8 +28,10 @@
 ------------------------------------------------------------------------------------------------------
 
 --> <make xmlns="wyliodrin" action="build" id="" request="id" address=""/>
-<-- <make xmlns="wyliodrin" action="build" response="working" request="id" id="" source="stdout/stderr/system">data</make
+<-- <make xmlns="wyliodrin" action="build" response="working" request="id" id=""source="stdout/stderr/system">data</make>
 <-- <make xmlns="wyliodrin" action="build" response="done" request="id" id="" code=""/>
 
 --------------------------------------------------------------------------------------------------------
 <-- <status xmlns="wyliodrin" fuse="0/1"/>
+--------------------------------------------------------------------------------------------------------
+<-- <signal xmlns="wyliodrin" signal="" value="" time="" id=""/>
