@@ -11,6 +11,7 @@
 	"dict":"*",
 	"underscore":"*",
 	"node-stringprep":"*",
-	"fuse4js":"*"
+	"fuse4js":"*",
+	"carrier":"*"
 	}
 	}
