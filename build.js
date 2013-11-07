@@ -12,6 +12,9 @@ var mountPath = null;
 var buildFile = null;
 var files = null;
 var gadget = null;
+var signalTimeout = null;
+
+var processArray = [];
 
 function loadConfig(configs)
 {
@@ -19,6 +22,11 @@ function loadConfig(configs)
 	mountPath = configs.mountFile;
 	console.log(buildFile);
 	gadget = configs.gadget;
+	try
+	{
+		signalTimeout = parseInt(configs.timeout);
+	}
+	catch(e)	
 }
 
 function load(modules)
@@ -40,6 +48,7 @@ function validatePath(id, returnPath)
 function startBuildProcess(command, args, path, sendOutput, done, id)
 {
 	var makeProcess = child_process.spawn(command,args,{cwd:path, env:{id:id}});
+	processArray[id] = makeProcess;
 	makeProcess.stdout.on('data', function(data){
 		var out = new Buffer(data).toString('base64');
 		sendOutput(out, 'stdout', null);
@@ -50,6 +59,7 @@ function startBuildProcess(command, args, path, sendOutput, done, id)
 	});
 	makeProcess.on('close', function(code){
 		sendOutput(null, null, code);
+		processArray[id] = null;
 	});
 	// done();
 }
@@ -137,6 +147,20 @@ function make(id, command, args, address, sendOutput)
 		}
 	});
 }
+
+function killProcess(id)
+{
+	var process = processArray[id];
+	if(process)
+	{
+		process.kill(process.pid, 'SIGTERM');
+		setTimeout(function(){
+			if(processArray[id])
+				processArray[id].kill(processArray[id].pid, 'SIGKILL');
+		},signalTimeout);
+	}
+}
+
 exports.make = make;
 exports.load = load;
 exports.loadConfig = loadConfig;

@@ -31,6 +31,8 @@
 <-- <make xmlns="wyliodrin" action="build" response="working" request="id" id=""source="stdout/stderr/system">data</make>
 <-- <make xmlns="wyliodrin" action="build" response="done" request="id" id="" code=""/>
 
+--> <make xmlns="wyliodrin" action="close" id="" request="id"/>
+
 --------------------------------------------------------------------------------------------------------
 <-- <status xmlns="wyliodrin" fuse="0/1"/>
 --------------------------------------------------------------------------------------------------------
@@ -39,4 +41,3 @@
 		<signal signal="" value="" time="" id=""/>
 	</signals>
 --> <signal xmlns="wyliodrin" signal="" value="" id=""/>
-<-- <signal xmlns="wyliodrin" id="" action="done"/>  ?????
