@@ -6,6 +6,10 @@ var _ = require ('underscore');
 var WYLIODRIN_NAMESPACE = "wyliodrin";
 var other = undefined;
 
+var wxmpp = null;
+
+var stanzas = [];
+
 function load(modules)
 {
 	console.log('load');
@@ -82,13 +86,27 @@ xmpp.Client.prototype.tag = function (name, namespace, activity)
 
 xmpp.Client.prototype.sendWyliodrin = function (to, stanza)
 {
+
 	stanza.attrs.xmlns = WYLIODRIN_NAMESPACE;
 	s=new xmpp.Element ('message', {to: to}).cnode(stanza);
 	// console.log (s.root().toString());
-	this.send (s);
+	if(to)
+		this.send (s);
+	else
+		stanzas.push(s);
 }
+
+xmpp.Client.prototype.emptyStanzaBuffer = function()
+{
+	for (i = 0; i<stanzas.length; i++)
+	{
+		this.send(stanzas[i]);
+	}
+}
+
+
 
 exports.xmpp = xmpp;
 exports.WYLIODRIN_NAMESPACE = WYLIODRIN_NAMESPACE;
-exports.load = load;
+//exports.load = load;
 

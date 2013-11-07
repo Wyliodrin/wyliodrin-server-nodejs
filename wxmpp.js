@@ -14,6 +14,9 @@ var XMPP = null;
 
 var available = false;
 
+stanzas = []
+
+
 function load(modules)
 {
 	xmpp = modules.xmpp;
@@ -31,6 +34,7 @@ function connect()
 		
 		connection = new xmpp.Client({jid:config.jid,password:config.password,preferredSaslMechanism:'PLAIN'});
 		isConnected = true;
+		emptyStanzaBuffer();
 		
 		connection.on ('error', function(error)
 		{
@@ -40,6 +44,7 @@ function connect()
 		connection.on ('disconnect', function()
 		{
 		  console.error ('disconnect');
+		  isConnected = false;
 		});
 
 		connection.on ('online', function()
@@ -106,6 +111,14 @@ function connect()
 	}
 }
 
+function getOwner()
+{
+	if(ownerIsAvailable())
+		return config.owner;
+	else
+		return null;
+}
+
 function ownerIsAvailable()
 {
 	return available;
@@ -130,9 +143,18 @@ function checkConnected()
 	return isConnected;
 }
 
+function emptyStanzaBuffer()
+{
+	for (i = 0; i<stanzas.length; i++)
+	{
+		connection.sendWyliodrin(config.owner, stanzas[i]);
+	}
+}
+
 exports.connect = connect;
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;
 exports.load = load;
 exports.ownerIsAvailable = ownerIsAvailable;
+exports.stanzas = stanzas;
 

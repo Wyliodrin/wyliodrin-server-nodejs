@@ -30,7 +30,7 @@ function load()
 	modulesDict.terminal_xmpp.load(modulesDict);
 	modulesDict.build.load(modulesDict);
 	modulesDict.signal.load(modulesDict);
-	// xmpp_temp.load(modulesDict);
+	//xmpp_temp.load(modulesDict);
 	modulesDict.files_xmpp.loadConfig(d);
 	modulesDict.build.loadConfig(d);
 	modulesDict.terminal_xmpp.loadConfig(d);
