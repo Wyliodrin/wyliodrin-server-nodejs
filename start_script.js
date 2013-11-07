@@ -30,7 +30,7 @@ function load()
 	modulesDict.terminal_xmpp.load(modulesDict);
 	modulesDict.build.load(modulesDict);
 	modulesDict.signal.load(modulesDict);
-	// xmpp_temp.load(modulesDict);
+	//xmpp_temp.load(modulesDict);
 	modulesDict.files_xmpp.loadConfig(d);
 	modulesDict.build.loadConfig(d);
 	modulesDict.terminal_xmpp.loadConfig(d);
@@ -42,10 +42,12 @@ function load()
 }
 
 load();
-//modulesDict.wxmpp.connect();
+modulesDict.wxmpp.connect();
 //modulesDict.files.main();
 modulesDict.signal.startSocketServer();
-setTimeout(modulesDict.signal.startSocketClient, 5000);
+setTimeout(modulesDict.signal.startSocketClient(' '), 1000);
+setTimeout(modulesDict.signal.startSocketClient('abc'), 3000);
+
 
 
 

@@ -15,6 +15,7 @@ var XMPP = null;
 var available = false;
 var signal_xmpp = null;
 
+
 function load(modules)
 {
 	xmpp = modules.xmpp;
@@ -33,8 +34,7 @@ function connect()
 		
 		connection = new xmpp.Client({jid:config.jid,password:config.password,preferredSaslMechanism:'PLAIN'});
 		isConnected = true;
-		signal_xmpp.sendSignals();
-		
+		signal_xmpp.sendSignalBuffer();
 		connection.on ('error', function(error)
 		{
 		  console.error (error);
@@ -43,6 +43,7 @@ function connect()
 		connection.on ('disconnect', function()
 		{
 		  console.error ('disconnect');
+		  isConnected = false;
 		});
 
 		connection.on ('online', function()
@@ -93,7 +94,7 @@ function connect()
 				{
 					console.log('available');
 					available = true;
-					signal_xmpp.sendSignals();
+					xmpp.emptyStanzaBuffer();
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{
@@ -105,9 +106,19 @@ function connect()
 		});		
 		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
 		connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
-		connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.files_stanza);
+		connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.filesStanza);
+		connection.tag('signal', XMPP.WYLIODRIN_NAMESPACE, signal_xmpp.signalStanza);
+
 		isConnected = true;
 	}
+}
+
+function getOwner()
+{
+	if(ownerIsAvailable())
+		return config.owner;
+	else
+		return null;
 }
 
 function ownerIsAvailable()
@@ -134,6 +145,7 @@ function checkConnected()
 	return isConnected;
 }
 
+exports.getOwner = getOwner;
 exports.connect = connect;
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;
