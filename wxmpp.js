@@ -13,6 +13,7 @@ var config = null;
 var XMPP = null;
 
 var available = false;
+var signal_xmpp = null;
 
 function load(modules)
 {
@@ -22,6 +23,7 @@ function load(modules)
 	files_xmpp = modules.files_xmpp;
 	config = modules.config;
 	XMPP = modules.XMPP;
+	signal_xmpp = modules.signal_xmpp;
 }
 
 function connect()
@@ -31,6 +33,7 @@ function connect()
 		
 		connection = new xmpp.Client({jid:config.jid,password:config.password,preferredSaslMechanism:'PLAIN'});
 		isConnected = true;
+		signal_xmpp.sendSignals();
 		
 		connection.on ('error', function(error)
 		{
@@ -90,6 +93,7 @@ function connect()
 				{
 					console.log('available');
 					available = true;
+					signal_xmpp.sendSignals();
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{

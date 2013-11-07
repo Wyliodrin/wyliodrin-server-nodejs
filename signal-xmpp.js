@@ -28,5 +28,16 @@ function sendSignal(signal, value, id, time)
 		signals.push({signal:signal, value:value, id:id, time:time});
 }
 
+function sendSignals()
+{
+	var t = wxmpp.getConnection();
+	var t = new xmpp.Element('signals');
+	for(i=0; i<signals.length; i++)
+	{
+		var t = new xmpp.Element('signals')
+	}
+}
+
+exports.sendSignals = sendSignals;
 exports.sendSignal = sendSignal;
 exports.load = load;
