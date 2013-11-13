@@ -13,6 +13,7 @@ var buildFile = null;
 var files = null;
 var gadget = null;
 var signalTimeout = null;
+var port = null;
 
 var processArray = [];
 
@@ -22,6 +23,7 @@ function loadConfig(configs)
 	mountPath = configs.mountFile;
 	console.log(buildFile);
 	gadget = configs.gadget;
+	port = configs.port;
 	try
 	{
 		signalTimeout = parseInt(configs.timeout);
@@ -47,7 +49,7 @@ function validatePath(id, returnPath)
 
 function startBuildProcess(command, args, path, sendOutput, done, id)
 {
-	var makeProcess = child_process.spawn(command,args,{cwd:path, env:{id:id}});
+	var makeProcess = child_process.spawn(command,args,{cwd:path, env:{id:id, port:port}});
 	processArray[id] = makeProcess;
 	makeProcess.stdout.on('data', function(data){
 		var out = new Buffer(data).toString('base64');

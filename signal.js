@@ -6,11 +6,14 @@ var _ = require ('underscore');
 
 var socketArray = [];
 
-PORT = 8124;
+//PORT = 8124;
+
+var port = null;
 
 function load(modules)
 {
 	signal_xmpp = modules.signal_xmpp;
+	port = modules.config.port;
 }
 
 function startSocketServer()
@@ -42,7 +45,7 @@ function startSocketServer()
 			}
 		});
 	});
-	server.listen(PORT, function(){});
+	server.listen(port, function(){});
 }
 	
 function setSignal(signal, value, id)
@@ -80,7 +83,6 @@ client.on('error', function(error){
 }
 
 exports.startSocketServer = startSocketServer;
-exports.PORT = PORT;
 exports.startSocketClient = startSocketClient;
 exports.load = load;
 exports.setSignal = setSignal;

@@ -6,5 +6,6 @@
 	"mountFile":"/home/pi/projects/mount",
 	"fuse":"1",
 	"gadget": "raspberrypi",
-	"timeout":"2000"
+	"timeout":"2000",
+	"port":"8124"
 }
