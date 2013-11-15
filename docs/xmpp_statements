@@ -37,7 +37,13 @@
 <-- <status xmlns="wyliodrin" fuse="0/1"/>
 --------------------------------------------------------------------------------------------------------
 <-- <signal xmlns="wyliodrin" signal="" value="" time="" id=""/>
+<-- <signal xmlns="wyliodrin" signal="" time="" id="">
+		<component name="" value=""/>
+	</signal>
 <-- <signals xmlns="wyliodrin">
 		<signal signal="" value="" time="" id=""/>
+		<signal signal="" time="" id="">
+			<component name="" value=""/>
+		</signal>
 	</signals>
 --> <signal xmlns="wyliodrin" signal="" value="" id=""/>
