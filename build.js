@@ -24,11 +24,11 @@ function loadConfig(configs)
 	console.log(buildFile);
 	gadget = configs.gadget;
 	port = configs.port;
-	try
-	{
+//	try
+//	{
 		signalTimeout = parseInt(configs.timeout);
-	}
-	catch(e)	
+//	}
+//	catch(e)	
 }
 
 function load(modules)

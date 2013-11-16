@@ -21,11 +21,13 @@ function load(modules)
 }
 
 
-function alloc_terminal()
+function alloc_terminal(from)
 {
 	var id = find_terminal_id();
 	var t = {id:id,
-				terminal:null};
+				terminal:null,
+				from:[from],
+				projectId:null};
 	terminals[id] = t;
 	return t;
 }
@@ -58,7 +60,7 @@ function find_terminal_by_id(id)
 	return null;
 }
 
-function destroy_terminal(id, sendResponse)
+function destroy_terminal(id,from,action, sendResponse)
 {
 	var t = find_terminal_by_id(id);
 	if(t != null)
@@ -66,9 +68,27 @@ function destroy_terminal(id, sendResponse)
 		//verific daca s-a facut terminalul sau doar s-a alocat
 		if(t.terminal != null)
 		{
-			t.terminal.destroy();
-			terminals[id] = null;
-			sendResponse(TERMINAL_OK);
+			if(action = 'close')
+			{
+				if(t.from.length > 1)
+				{
+					t.from.pop(from);
+					sendResponse(TERMINAL_OK, [from]);
+				}
+				else
+				{
+					t.terminal.destroy();
+					terminals[id] = null;
+					sendResponse(TERMINAL_OK, [from]);
+				}
+			}
+			else
+			{
+				var from = t.from;
+				t.terminal.destroy();
+				terminals[id] = null;
+				sendResponse(TERMINAL_OK, from);
+			}
 		}
 		else
 			sendResponse(TERMINAL_E_NOT_ALLOC);
@@ -76,7 +96,7 @@ function destroy_terminal(id, sendResponse)
 	else sendResponse(TERMINAL_E_NOT_FOUND);	
 }
 
-function start_terminal(id, command, args, width, height, env, send_data)
+function start_terminal(id, projectId, command, args, width, height, env, send_data)
 {
 	console.log('start terminal');
 	var t = find_terminal_by_id(id);
@@ -99,6 +119,7 @@ function start_terminal(id, command, args, width, height, env, send_data)
 		});
 	
 		t.terminal = term;
+		t.projectId = projectId;
 		term.on('data', function(data)
 		{
 			// var b=	new Buffer(data);
@@ -108,9 +129,16 @@ function start_terminal(id, command, args, width, height, env, send_data)
 			// }
 	
 			var data64 = new Buffer(data).toString('base64');
-			send_data(data64);
+			send_data(data64, t.from);
 			// send_data(data);
-		});	
+		});
+		term.on('close', function(){
+			console.log('terminal closed');
+			if(term.projectId)
+			{
+				terminal_xmpp.closeProject(term.projectId);
+			}
+		});
 		// term.write('blabla\r');
 		return TERMINAL_OK
 	}
@@ -132,6 +160,15 @@ function sendKeysToTerminal(id, keys)
 		return TERMINAL_E_NOT_FOUND;
 }
 
+function attachTerminal(from, id)
+{
+	var t = find_terminal_by_id(id);
+	if(t != null)
+	{
+		t.from.push(from);
+	}
+}
+
 exports.allocTerminal = alloc_terminal;
 exports.destroyTerminal = destroy_terminal;
 exports.startTerminal = start_terminal;
@@ -139,5 +176,6 @@ exports.sendKeysToTerminal = sendKeysToTerminal;
 exports.TERMINAL_OK = TERMINAL_OK;
 
 exports.load = load;
+exports.attachTerminal = attachTerminal;
 
 

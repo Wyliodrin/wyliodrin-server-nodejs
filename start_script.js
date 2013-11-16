@@ -45,8 +45,8 @@ load();
 modulesDict.wxmpp.connect();
 //modulesDict.files.main();
 modulesDict.signal.startSocketServer();
-setTimeout(modulesDict.signal.startSocketClient(' '), 1000);
-setTimeout(modulesDict.signal.startSocketClient('abc'), 3000);
+//setTimeout(modulesDict.signal.startSocketClient(' '), 1000);
+//setTimeout(modulesDict.signal.startSocketClient('abc'), 3000);
 
 
 

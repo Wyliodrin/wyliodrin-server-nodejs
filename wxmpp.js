@@ -94,7 +94,7 @@ function connect()
 				{
 					console.log('available');
 					available = true;
-					xmpp.emptyStanzaBuffer();
+					connection.emptyStanzaBuffer(); 
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{

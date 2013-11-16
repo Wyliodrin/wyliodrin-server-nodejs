@@ -18,10 +18,12 @@ function load(modules)
 
 function startSocketServer()
 {
-	
+console.log('start socket');	
 		var server = net.createServer(function(c){
+			console.log('id = '+id);
 		var id = null;
 		carrier.carry(c, function(line){
+		console.log('line = '+line);
 			var tokens = line.split(' ');
 			if(!id)
 			{
@@ -29,9 +31,11 @@ function startSocketServer()
 				{
 					id = tokens[1];
 					socketArray[id] = c;
+					console.log('received id\n');
 				}
 				else
 				{
+					console.log('server end connection');
 					c.end();
 				}
 			}
@@ -45,7 +49,7 @@ function startSocketServer()
 			}
 		});
 	});
-	server.listen(port, function(){});
+	server.listen(port, function(){console.log('server listening')});
 }
 	
 function setSignal(signal, value, id)

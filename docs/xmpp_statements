@@ -2,11 +2,16 @@
 <--	<shells xmlns="wyliodrin" action="open" response="done" shellid="" request="id"/>
 <--	<shells xmlns="wyliodrin" action="open" response="error" request="id"/>
 
--->	<shells xmlns="wyliodrin" shellid="" action="close" request="id"/>
+-->	<shells xmlns="wyliodrin" shellid="" action="close/stop" request="id"/>
 <-- <shells xmlns="wyliodrin" shellid="" action="close" request="id" code=""/>
 
 -->	<shells xmlns="wyliodrin" id="" action="keys">data</shell>
 <--	<shells xmlns="wyliodrin" id="" action="keys">data</shell>
+
+--> <shells xmlns="wyliodrin" action="list" request="id"/>
+<-- <shellsxmlns="wyliodrin" action="list" request="id">
+		<project projectid=""/>
+	</shells>
 
 ------------------------------------------------------------------------------------------------------
 
@@ -41,3 +46,4 @@
 		<signal signal="" value="" time="" id=""/>
 	</signals>
 --> <signal xmlns="wyliodrin" signal="" value="" id=""/>
+-------------------------------------------------------------------------------------------------------

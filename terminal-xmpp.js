@@ -1,3 +1,6 @@
+var dict = require('dict');
+
+var projectsDict = dict({});
 var xmpp = null;
 var terminal = null;
 
@@ -16,9 +19,11 @@ function loadConfig(configs)
 	buildFile = configs.buildFile;
 }
 
+
+
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
-	var term = terminal.allocTerminal();
+	var term = terminal.allocTerminal(from);
 	console.log('term allocated');
 	if(!es.attrs.height)
 		height = 0;
@@ -40,10 +45,13 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		}
 	catch(e){}
 	}
-	var rc = terminal.startTerminal(term.id, command, args, width, height, env, function (data)
+	var rc = terminal.startTerminal(term.id, es.attrs.projectid, command, args, width, height, env, function (data, from)
 		{
-			var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
-			t.sendWyliodrin(from, tag);
+			for(var i=0; i<from.length; i++)
+			{
+				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
+				t.sendWyliodrin(from, tag);
+			}
 		});
 	if(rc == terminal.TERMINAL_OK)
 	{
@@ -60,6 +68,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:id});
 		t.sendWyliodrin(from, tag);
 	}
+	return term;
 }
 
 
@@ -74,28 +83,40 @@ function shell_stanza(t, from, to, es, error)
 			if(!es.attrs.projectid)
 			{
 				console.log('open');
-				makeTerminal(t, from, to, es, error, COMMAND, [],process.env.HOME);
-				
+				makeTerminal(t, from, to, es, error, COMMAND, [],process.env.HOME);		
 			}
 			else
 			{
 				if(es.attrs.projectid.indexOf('/') == -1)
 				{
-					makeTerminal(t, from, to, es, error, 'make', ['run'], buildFile+'/'+es.attrs.projectid);
+					if(projectsDict.has(es.attrs.projectid))
+					{
+						var id = projectsDict.get(es.attrs.projectid);
+						terminal.attachTerminal(from, id);	
+					}
+					else
+					{
+						var t = makeTerminal(t, from, to, es, error, 'make', ['run'], buildFile+'/'+es.attrs.projectid);
+						projectsDict.set(es.attrs.projectid,t.id);
+					}					
+					
 				}
 				
 			}
 		}
-		if(es.attrs.action == 'close')
+		if(es.attrs.action == 'close' || es.attrs.action == 'stop')
 		{
 			if(es.attrs.shellid)
 			{
 				try{
 				var id = parseInt(es.attrs.shellid);}
 				catch(e){}
-				terminal.destroyTerminal(id, function(code){
-					var tag = new xmpp.Element('shells', {shellid:id, action:'close', request:es.attrs.request, code:code});
-					t.sendWyliodrin(from, tag);
+				terminal.destroyTerminal(id, from, es.attrs.action, function(code, from){
+					for(var i = 0; i<from.length; i++)
+					{
+						var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, request:es.attrs.request, code:code});
+						t.sendWyliodrin(from[i], tag);
+					}
 				});
 			}
 			else
@@ -104,7 +125,14 @@ function shell_stanza(t, from, to, es, error)
 				t.sendWyliodrin(from, tag);
 			}
 		}
-		if(es.attrs.action == 'keys')
+		if(es.attrs.action == 'list')
+		{
+			projectsDict.forEach(function(value, key){
+				var tag = new xmpp.Element('shells',{action:list, request:es.attrs.request}).c('project',{projectid:key});
+				t.sendWyliodrin(from.tag);
+			});
+		}
+		if (es.attrs.action == 'keys')
 		{
 			try{	
 			var id = parseInt(es.attrs.shellid);}
@@ -113,6 +141,14 @@ function shell_stanza(t, from, to, es, error)
 		}
 	}
 	
+}
+
+function closeProject(projectId)
+{
+	if(projectsDict.has(projectId))
+	{
+		projectsDict.delete(projectId);
+	}
 }
 
 
