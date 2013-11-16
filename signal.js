@@ -6,8 +6,6 @@ var _ = require ('underscore');
 
 var socketArray = [];
 
-//PORT = 8124;
-
 var port = null;
 
 function load(modules)
@@ -18,7 +16,7 @@ function load(modules)
 
 function startSocketServer()
 {
-console.log('start socket');	
+		console.log('start socket');	
 		var server = net.createServer(function(c){
 			console.log('id = '+id);
 		var id = null;
@@ -43,9 +41,26 @@ console.log('start socket');
 			{
 				var signal = tokens[0];
 				var value = tokens[1];
-				var d = new Date();
-				var time = d.getTime();
-				signal_xmpp.sendSignal(signal, value, id, time);
+				if(parseFloat(value) != NaN)
+				{
+					var d = new Date();
+					var time = d.getTime();
+					var s = {signal:signal, value:value, id:id, time:time};
+					signal_xmpp.sendSignal(s, id, time);
+				}
+				else
+				{
+					var d = new Date();
+					var time = d.getTime();
+					var s={signal:signal, component:[], id:id, time:time};
+					var i=1;
+					while(i<(tokens.length-1))
+					{
+						s.component.push({signal:tokens[i], value:tokens[i+1]});
+						i=i+2;
+					}
+					signal_xmpp.sendSignal(s);
+				}
 			}
 		});
 	});

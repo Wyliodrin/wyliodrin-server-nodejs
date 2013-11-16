@@ -14,16 +14,32 @@ function load(modules)
 	signal = modules.signal;
 }
 
-function sendSignal(signal, value, id, time)
+function sendSignal(s)
 {
 	if(wxmpp.checkConnected())
 	{
 		var t = wxmpp.getConnection();
-		var tag = new xmpp.Element('signal', {signal:signal, value:value, id:id, time:time});
-		t.sendWyliodrin(wxmpp.getOwner(), tag);		
+		if(s.value)
+		{
+			var tag = new xmpp.Element('signal', s);
+			t.sendWyliodrin(wxmpp.getOwner(), tag);	
+		}
+		else
+		{
+			var tag = new xmpp.Element('signal', {signal:s.signal, id:s.id, time:s.time});
+			for(var i=0; i<s.component.length; i++)
+			{
+				tag.c('component',{name:component[i].signal, value:component[i].value});
+			}
+			t.sendWyliodrin(wxmpp.getOwner(), tag);
+		}
+			
 	}
 	else
-		signals.push({signal:signal, value:value, id:id, time:time});
+	{
+		signals.push(s)
+	}
+		
 }
 
 function sendSignalBuffer()
@@ -35,11 +51,19 @@ function sendSignalBuffer()
 		var tag = new xmpp.Element('signals');
 		for(i=0; i<signals.length; i++)
 		{
-			tag.c('signal', signals[i]);
+			if(signals[i].value)
+			{
+				tag.c('signal', signals[i]);
+			}
+			else
+			{
+				tag.c('signal',{signal:signals[i].signal, id:signals[i].id, time:signals[i].time});
+				for(var j=0; j<signals[i].component.length; i++)
+					tag.c('component',{name:signals[i].component[j].signal, value:signals[i].component[j].value});
+			}			
 		}
 		t.sendWyliodrin(wxmpp.getOwner(), tag);
-	}
-	
+	}	
 }
 
 function signalStanza(t, from, to, es, error)
