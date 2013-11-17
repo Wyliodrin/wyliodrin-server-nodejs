@@ -19,7 +19,8 @@ function load()
 							XMPP:xmpp_temp,
 							build:require('./build'),
 							signal_xmpp:require('./signal-xmpp'),
-							signal:require('./signal')
+							signal:require('./signal'),
+							info:require('./info')
 						};
 
 	modulesDict.terminal.load(modulesDict);
@@ -36,6 +37,7 @@ function load()
 	modulesDict.terminal_xmpp.loadConfig(d);
 	modulesDict.files.loadConfig(d);
 	modulesDict.signal_xmpp.load(modulesDict);
+	modulesDict.info.load(modulesDict);
 
 	console.log('loaded');
 
@@ -43,13 +45,8 @@ function load()
 
 load();
 modulesDict.wxmpp.connect();
-//modulesDict.files.main();
+modulesDict.files.main();
 modulesDict.signal.startSocketServer();
-//setTimeout(modulesDict.signal.startSocketClient(' '), 1000);
-//setTimeout(modulesDict.signal.startSocketClient('abc'), 3000);
-
-
-
 
 
 exports.config = d;

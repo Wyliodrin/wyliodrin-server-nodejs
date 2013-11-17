@@ -123,7 +123,10 @@ function getAttr(path, sendResult)
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files',{action:"attributes", path:path});
-			t.sendWyliodrin(owner, tag);
+			if(xmpp.ownerIsAvailable())
+				t.sendWyliodrin(owner, tag, false);
+			else
+				t.sendWyliodrin(owner, tag, true);
 			addToRequests('attributes '+path, sendResult);	
 		}
 		else
@@ -140,7 +143,10 @@ function readDir(path, sendResult)
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'list', path:path});
-			t.sendWyliodrin(owner, tag);
+			if(xmpp.ownerIsAvailable())
+				t.sendWyliodrin(owner, tag, false);
+			else
+				t.sendWyliodrin(owner, tag, true);
 			addToRequests('list '+path, sendResult);
 		}
 		else
@@ -164,7 +170,10 @@ function open(path, sendResult)
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'open', path:path});
-			t.sendWyliodrin(owner,tag);
+			if(xmpp.ownerIsAvailable())
+				t.sendWyliodrin(owner, tag, false);
+			else
+				t.sendWyliodrin(owner, tag, true);
 			addToRequests('open '+path, sendResult);
 		}
 		else
@@ -190,7 +199,10 @@ function read(path,offset,len,sendResult)
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'read', path:path, offset:offset, length:len});
-			t.sendWyliodrin(owner, tag);
+			if(xmpp.ownerIsAvailable())
+				t.sendWyliodrin(owner, tag, false);
+			else
+				t.sendWyliodrin(owner, tag, true);
 			addToRequests('read '+path, sendResult);
 		}
 		else

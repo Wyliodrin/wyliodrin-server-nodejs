@@ -51,4 +51,10 @@
 			<component name="" value=""/>
 		</signal>
 	</signals>
+	
 --> <signal xmlns="wyliodrin" signal="" value="" id=""/>
+----------------------------------------------------------------------------------------
+<-- <info xmlns="wyliodrin" data="start" board="raspberrypi" uptime="" loadavg1="" loadavg5="" loadavg15 ="" totalmemo="" freemem="">
+		<cpu model="" speed=""/>
+	</info>
+<-- <info xmlns="wyliodrin" data="running" uptime="" loadavg1="" loadavg5="" loadavg15="" freemem=""/>

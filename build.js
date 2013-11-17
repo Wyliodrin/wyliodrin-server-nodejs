@@ -1,12 +1,12 @@
+"use strict";
+var path = require('path');
+var fs = require('fs');
+var child_process = require('child_process');
 
-path = require('path');
-fs = require('fs');
-child_process = require('child_process');
-
-PATH_ERROR = 1;
-COPY_ERROR = 2;
-WGET_ERROR = 3;
-PATH_OK = 0;
+var PATH_ERROR = 1;
+var COPY_ERROR = 2;
+var WGET_ERROR = 3;
+var PATH_OK = 0;
 
 var mountPath = null;
 var buildFile = null;

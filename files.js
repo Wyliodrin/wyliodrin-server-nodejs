@@ -1,4 +1,6 @@
+"use strict";
 var f4js = require('fuse4js');
+var child_process = require('child_process');
 
 var files_xmpp =null;
 var xmpp = null;
@@ -403,6 +405,7 @@ function main()
 {
   if(canMount())
   {
+    child_process.exec('fusermount -u '+mountFile);
     f4js.start(mountFile, handlers, true);
   }
   if(wxmpp.checkConnected)
@@ -411,7 +414,10 @@ function main()
     {
       var t = wxmpp.getConnection();
       var tag = new xmpp.Element('status',{fuse:canMount()});
-      t.sendWyliodrin(owner, tag);  
+      if(xmpp.ownerIsAvailable())
+        t.sendWyliodrin(owner, tag, false);
+      else
+        t.sendWyliodrin(owner, tag, true);
     }
   }
 }

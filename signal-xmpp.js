@@ -1,3 +1,4 @@
+"use strict";
 var xmpp = null;
 var wxmpp = null;
 var owner = null;
@@ -22,7 +23,10 @@ function sendSignal(s)
 		if(s.value)
 		{
 			var tag = new xmpp.Element('signal', s);
-			t.sendWyliodrin(wxmpp.getOwner(), tag);	
+			if(xmpp.ownerIsAvailable())
+				t.sendWyliodrin(owner, tag, false);
+			else
+				t.sendWyliodrin(owner, tag, true);
 		}
 		else
 		{
@@ -31,7 +35,10 @@ function sendSignal(s)
 			{
 				tag.c('component',{name:component[i].signal, value:component[i].value});
 			}
-			t.sendWyliodrin(wxmpp.getOwner(), tag);
+			if(xmpp.ownerIsAvailable())
+				t.sendWyliodrin(owner, tag, false);
+			else
+				t.sendWyliodrin(owner, tag, true);
 		}
 			
 	}
@@ -62,7 +69,10 @@ function sendSignalBuffer()
 					tag.c('component',{name:signals[i].component[j].signal, value:signals[i].component[j].value});
 			}			
 		}
-		t.sendWyliodrin(wxmpp.getOwner(), tag);
+		if(xmpp.ownerIsAvailable())
+				t.sendWyliodrin(owner, tag, false);
+			else
+				t.sendWyliodrin(owner, tag, true);
 	}	
 }
 

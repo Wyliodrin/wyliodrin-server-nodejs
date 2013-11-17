@@ -1,3 +1,4 @@
+"use strict";
 var xmpp = null;
 var dict = require('dict');
 var fs = require('fs');
@@ -14,6 +15,7 @@ var XMPP = null;
 
 var available = false;
 var signal_xmpp = null;
+var info = null;
 
 
 function load(modules)
@@ -25,6 +27,7 @@ function load(modules)
 	config = modules.config;
 	XMPP = modules.XMPP;
 	signal_xmpp = modules.signal_xmpp;
+	info = modules.info;
 }
 
 function connect()
@@ -73,7 +76,7 @@ function connect()
 	//	  	shells = stanza.getChild ('shells', 'wyliodrin');
 	//	 } 			  
 	//	});
-		connection.load(function (connection, from, to, stanza, error)
+		connection.load(connection, function (from, to, stanza, error)
 		{
 			if (stanza.getName()=='presence')
 			{
@@ -95,6 +98,11 @@ function connect()
 					console.log('available');
 					available = true;
 					connection.emptyStanzaBuffer(); 
+					info.sendStartInfo(from);
+					while(available)
+					{
+						setTimeout(function(){info.sendInfo(from);}, 2000);
+					}
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{
@@ -113,13 +121,6 @@ function connect()
 	}
 }
 
-function getOwner()
-{
-	if(ownerIsAvailable())
-		return config.owner;
-	else
-		return null;
-}
 
 function ownerIsAvailable()
 {
@@ -145,7 +146,6 @@ function checkConnected()
 	return isConnected;
 }
 
-exports.getOwner = getOwner;
 exports.connect = connect;
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;

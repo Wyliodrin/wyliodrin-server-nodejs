@@ -50,7 +50,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 			for(var i=0; i<from.length; i++)
 			{
 				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
-				t.sendWyliodrin(from, tag);
+				t.sendWyliodrin(from, tag, false);
 			}
 		});
 	if(rc == terminal.TERMINAL_OK)
@@ -59,14 +59,14 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:id, shellid:term.id});
 		console.log(tag.root().toString());
-		t.sendWyliodrin(from, tag);
+		t.sendWyliodrin(from, tag, false);
 	}
 	else
 	{
 		console.log('terminal error');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:id});
-		t.sendWyliodrin(from, tag);
+		t.sendWyliodrin(from, tag, false);
 	}
 	return term;
 }

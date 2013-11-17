@@ -7,5 +7,6 @@
 	"fuse":"1",
 	"gadget": "raspberrypi",
 	"timeout":"2000",
-	"port":"8124"
+	"port":"8124",
+	"maxBuffer":"200"
 }

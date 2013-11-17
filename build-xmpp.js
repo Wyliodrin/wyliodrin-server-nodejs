@@ -1,3 +1,4 @@
+"use strict";
 var xmpp = null;
 var build = null;
 
@@ -19,13 +20,19 @@ function buildStanza(t, from, to, es, error)
 				{
 					var tag = new xmpp.Element("make", {action:es.attrs.action, response:"working",
 						request:es.attrs.request, projectid:es.attrs.projectid, source:source}).t(data);
-					t.sendWyliodrin(from, tag);
+					if(xmpp.ownerIsAvailable())
+						t.sendWyliodrin(from, tag, false);
+					else
+						t.sendWyliodrin(from, tag, true);
 				}
 				else
 				{
 					var tag = new xmpp.Element("make",{action:es.attrs.action, response:"done",
 						request:es.attrs.request, projectid:es.attrs.projectid, code:code});
-					t.sendWyliodrin(from, tag);
+					if(xmpp.ownerIsAvailable())
+						t.sendWyliodrin(from, tag, false);
+					else
+						t.sendWyliodrin(from, tag, true);
 				}
 			});
 		}

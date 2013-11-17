@@ -1,13 +1,14 @@
+"use strict";
 var pty = require('pty.js');
 
 var terminal_xmpp = null;
-MAX_TERMINALS = 1024;
-TERMINAL_ROWS = 24;
-TERMINAL_COLS = 80;
+var MAX_TERMINALS = 1024;
+var TERMINAL_ROWS = 24;
+var TERMINAL_COLS = 80;
 
-TERMINAL_E_NOT_FOUND = 1;
-TERMINAL_OK = 0;
-TERMINAL_E_NOT_ALLOC = 2;
+var TERMINAL_E_NOT_FOUND = 1;
+var TERMINAL_OK = 0;
+var TERMINAL_E_NOT_ALLOC = 2;
 
 var terminals=[];
 
