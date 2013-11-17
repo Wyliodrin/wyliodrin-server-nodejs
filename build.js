@@ -2,6 +2,7 @@
 var path = require('path');
 var fs = require('fs');
 var child_process = require('child_process');
+var _ = require('underscore');
 
 var PATH_ERROR = 1;
 var COPY_ERROR = 2;
@@ -40,6 +41,7 @@ function load(modules)
 
 function validatePath(id, returnPath)
 {
+	var validPath;
 	if(id.indexOf('/') == -1)
 		validPath = path.join(buildFile, id)
 	else
@@ -49,7 +51,7 @@ function validatePath(id, returnPath)
 
 function startBuildProcess(command, args, path, sendOutput, done, id)
 {
-	var makeProcess = child_process.spawn(command,args,{cwd:path, env:{id:id, port:port}});
+	var makeProcess = child_process.spawn(command,args,{cwd:path, env:_.extend(process.env,{wyliodrinid:id, wyliodrinport:port})});
 	processArray[id] = makeProcess;
 	makeProcess.stdout.on('data', function(data){
 		var out = new Buffer(data).toString('base64');
@@ -64,7 +66,7 @@ function startBuildProcess(command, args, path, sendOutput, done, id)
 		processArray[id] = null;
 	});
 	// done();
-}
+} 
 
 function make(id, command, args, address, sendOutput)
 {
@@ -73,10 +75,12 @@ function make(id, command, args, address, sendOutput)
 	{
 		if(buildPath)
 		{
+			console.log('build path');
 			child_process.exec('rm -rf '+buildPath, {maxBuffer:10*1024, cwd:buildFile},
 				function(error, stdout, stderr){
 					if(files.canMount())
 					{
+						console.log('can mount');
 						child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
 						function(error, stdout, stderr){	
 							console.log ('ln -s Makefile.'+gadget+' Makefile '+buildPath+'/'+id);

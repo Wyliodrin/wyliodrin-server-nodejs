@@ -1,5 +1,6 @@
 "use strict";
 var pty = require('pty.js');
+var _ = require('underscore');
 
 var terminal_xmpp = null;
 var MAX_TERMINALS = 1024;
@@ -11,9 +12,12 @@ var TERMINAL_OK = 0;
 var TERMINAL_E_NOT_ALLOC = 2;
 
 var terminals=[];
+var port;
 
 function load(modules)
 {
+	port = parseInt(modules.config.port);
+	console.log('port = '+port);
 	terminal_xmpp = modules.terminal_xmpp;
 	for(var i=0; i<MAX_TERMINALS; i++)
 	{
@@ -116,7 +120,7 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 		  cols: termWidth,
 		  rows: termHeight,
 		  cwd: env,
-		  env: process.env
+		  env:_.extend(process.env,{wyliodrin_id:projectId, wyliodrin_port:port})
 		});
 	
 		t.terminal = term;
@@ -133,12 +137,16 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 			send_data(data64, t.from);
 			// send_data(data);
 		});
-		term.on('close', function(){
+		term.on('exit', function(){
 			console.log('terminal closed');
-			if(term.projectId)
+			if(t.projectId)
 			{
-				terminal_xmpp.closeProject(term.projectId);
+				console.log('term has proj id');
+				terminal_xmpp.closeProject(t.projectId);
 			}
+			terminal_xmpp.notifyClosedTerminal(id, t.from);
+			terminals[id] = null;
+
 		});
 		// term.write('blabla\r');
 		return TERMINAL_OK
@@ -151,7 +159,7 @@ function sendKeysToTerminal(id, keys)
 	var t = find_terminal_by_id(id);
 	if(t != null)
 	{
-		for (i=0; i<keys.length; i++)
+		for (var i=0; i<keys.length; i++)
 		{
 			t.terminal.write(keys[i]);
 		}
@@ -175,6 +183,7 @@ exports.destroyTerminal = destroy_terminal;
 exports.startTerminal = start_terminal;
 exports.sendKeysToTerminal = sendKeysToTerminal;
 exports.TERMINAL_OK = TERMINAL_OK;
+exports.MAX_TERMINALS = MAX_TERMINALS;
 
 exports.load = load;
 exports.attachTerminal = attachTerminal;

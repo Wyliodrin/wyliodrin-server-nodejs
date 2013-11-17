@@ -8,10 +8,14 @@ var COMMAND = '/bin/bash';
 
 var buildFile = null;
 var INVALID_ID = -2;
+
+var wxmpp = null;
+
 function load(modules)
 {
 	xmpp = modules.xmpp;
 	terminal = modules.terminal;
+	wxmpp = modules.wxmpp;
 }
 
 function loadConfig(configs)
@@ -50,7 +54,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 			for(var i=0; i<from.length; i++)
 			{
 				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
-				t.sendWyliodrin(from, tag, false);
+				t.sendWyliodrin(from[i], tag, false);
 			}
 		});
 	if(rc == terminal.TERMINAL_OK)
@@ -78,6 +82,7 @@ function shell_stanza(t, from, to, es, error)
 	console.log('error='+error);
 	if(error == 0)
 	{
+		if(!es.attrs.err){
 		if(es.attrs.action == 'open')
 		{
 			if(!es.attrs.projectid)
@@ -91,6 +96,7 @@ function shell_stanza(t, from, to, es, error)
 				{
 					if(projectsDict.has(es.attrs.projectid))
 					{
+						console.log('attachTerminal');
 						var id = projectsDict.get(es.attrs.projectid);
 						terminal.attachTerminal(from, id);	
 					}
@@ -121,14 +127,14 @@ function shell_stanza(t, from, to, es, error)
 			}
 			else
 			{
-				var tag = new xmpp.Element('shells', {action:close, request:es.attrs.request, code:INVALID_ID});
+				var tag = new xmpp.Element('shells', {action:'close', request:es.attrs.request, code:INVALID_ID});
 				t.sendWyliodrin(from, tag);
 			}
 		}
 		if(es.attrs.action == 'list')
 		{
 			projectsDict.forEach(function(value, key){
-				var tag = new xmpp.Element('shells',{action:list, request:es.attrs.request}).c('project',{projectid:key});
+				var tag = new xmpp.Element('shells',{action:'list', request:es.attrs.request}).c('project',{projectid:key});
 				t.sendWyliodrin(from.tag);
 			});
 		}
@@ -140,18 +146,34 @@ function shell_stanza(t, from, to, es, error)
 			var rc = terminal.sendKeysToTerminal(id, new Buffer(es.getText(),'base64').toString());
 		}
 	}
+
+}
 	
 }
 
 function closeProject(projectId)
 {
+	console.log('close project ' +projectId);
 	if(projectsDict.has(projectId))
 	{
+		console.log('removing projectId');
 		projectsDict.delete(projectId);
 	}
 }
 
+function notifyClosedTerminal(id, from)
+{
+	var t = wxmpp.getConnection();
+	var tag = new xmpp.Element('shells',{action:'close', status:'done', shellid:id});
+	for(var i=0; i<from.length; i++)
+	{
+		t.sendWyliodrin(from[i], tag);
+	}
+}
 
+
+exports.notifyClosedTerminal = notifyClosedTerminal;
 exports.shellStanza = shell_stanza;
 exports.load = load;
 exports.loadConfig = loadConfig;
+exports.closeProject = closeProject;

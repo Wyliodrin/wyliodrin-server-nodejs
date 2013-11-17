@@ -11,7 +11,6 @@ function load(modules)
 	boardType = modules.config.gadget;
 	xmpp = modules.xmpp;
 	wxmpp = modules.wxmpp;
-	owner = modules.config.owner;
 }
 
 function sendStartInfo(from)
@@ -41,7 +40,6 @@ function sendInfo(from)
 	}
 }
 
-startInfo();
 
 exports.sendStartInfo = sendStartInfo;
 exports.load = load;

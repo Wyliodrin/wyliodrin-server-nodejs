@@ -23,7 +23,7 @@ function sendSignal(s)
 		if(s.value)
 		{
 			var tag = new xmpp.Element('signal', s);
-			if(xmpp.ownerIsAvailable())
+			if(wxmpp.ownerIsAvailable())
 				t.sendWyliodrin(owner, tag, false);
 			else
 				t.sendWyliodrin(owner, tag, true);
@@ -35,7 +35,7 @@ function sendSignal(s)
 			{
 				tag.c('component',{name:component[i].signal, value:component[i].value});
 			}
-			if(xmpp.ownerIsAvailable())
+			if(wxmpp.ownerIsAvailable())
 				t.sendWyliodrin(owner, tag, false);
 			else
 				t.sendWyliodrin(owner, tag, true);
@@ -44,6 +44,7 @@ function sendSignal(s)
 	}
 	else
 	{
+		console.log('push signal');
 		signals.push(s)
 	}
 		
@@ -69,7 +70,7 @@ function sendSignalBuffer()
 					tag.c('component',{name:signals[i].component[j].signal, value:signals[i].component[j].value});
 			}			
 		}
-		if(xmpp.ownerIsAvailable())
+		if(wxmpp.ownerIsAvailable())
 				t.sendWyliodrin(owner, tag, false);
 			else
 				t.sendWyliodrin(owner, tag, true);

@@ -405,8 +405,10 @@ function main()
 {
   if(canMount())
   {
-    child_process.exec('fusermount -u '+mountFile);
-    f4js.start(mountFile, handlers, true);
+    child_process.exec('sudo umount -f '+mountFile, function (err, stdout, stderr)
+    {
+      f4js.start(mountFile, handlers, true);
+    });
   }
   if(wxmpp.checkConnected)
   {

@@ -25,7 +25,7 @@ function startSocketServer()
 			var tokens = line.split(' ');
 			if(!id)
 			{
-				if((tokens.length == 2) && (tokens[0] == "id"))
+				if((tokens.length == 2) && (tokens[0] == "id") && (tokens[1] != 'undefined'))
 				{
 					id = tokens[1];
 					socketArray[id] = c;

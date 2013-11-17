@@ -117,40 +117,42 @@ function files_stanza(t, from, to, es, error)
 function getAttr(path, sendResult)
 {
 	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
-	if(wxmpp.checkConnected)
+	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files',{action:"attributes", path:path});
-			if(xmpp.ownerIsAvailable())
-				t.sendWyliodrin(owner, tag, false);
-			else
-				t.sendWyliodrin(owner, tag, true);
+			t.sendWyliodrin(owner, tag, false);
 			addToRequests('attributes '+path, sendResult);	
 		}
 		else
 			sendResult(-2, null);
+	}
+	else
+	{
+		sendResult(-2);
 	}
 }
 
 function readDir(path, sendResult)
 {
 	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
-	if(wxmpp.checkConnected)
+	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'list', path:path});
-			if(xmpp.ownerIsAvailable())
-				t.sendWyliodrin(owner, tag, false);
-			else
-				t.sendWyliodrin(owner, tag, true);
+			t.sendWyliodrin(owner, tag, false);
 			addToRequests('list '+path, sendResult);
 		}
 		else
 			sendResult(-2,null);
+	}
+	else
+	{
+		sendResult(-2);
 	}
 }
 
@@ -164,20 +166,22 @@ function addToRequests(key, value)
 
 function open(path, sendResult)
 {
-	if(wxmpp.checkConnected)
+	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
+	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'open', path:path});
-			if(xmpp.ownerIsAvailable())
-				t.sendWyliodrin(owner, tag, false);
-			else
-				t.sendWyliodrin(owner, tag, true);
+			t.sendWyliodrin(owner, tag, false);
 			addToRequests('open '+path, sendResult);
 		}
 		else
 			sendResult(-2);
+	}
+	else
+	{
+		sendResult(-2);
 	}
 }
 
@@ -193,20 +197,22 @@ function ownerUnavailable()
 
 function read(path,offset,len,sendResult)
 {
-	if(wxmpp.checkConnected)
+	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
+	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
 			var tag = new xmpp.Element('files', {action:'read', path:path, offset:offset, length:len});
-			if(xmpp.ownerIsAvailable())
-				t.sendWyliodrin(owner, tag, false);
-			else
-				t.sendWyliodrin(owner, tag, true);
+			t.sendWyliodrin(owner, tag, false);
 			addToRequests('read '+path, sendResult);
 		}
 		else
 			sendResult(-2,null,null);
+	}
+	else
+	{
+		sendResult(-2);
 	}
 }
 

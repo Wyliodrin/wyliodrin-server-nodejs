@@ -32,7 +32,7 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
 
         this.on ('stanza', function (stanza)
         {
-                // console.log (stanza.root().toString());
+                 console.log ('received = '+stanza.root().toString());
                 if (stanza.is('iq'))
                 {
                         var p = stanza.getChild ('ping');
@@ -83,11 +83,13 @@ xmpp.Client.prototype.tag = function (name, namespace, activity)
 
 xmpp.Client.prototype.sendWyliodrin = function (to, stanza, store)
 {
+    console.log('send wyliodrin');
         stanza.attrs.xmlns = WYLIODRIN_NAMESPACE;
         var s=new xmpp.Element ('message', {to: to}).cnode(stanza);
-        // console.log (s.root().toString());
+         console.log ('sent = '+s.root().toString());
         if(!store)
         {
+            console.log('send');
         	this.send (s);
         }
         else

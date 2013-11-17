@@ -17,6 +17,8 @@ var available = false;
 var signal_xmpp = null;
 var info = null;
 
+var intervalID = null;
+
 
 function load(modules)
 {
@@ -36,6 +38,8 @@ function connect()
 	{
 		
 		connection = new xmpp.Client({jid:config.jid,password:config.password,preferredSaslMechanism:'PLAIN'});
+		connection.connection.socket.setTimeout (0);
+		connection.connection.socket.setKeepAlive (true, 100);
 		isConnected = true;
 		signal_xmpp.sendSignalBuffer();
 		connection.on ('error', function(error)
@@ -99,16 +103,20 @@ function connect()
 					available = true;
 					connection.emptyStanzaBuffer(); 
 					info.sendStartInfo(from);
-					while(available)
-					{
-						setTimeout(function(){info.sendInfo(from);}, 2000);
-					}
+					//intervalID = setInterval(function(){	
+					//info.sendInfo(from);}, 2000);
+					
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{
 					console.log('unavailable');
 					available = false;
 					files_xmpp.ownerUnavailable();
+					// if(intervalID)
+					// {
+					//		clearInterval(intervalID);
+					//		intervalID = null;
+					// }
 				}
 			}
 		});		
