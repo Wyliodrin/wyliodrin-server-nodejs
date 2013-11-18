@@ -56,12 +56,12 @@ function find_terminal_by_id(id)
 	while(i<terminals.length)
 	{
 		if(terminals[i])
-{
-		if(terminals[i].id == id)
-			return terminals[i];
+		{
+			if(terminals[i].id == id)
+				return terminals[i];
+		}
 		i++;
 	}
-}
 	return null;
 }
 
@@ -156,7 +156,9 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 
 function sendKeysToTerminal(id, keys)
 {
+	console.log ('sending keys');
 	var t = find_terminal_by_id(id);
+	console.log (t);
 	if(t != null)
 	{
 		for (var i=0; i<keys.length; i++)
@@ -166,7 +168,10 @@ function sendKeysToTerminal(id, keys)
 		return TERMINAL_OK;
 	}
 	else
+	{
+		console.log ('terminal not found '+id);
 		return TERMINAL_E_NOT_FOUND;
+	}
 }
 
 function attachTerminal(from, id)
