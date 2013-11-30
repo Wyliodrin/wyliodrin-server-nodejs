@@ -65,6 +65,10 @@ function load()
 	else
 	{
 		console.log ('cannot load wyliodrin.json');
+		setTimeout (function ()
+		{
+			console.log ('exiting');
+		}, 50000);
 	}
 }
 
