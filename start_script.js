@@ -61,6 +61,10 @@ function load()
 		modulesDict.info.load(modulesDict);
 	
 		console.log('loaded');
+		
+		modulesDict.wxmpp.connect();
+		modulesDict.files.main();
+		modulesDict.signal.startSocketServer();
 	}
 	else
 	{
@@ -73,9 +77,6 @@ function load()
 }
 
 load();
-modulesDict.wxmpp.connect();
-modulesDict.files.main();
-modulesDict.signal.startSocketServer();
 
 
 exports.config = d;
