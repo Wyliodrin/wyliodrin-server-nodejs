@@ -28,7 +28,7 @@ function loadConfig(configs)
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
 	var term = terminal.allocTerminal(from);
-	console.log('term allocated');
+	// console.log('term allocated');
 	if(!es.attrs.height)
 		height = 0;
 	else
@@ -59,15 +59,15 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		});
 	if(rc == terminal.TERMINAL_OK)
 	{
-		console.log('terminal ok');
+		// console.log('terminal ok');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:id, shellid:term.id});
-		console.log(tag.root().toString());
+		// console.log(tag.root().toString());
 		t.sendWyliodrin(from, tag, false);
 	}
 	else
 	{
-		console.log('terminal error');
+		// console.log('terminal error');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:id});
 		t.sendWyliodrin(from, tag, false);
@@ -78,8 +78,8 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 
 function shell_stanza(t, from, to, es, error)
 {
-	console.log('shell_stanza');
-	console.log('error='+error);
+	// console.log('shell_stanza');
+	// console.log('error='+error);
 	if(error == 0)
 	{
 		if(!es.attrs.err){
@@ -87,7 +87,7 @@ function shell_stanza(t, from, to, es, error)
 		{
 			if(!es.attrs.projectid)
 			{
-				console.log('open');
+				// console.log('open');
 				makeTerminal(t, from, to, es, error, COMMAND, [],process.env.HOME);		
 			}
 			else
@@ -96,7 +96,7 @@ function shell_stanza(t, from, to, es, error)
 				{
 					if(projectsDict.has(es.attrs.projectid))
 					{
-						console.log('attachTerminal');
+						// console.log('attachTerminal');
 						var id = projectsDict.get(es.attrs.projectid);
 						terminal.attachTerminal(from, id);	
 					}
@@ -153,10 +153,10 @@ function shell_stanza(t, from, to, es, error)
 
 function closeProject(projectId)
 {
-	console.log('close project ' +projectId);
+	// console.log('close project ' +projectId);
 	if(projectsDict.has(projectId))
 	{
-		console.log('removing projectId');
+		// console.log('removing projectId');
 		projectsDict.delete(projectId);
 	}
 }
