@@ -37,7 +37,7 @@ function files_stanza(t, from, to, es, error)
 				var stats = {};
 				stats.mode = 0;
 				stats.size = 0;
-				console.log (err);
+				// console.log (err);
 				if(err == 0)
 				{
 					type = es.attrs.type;
@@ -57,7 +57,7 @@ function files_stanza(t, from, to, es, error)
 				}
 				_.each (requests.get ('attributes '+es.attrs.path), function (sendResult)
 				{
-					console.log ('files-xmpp.js sending result for attributes');
+					// console.log ('files-xmpp.js sending result for attributes');
 					sendResult (err, stats);
 				});
 				requests.delete ('attributes '+es.attrs.path);
@@ -78,7 +78,7 @@ function files_stanza(t, from, to, es, error)
 						names.push(child.attrs.filename);
 					});
 					_.each(requests.get('list '+es.attrs.path), function(sendResult){
-						console.log ('files-xmpp.js sending result for list');
+						// console.log ('files-xmpp.js sending result for list');
 						sendResult(err, names);
 					});
 				}
@@ -116,7 +116,7 @@ function files_stanza(t, from, to, es, error)
 
 function getAttr(path, sendResult)
 {
-	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
+	// console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
 	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
@@ -137,7 +137,7 @@ function getAttr(path, sendResult)
 
 function readDir(path, sendResult)
 {
-	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
+	// console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
 	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
@@ -166,7 +166,7 @@ function addToRequests(key, value)
 
 function open(path, sendResult)
 {
-	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
+	// console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
 	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
@@ -197,7 +197,7 @@ function ownerUnavailable()
 
 function read(path,offset,len,sendResult)
 {
-	console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
+	// console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
 	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
