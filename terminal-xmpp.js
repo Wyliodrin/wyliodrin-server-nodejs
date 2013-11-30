@@ -102,7 +102,7 @@ function shell_stanza(t, from, to, es, error)
 					}
 					else
 					{
-						var t = makeTerminal(t, from, to, es, error, 'make', ['run'], buildFile+'/'+es.attrs.projectid);
+						var t = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
 						projectsDict.set(es.attrs.projectid,t.id);
 					}					
 					
