@@ -47,11 +47,11 @@ function loadConfig(configs)
  */
 function getattr(path, cb) 
 {    
-  console.log('files.js get attr = '+path);
+  // console.log('files.js get attr = '+path);
    var stat = {};
 
    files_xmpp.getAttr(path,function(err, attrs){
-   	console.log ('files.js responding get attr');
+   	// console.log ('files.js responding get attr');
    	if(err == 0)
    	{
    		stat.size = attrs.size;
@@ -73,12 +73,12 @@ function getattr(path, cb)
  */
 function readdir(path, cb) 
 {
-	console.log ('file.js read dir path = '+path);
+	// console.log ('file.js read dir path = '+path);
   files_xmpp.readDir(path,function(err, names){
-  	console.log ('file.js responding read dir');
+  	// console.log ('file.js responding read dir');
   	if(err != 0)
   		err = ERROR;
-  		console.log ('names: '+names);
+  		// console.log ('names: '+names);
   		cb(err, names);
   });
 }
@@ -118,13 +118,13 @@ function read(path, offset, len, buf, fh, cb) {
   files_xmpp.read(path,offset,len, function(err,data,length){
     if(err == 0)
     {
-      console.log('err = 0');
+      // console.log('err = 0');
       err = length;
       buf.write(data, 0, length, 'ascii');
     }
     else
     {
-      console.log('else error');
+      // console.log('else error');
       err = ERROR;
     }
     cb(err);
