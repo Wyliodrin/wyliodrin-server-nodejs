@@ -17,7 +17,7 @@ var port;
 function load(modules)
 {
 	port = parseInt(modules.config.port);
-	console.log('port = '+port);
+	// console.log('port = '+port);
 	terminal_xmpp = modules.terminal_xmpp;
 	for(var i=0; i<MAX_TERMINALS; i++)
 	{
@@ -103,7 +103,7 @@ function destroy_terminal(id,from,action, sendResponse)
 
 function start_terminal(id, projectId, command, args, width, height, env, send_data)
 {
-	console.log('start terminal');
+	// console.log('start terminal');
 	var t = find_terminal_by_id(id);
 	//console.log(t.id);
 	var termWidth = TERMINAL_COLS;
@@ -114,7 +114,7 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 			termWidth = width;
 		if(height != 0)
 			termHeight = height;
-		console.log('not null');
+		// console.log('not null');
 		var term = pty.spawn(command, args, {
 		  name: 'xterm',
 		  cols: termWidth,
@@ -138,10 +138,10 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 			// send_data(data);
 		});
 		term.on('exit', function(){
-			console.log('terminal closed');
+			// console.log('terminal closed');
 			if(t.projectId)
 			{
-				console.log('term has proj id');
+				// console.log('term has proj id');
 				terminal_xmpp.closeProject(t.projectId);
 			}
 			terminal_xmpp.notifyClosedTerminal(id, t.from);
@@ -156,9 +156,9 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 
 function sendKeysToTerminal(id, keys)
 {
-	console.log ('sending keys');
+	// console.log ('sending keys');
 	var t = find_terminal_by_id(id);
-	console.log (t);
+	// console.log (t);
 	if(t != null)
 	{
 		for (var i=0; i<keys.length; i++)
