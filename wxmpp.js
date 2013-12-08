@@ -72,6 +72,11 @@ function connect()
 		{
 		  console.log (config.jid+'>'+stanza.root().toString());
 		});
+		
+		connection.on ('end', function ()
+		{
+			console.log ('disconnected');	
+		});
 	//	wxmpp.on ('stanza', function (stanza)
 	//	{
 	//	  console.log (this.jid+'>'+stanza.root().toString());
