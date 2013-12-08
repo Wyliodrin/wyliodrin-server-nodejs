@@ -120,7 +120,7 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 		  cols: termWidth,
 		  rows: termHeight,
 		  cwd: env,
-		  env:_.extend(process.env,{home:module.config.home,wyliodrin_id:projectId, wyliodrin_port:port})
+		  env:_.extend(process.env,{home:modules.config.home,wyliodrin_id:projectId, wyliodrin_port:port})
 		});
 	
 		t.terminal = term;
