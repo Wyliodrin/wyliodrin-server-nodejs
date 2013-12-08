@@ -143,7 +143,7 @@ function reconnect ()
 	setTimeout (function ()
 	{
 		delay = delay * 2;
-		if (delay) > 30*1000 delay = 100;
+		if (delay > 30*1000) delay = 100;
 		connect ();
 	}, delay);
 }
