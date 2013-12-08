@@ -98,7 +98,11 @@ function shell_stanza(t, from, to, es, error)
 					{
 						// console.log('attachTerminal');
 						var id = projectsDict.get(es.attrs.projectid);
-						terminal.attachTerminal(from, id);	
+						// terminal.attachTerminal(from, id);	
+						terminal.destroyTerminal(id, from, es.attrs.action, function(code, from){
+							var t = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
+							projectsDict.set(es.attrs.projectid,t.id);
+						});
 					}
 					else
 					{
