@@ -16,6 +16,7 @@ var XMPP = null;
 var available = false;
 var signal_xmpp = null;
 var info = null;
+var delay = 100;
 
 var intervalID = null;
 
@@ -36,26 +37,27 @@ function connect()
 {
 	if(!isConnected)
 	{
-		
 		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:true, preferredSaslMechanism:'PLAIN'});
-		connection.reconnect = true;
 		connection.connection.socket.setTimeout (0);
 		connection.connection.socket.setKeepAlive (true, 100);
 		isConnected = true;
 		signal_xmpp.sendSignalBuffer();
 		connection.on ('error', function(error)
 		{
+			reconnect ();
 		  console.error (error);
 		});
 
 		connection.on ('disconnect', function()
 		{
+			reconnect ();
 		  console.error ('disconnect');
 		  isConnected = false;
 		});
 
 		connection.on ('online', function()
 		{
+			delay = 100;
 		  console.log (config.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
@@ -76,7 +78,8 @@ function connect()
 		
 		connection.on ('end', function ()
 		{
-			console.log ('disconnected');	
+			isConnected = false;
+			reconnect ();
 		});
 	//	wxmpp.on ('stanza', function (stanza)
 	//	{
@@ -133,6 +136,16 @@ function connect()
 
 		isConnected = true;
 	}
+}
+
+function reconnect ()
+{
+	setTimeout (function ()
+	{
+		delay = delay * 2;
+		if (delay) > 30*1000 delay = 100;
+		connect ();
+	}, delay);
 }
 
 
