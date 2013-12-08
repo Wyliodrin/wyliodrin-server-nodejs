@@ -45,7 +45,7 @@ function connect()
 		connection.on ('error', function(error)
 		{
 			reconnect ();
-		  console.error (error);
+			console.error (error);
 		});
 
 		connection.on ('disconnect', function()
@@ -140,6 +140,7 @@ function connect()
 
 function reconnect ()
 {
+	console.log ('reconnecting '+delay);
 	setTimeout (function ()
 	{
 		delay = delay * 2;
