@@ -1,6 +1,7 @@
 "use strict";
 var f4js = require('fuse4js');
 var child_process = require('child_process');
+var fs = require ('fs');
 
 var files_xmpp =null;
 var xmpp = null;
@@ -11,7 +12,6 @@ var ERROR = -2;
 var mountFile = null;
 var fuse = null;
 var owner = null;
-
 
 function canMount()
 {
@@ -28,11 +28,13 @@ function load(modules)
 function loadConfig(configs)
 {
   mountFile = configs.mountFile;
-  try{
-  fuse = parseInt(configs.fuse);}
+  try
+  {
+  	fuse = fs.existsSync ('/dev/fuse');
+  }
   catch(e)
   {
-    fuse = 0;
+    fuse = false;
   }
   owner = configs.owner;
 
