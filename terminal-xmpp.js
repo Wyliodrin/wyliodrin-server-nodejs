@@ -51,7 +51,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	}
 	var rc = terminal.startTerminal(term.id, es.attrs.projectid, command, args, width, height, env, function (data, from)
 		{
-			for(var i=0; i<from.length; i++)
+			if (from) for(var i=0; i<from.length; i++)
 			{
 				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
 				t.sendWyliodrin(from[i], tag, false);
@@ -118,7 +118,7 @@ function shell_stanza(t, from, to, es, error)
 				var id = parseInt(es.attrs.shellid);}
 				catch(e){}
 				terminal.destroyTerminal(id, from, es.attrs.action, function(code, from){
-					for(var i = 0; i<from.length; i++)
+					if (from) for(var i = 0; i<from.length; i++)
 					{
 						var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, request:es.attrs.request, code:code});
 						t.sendWyliodrin(from[i], tag);
