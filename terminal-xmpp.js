@@ -10,6 +10,7 @@ var buildFile = null;
 var INVALID_ID = -2;
 
 var wxmpp = null;
+var home = null;
 
 function load(modules)
 {
@@ -21,6 +22,7 @@ function load(modules)
 function loadConfig(configs)
 {
 	buildFile = configs.buildFile;
+	home = config.home;
 }
 
 
@@ -88,7 +90,7 @@ function shell_stanza(t, from, to, es, error)
 			if(!es.attrs.projectid)
 			{
 				// console.log('open');
-				makeTerminal(t, from, to, es, error, COMMAND, [],process.env.HOME);		
+				makeTerminal(t, from, to, es, error, COMMAND, [], home);		
 			}
 			else
 			{
