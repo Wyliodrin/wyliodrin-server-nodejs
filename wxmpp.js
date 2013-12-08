@@ -37,7 +37,7 @@ function connect()
 	if(!isConnected)
 	{
 		
-		connection = new xmpp.Client({jid:config.jid,password:config.password,preferredSaslMechanism:'PLAIN'});
+		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:true, preferredSaslMechanism:'PLAIN'});
 		connection.connection.socket.setTimeout (0);
 		connection.connection.socket.setKeepAlive (true, 100);
 		isConnected = true;
