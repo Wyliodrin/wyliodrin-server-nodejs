@@ -110,7 +110,7 @@ function make(id, command, args, address, sendOutput)
 					else
 					{
 						console.log('address = '+address);
-						child_process.exec('wget '+address, {maxBuffer:30*1024, cwd:buildFile},function(error,stdout,stderr){
+						child_process.exec('wget --no-check-certificate '+address, {maxBuffer:30*1024, cwd:buildFile},function(error,stdout,stderr){
 							if(!error)
 							{
 								console.log("fisier = "+path.basename(address));
