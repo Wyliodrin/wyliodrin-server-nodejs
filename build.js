@@ -141,6 +141,7 @@ function make(id, command, args, address, sendOutput)
 							}
 							else
 							{
+								console.log (error);
 								sendOutput("Wget error", "system", error.code);
 							}
 						});
