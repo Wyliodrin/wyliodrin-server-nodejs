@@ -22,7 +22,7 @@ function load(modules)
 function loadConfig(configs)
 {
 	buildFile = configs.buildFile;
-	home = config.home;
+	home = configs.home;
 }
 
 
