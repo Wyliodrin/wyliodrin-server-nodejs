@@ -13,10 +13,12 @@ var TERMINAL_E_NOT_ALLOC = 2;
 
 var terminals=[];
 var port;
+var home = null;
 
 function load(modules)
 {
 	port = parseInt(modules.config.port);
+	home = modules.home;
 	// console.log('port = '+port);
 	terminal_xmpp = modules.terminal_xmpp;
 	for(var i=0; i<MAX_TERMINALS; i++)
@@ -120,7 +122,7 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 		  cols: termWidth,
 		  rows: termHeight,
 		  cwd: env,
-		  env:_.extend(process.env,{home:modules.config.home,wyliodrin_id:projectId, wyliodrin_port:port})
+		  env:_.extend(process.env,{home:home,wyliodrin_id:projectId, wyliodrin_port:port})
 		});
 	
 		t.terminal = term;
