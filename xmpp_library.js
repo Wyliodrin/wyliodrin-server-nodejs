@@ -37,7 +37,7 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
                 {
                         var p = stanza.getChild ('ping');
                         // console.log (stanza);
-                        if (p && stanza.type == 'get')
+                        if (p && stanza.attrs.type == 'get')
                         {
                                 // console.log ('ping');
                                 t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
