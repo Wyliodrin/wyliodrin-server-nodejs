@@ -39,6 +39,7 @@ npm install
 sudo adduser $USER $FUSE
 sudo mkdir /wyliodrin
 sudo chown $USER:$USER /wyliodrin
+cp libs/$GADGET/bash/* /wyliodrin
 mkdir /wyliodrin/projects
 mkdir /wyliodrin/projects/mount
 mkdir /wyliodrin/projects/projects_build

@@ -1,5 +1,6 @@
 "use strict";
 var pty = require('pty.js');
+var exec = require ('child_process').exec;
 var _ = require('underscore');
 
 var terminal_xmpp = null;
@@ -18,7 +19,7 @@ var home = null;
 function load(modules)
 {
 	port = parseInt(modules.config.port);
-	home = modules.home;
+	home = modules.config.home;
 	// console.log('port = '+port);
 	terminal_xmpp = modules.terminal_xmpp;
 	for(var i=0; i<MAX_TERMINALS; i++)
@@ -85,6 +86,7 @@ function destroy_terminal(id,from,action, sendResponse)
 				else
 				{
 					t.terminal.destroy();
+					exec ('sudo kill -9 '+t.terminal.pid);
 					terminals[id] = null;
 					sendResponse(TERMINAL_OK, [from]);
 				}
@@ -93,6 +95,7 @@ function destroy_terminal(id,from,action, sendResponse)
 			{
 				var from = t.from;
 				t.terminal.destroy();
+				exec ('sudo kill -9 '+t.terminal.pid);
 				terminals[id] = null;
 				sendResponse(TERMINAL_OK, from);
 			}
@@ -122,7 +125,7 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 		  cols: termWidth,
 		  rows: termHeight,
 		  cwd: env,
-		  env:_.extend(process.env,{home:home,wyliodrin_id:projectId, wyliodrin_port:port})
+		  env:_.extend(process.env,{HOME:home,wyliodrin_id:projectId, wyliodrin_port:port})
 		});
 	
 		t.terminal = term;

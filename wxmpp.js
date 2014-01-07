@@ -46,6 +46,7 @@ function connect()
 		{
 			reconnect ();
 			console.error (error);
+			isConnected = false;
 		});
 
 		connection.on ('disconnect', function()
