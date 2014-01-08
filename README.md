@@ -11,11 +11,11 @@ For beginners, we recommand downloading the SD Card Image from www.wyliodrin.com
 For advanced users, you may install Wyliodrin Server yourself. Please follow the 
 instructions depending on your board.
 
-Raspberry Pi
-============
+  Raspberry Pi
+  ============
 
 Download the release branch and run the install script. Please read the script 
 before running it.
 
-  ./wyliodrin-server-raspberry-pi.sh
+    ./wyliodrin-server-raspberry-pi.sh
 
