@@ -9,8 +9,10 @@ FUSE=fuse
 # gadget
 GADGET=raspberrypi
 
+mkdir download
+
 echo Installing Server
-source wyliodrin-werver-install.sh
+source wyliodrin-server-install.sh
 
 echo Installing Raspberry Pi Libraries
 
@@ -24,7 +26,7 @@ cd ..
 
 # node-wiringpi
 echo Installing Node WiringPi
-npm install -g wiring-pi
+sudo npm install -g wiring-pi
 
 # python wiringpi2
 echo Installing Python WiringPi2
@@ -32,7 +34,7 @@ cd download
 git clone https://github.com/Gadgetoid/WiringPi2-Python.git
 cd WiringPi2-Python
 sudo python setup.py install
-cd ..
+cd ../..
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
@@ -63,5 +65,8 @@ sudo cp wyliodrin-server.conf /etc/init/wyliodrin.conf
 
 fi
 
-echo You need to logout and goin again
+echo You need to restart your Raspberry Pi
+
+sudo rm -rf download
+
 

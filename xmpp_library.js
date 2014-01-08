@@ -26,21 +26,21 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
 	//         console.log ('stanza');
         //         if (p && p.type == 'get')
         //         {
-                         console.log ('ping');
+        //                 console.log ('ping');
         //                 t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
         //         }
         // });
 
         this.on ('stanza', function (stanza)
         {
-                  console.log ('received = '+stanza.root().toString());
+                  // console.log ('received = '+stanza.root().toString());
                 if (stanza.is('iq'))
                 {
                         var p = stanza.getChild ('ping');
                         // console.log (stanza);
                         if (p && stanza.attrs.type == 'get')
                         {
-                                console.log ('ping');
+                                // console.log ('ping');
                                 t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
                         	
 			}

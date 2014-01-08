@@ -3,8 +3,6 @@
 # nodejs version to install
 NODE_VERSION=v0.10.23
 
-mkdir download
-
 # update packages list
 sudo apt-get update
 
@@ -29,6 +27,7 @@ then
 	./configure
 	make
 	sudo make install
+	cd ..
 else
 	echo failed to install nodejs
 fi
@@ -39,7 +38,7 @@ npm install
 sudo adduser $USER $FUSE
 sudo mkdir /wyliodrin
 sudo chown $USER:$USER /wyliodrin
-cp libs/$GADGET/bash/* /wyliodrin
+cp libs/$GADGET/bash/.bashrc /wyliodrin
 mkdir /wyliodrin/projects
 mkdir /wyliodrin/projects/mount
 mkdir /wyliodrin/projects/projects_build
@@ -53,6 +52,9 @@ sudo apt-get -y install fpc
 
 # install mono
 sudo apt-get -y install mono-devel
+
+# install objective-c
+sudo apt-get install -y gnustep-core-devel
 
 # install python, python-dev, pyserial
 sudo apt-get -y install python python-dev python-setuptools
