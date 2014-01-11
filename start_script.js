@@ -1,34 +1,79 @@
 var fs = require('fs');
 var CONFIG_FILE ='/boot/wyliodrin.json';
+var sys = require ('child_process');
+var ejs = require ('ejs');
 
 var d;
 var modulesDict;
 var _ = require('underscore');
+
+function wireless (ssid, scan_ssid, psk, wlanrestart)
+{
+	fs.readFile ('libs/'+d.gadget+'/wireless/wireless_form.conf', function (err, filewifiform)
+	{
+		if (err) console.log ('error wireless '+err);
+		else
+		{
+			console.log (filewifiform.toString());
+			filewifi = ejs.render (filewifiform.toString(), {ssid:d.ssid, scan_ssid:d.scan_ssid, psk:d.psk});
+			fs.writeFile ('libs/'+d.gadget+'/wireless/wireless.conf', filewifi, function (err)
+			{
+				if (err) console.log ('error wireless '+err);
+				if (wlanrestart) sys.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
+				{
+					if (error!=0) console.log ('error wireless '+stderr);
+				});
+			});
+		}
+	});
+
+
+}
+
 function load()
 {
 	var file_data = null;
+	var file_data_boot = null;
+	var file_data_wyliodrin = null;
+	
 	try
 	{
-		file_data = fs.readFileSync(CONFIG_FILE);
-		if (file_data!=null)
+		file_data_wyliodrin = fs.readFileSync('./wyliodrin.json');
+	}
+	catch (ex2)
+	{
+		
+	}
+
+	
+
+	try
+	{
+		file_data_boot = fs.readFileSync(CONFIG_FILE);
+		if (file_data_boot!=null)
 		{
-			fs.writeFileSync ('./wyliodrin.json', file_data);
+			fs.writeFileSync ('./wyliodrin.json', file_data_boot);
 		}
 	}
 	catch (ex)
 	{
-		try
-		{
-			file_data = fs.readFileSync('./wyliodrin.json');
-		}
-		catch (ex2)
-		{
-			
-		}
 	}
+
+	var newsettings = true;
+	if (file_data_boot!=null && file_data_wyliodrin!=null) newsettings = file_data_boot.toString()!=file_data_wyliodrin.toString();
+
+	console.log ('new settings '+newsettings);
+
+	if (file_data_boot) file_data = file_data_boot;
+	else file_data = file_data_wyliodrin;
+
 	if (file_data!=null)
 	{
 		d = JSON.parse(file_data);
+		if (newsettings && d.ssid)
+		{
+			wireless (d.ssid, d.scan_ssid, d.psk, true);
+		}
 		var xmpp_temp = require('./xmpp_library.js');
 		modulesDict = {	config:d, terminal:require('./terminal'),
 								wxmpp:require('./wxmpp'),

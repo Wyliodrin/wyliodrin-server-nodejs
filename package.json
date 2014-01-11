@@ -12,6 +12,7 @@
 	"underscore":"*",
 	"node-stringprep":"*",
 	"fuse4js":"*",
-	"carrier":"*"
+	"carrier":"*",
+	"ejs":"*"
 	}
 	}

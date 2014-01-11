@@ -4,6 +4,8 @@ var projectsDict = dict({});
 var xmpp = null;
 var terminal = null;
 
+var sys = require ('child_process');
+
 var COMMAND = '/bin/bash';
 
 var buildFile = null;
@@ -117,6 +119,13 @@ function shell_stanza(t, from, to, es, error)
 				}
 				
 			}
+		}
+		if(es.attrs.action == 'poweroff')
+		{
+			sys.exec ('sudo poweroff', function (error, stdout, stderr)
+			{
+				if (error) console.log ('poweroff error '+stderr);
+			{
 		}
 		if(es.attrs.action == 'close' || es.attrs.action == 'stop')
 		{

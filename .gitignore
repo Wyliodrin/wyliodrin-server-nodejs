@@ -11,6 +11,9 @@ pids
 logs
 results
 
+wyliodrin.json
+libs/raspberrypi/wireless/wireless.conf
+
 node_modules/
 download/
 npm-debug.log
