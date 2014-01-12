@@ -16,7 +16,7 @@ function wireless (ssid, scan_ssid, psk, wlanrestart)
 		{
 			console.log (filewifiform.toString());
 			filewifi = ejs.render (filewifiform.toString(), {ssid:d.ssid, scan_ssid:d.scan_ssid, psk:d.psk});
-			fs.writeFile ('libs/'+d.gadget+'/wireless/wireless.conf', filewifi, function (err)
+			fs.writeFile ('libs/wireless/wireless.conf', filewifi, function (err)
 			{
 				if (err) console.log ('error wireless '+err);
 				if (wlanrestart) sys.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
