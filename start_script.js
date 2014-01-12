@@ -70,7 +70,7 @@ function load()
 	if (file_data!=null)
 	{
 		d = JSON.parse(file_data);
-		if (newsettings && d.ssid)
+		if (newsettings && d.ssid && d.ssid!='')
 		{
 			wireless (d.ssid, d.scan_ssid, d.psk, true);
 		}
