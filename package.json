@@ -1,6 +1,6 @@
 {
 	 "name": "wyliodrin-server-nodejs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "start": "node start_script.js"
