@@ -42,7 +42,7 @@ cp libs/$GADGET/bash/.bashrc /wyliodrin
 mkdir /wyliodrin/projects
 mkdir /wyliodrin/projects/mount
 mkdir /wyliodrin/projects/projects_build
-sudo ln -s `pwd`/libs/$GADGET /usr/local/lib/wyliodrin
+sudo ln -s `pwd`/libs /usr/local/lib/wyliodrin
 
 # install java
 sudo apt-get -y install oracle-java7-jdk
