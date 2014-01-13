@@ -24,6 +24,30 @@ cd wiringPi
 ./build
 cd ..
 
+# perl wiringpi
+echo Installing Perl WiringPi
+cd download
+git clone --recursive https://github.com/Wyliodrin/WiringPi-Perl.git
+cd WiringPi-Perl
+./build.sh
+cp wiringpi.pm ../../libs/raspberrypi/perl
+cp wiringpi.so ../../libs/raspberrypi/perl
+cd ../..
+
+# php wiringpi
+echo Installing PHP WiringPi
+cd download
+git clone --recursive https://github.com/WiringPi/WiringPi-PHP.git
+cd WiringPi-PHP
+./build.sh
+sudo ./install.sh
+echo "extension=wiringpi.so
+pinmaptype=PINS" > wiringpi.ini
+sudo cp wiringpi.ini /etc/php5/conf.d/
+cd ../..
+
+
+
 # node-wiringpi
 echo Installing Node WiringPi
 sudo npm install -g wiring-pi
