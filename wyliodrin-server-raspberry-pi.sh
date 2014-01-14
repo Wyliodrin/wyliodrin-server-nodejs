@@ -37,7 +37,7 @@ cd ../..
 # php wiringpi
 echo Installing PHP WiringPi
 cd download
-git clone --recursive https://github.com/WiringPi/WiringPi-PHP.git
+git clone --recursive https://github.com/Wyliodrin/WiringPi-PHP.git
 cd WiringPi-PHP
 ./build.sh
 sudo ./install.sh
