@@ -42,7 +42,7 @@ cd WiringPi-PHP
 ./build.sh
 sudo ./install.sh
 echo "extension=wiringpi.so
-pinmaptype=PROGRAM" > wiringpi.ini
+pinmapmode=PROGRAM" > wiringpi.ini
 sudo cp wiringpi.ini /etc/php5/conf.d/
 cd ../..
 
