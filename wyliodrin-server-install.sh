@@ -44,6 +44,9 @@ mkdir /wyliodrin/projects/mount
 mkdir /wyliodrin/projects/projects_build
 sudo ln -s `pwd`/libs /usr/local/lib/wyliodrin
 
+# install mplayer
+sudo apt-get -y install mplayer
+
 # install java
 sudo apt-get -y install oracle-java7-jdk
 
@@ -56,8 +59,13 @@ sudo apt-get -y install mono-devel
 # install objective-c
 sudo apt-get install -y gnustep-core-devel
 
-# install python, python-dev, pyserial
+# install python, python-dev, pyserial,  mplayer.py
 sudo apt-get -y install python python-dev python-setuptools
 
-
-
+cd download
+if git clone https://github.com/baudm/mplayer.py.git
+then
+	cd mplayer.py
+	sudo python setup.py install
+fi
+cd ..
