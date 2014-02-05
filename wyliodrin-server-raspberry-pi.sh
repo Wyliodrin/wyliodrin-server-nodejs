@@ -24,6 +24,10 @@ cd wiringPi
 ./build
 cd ..
 
+# bass.dll
+sudo cp libs/raspberrypi/c/bass/linbass* /usr/local/lib
+sudo ldconfig
+
 # perl wiringpi
 echo Installing Perl WiringPi
 cd download
