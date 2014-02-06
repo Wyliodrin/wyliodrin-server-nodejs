@@ -60,6 +60,14 @@ sudo ldconfig
 # install python, python-dev, pyserial,  pybass, mplayer.py
 sudo apt-get -y install python python-dev python-setuptools
 
+# python wiringpi2
+echo Installing Python WiringPi2
+cd download
+git clone https://github.com/Gadgetoid/WiringPi2-Python.git
+cd WiringPi2-Python
+sudo python setup.py install
+cd ../..
+
 cd download
 if git clone https://github.com/baudm/mplayer.py.git
 then
