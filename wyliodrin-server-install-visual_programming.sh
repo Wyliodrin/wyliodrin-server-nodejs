@@ -44,6 +44,19 @@ mkdir /wyliodrin/projects/mount
 mkdir /wyliodrin/projects/projects_build
 sudo ln -s `pwd`/libs /usr/local/lib/wyliodrin
 
+# install wiringpi
+echo Installing WiringPi
+cd download
+git clone git://git.drogon.net/wiringPi
+cd wiringPi
+./build
+cd ..
+
+# bass.dll
+sudo cp libs/raspberrypi/c/bass/linbass* /usr/local/lib
+sudo ldconfig
+
+
 # install python, python-dev, pyserial,  pybass, mplayer.py
 sudo apt-get -y install python python-dev python-setuptools
 
