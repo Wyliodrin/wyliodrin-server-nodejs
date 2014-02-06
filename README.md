@@ -19,6 +19,11 @@ before running it.
 
     ./wyliodrin-server-raspberry-pi.sh
 
+To enable Visual Programming without the other languages, please read and run the script
+
+    ./wyliodrin-server-install-visual.sh
+
+
 If you want to enable wireless, you need to modify your /etc/network/interfaces file
 to use wyliodrin configuration
 
