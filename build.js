@@ -70,10 +70,10 @@ function startBuildProcess(command, args, path, sendOutput, done, id)
 
 function make(id, command, args, address, sendOutput)
 {
-	console.log('make');
 	validatePath(id, function(buildPath,id)
 	{
 		if(buildPath)
+		if(true)
 		{
 			console.log('build path');
 			child_process.exec('rm -rf '+buildPath, {maxBuffer:10*1024, cwd:buildFile},

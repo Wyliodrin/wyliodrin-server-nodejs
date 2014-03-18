@@ -1,21 +1,45 @@
 "use strict";
+var f4js = require('fuse4js');
 var child_process = require('child_process');
 var fs = require ('fs');
 
 var files_xmpp =null;
-var fuse = null;
+var xmpp = null;
+var wxmpp = null;
+
 var ERROR = -2;
+
+var mountFile = null;
+var fuse = null;
+var owner = null;
+
+function canMount()
+{
+  return fuse;
+}
 
 function load(modules)
 {
 	files_xmpp = modules.files_xmpp;
-  fuse = modules.fuse;
+  xmpp = modules.xmpp;
+  wxmpp = modules.wxmpp;
 }
 
-function canMount()
+function loadConfig(configs)
 {
-  return fuse.canMount();
+  mountFile = configs.mountFile;
+  try
+  {
+  	fuse = fs.existsSync ('/dev/fuse');
+  }
+  catch(e)
+  {
+    fuse = false;
+  }
+  owner = configs.owner;
+
 }
+
 
 /*
  * Handler for the getattr() system call.
@@ -378,5 +402,31 @@ function destroy(cb) {
    statfs: statfs
 };
 
+
+function main()
+{
+  if(canMount())
+  {
+    child_process.exec('sudo umount -f '+mountFile, function (err, stdout, stderr)
+    {
+      f4js.start(mountFile, handlers, true);
+    });
+  }
+  if(wxmpp.checkConnected)
+  {
+    if(wxmpp.ownerIsAvailable())
+    {
+      var t = wxmpp.getConnection();
+      var tag = new xmpp.Element('status',{fuse:canMount()});
+      if(xmpp.ownerIsAvailable())
+        t.sendWyliodrin(owner, tag, false);
+      else
+        t.sendWyliodrin(owner, tag, true);
+    }
+  }
+}
+
+exports.main = main;
 exports.load = load;
+exports.loadConfig = loadConfig;
 exports.canMount = canMount;

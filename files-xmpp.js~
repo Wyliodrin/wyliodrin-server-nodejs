@@ -1,4 +1,3 @@
-
 var dict = require('dict');
 var _ = require('underscore');
 
@@ -9,15 +8,19 @@ var requests = null;
 var owner = null;
 var config = null;
 
-
 function load(modules)
 {
-	config = modules.config;
 	xmpp = modules.xmpp;
 	wxmpp = modules.wxmpp;
-	mountFile = config.mountFile;
-	owner = config.owner;
-	requests = dict();	
+
+	requests = dict();
+	
+	config = modules.config;
+}
+
+function loadConfig(confs)
+{
+	owner = confs.owner;
 }
 
 function files_stanza(t, from, to, es, error)
@@ -216,6 +219,7 @@ function read(path,offset,len,sendResult)
 exports.read = read;
 exports.ownerUnavailable = ownerUnavailable;
 exports.load = load;
+exports.loadConfig = loadConfig;
 exports.filesStanza = files_stanza;
 exports.readDir = readDir;
 exports.getAttr = getAttr;
