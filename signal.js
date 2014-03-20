@@ -21,7 +21,7 @@ function startSocketServer()
 			console.log('id = '+id);
 		var id = null;
 		carrier.carry(c, function(line){
-		console.log('line = '+line);
+		// console.log('line = '+line);
 			var tokens = line.split(' ');
 			if(!id)
 			{

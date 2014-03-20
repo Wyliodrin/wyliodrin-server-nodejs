@@ -32,6 +32,7 @@ function loadConfig(configs)
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
 	var term = terminal.allocTerminal(from);
+	term.request = es.attrs.request;
 	// console.log('term allocated');
 	if(!es.attrs.height)
 		height = 0;
@@ -57,7 +58,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		{
 			if (from) for(var i=0; i<from.length; i++)
 			{
-				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
+				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",request:term.request}).t(data);
 				t.sendWyliodrin(from[i], tag, false);
 			}
 		});
@@ -65,7 +66,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	{
 		// console.log('terminal ok');
 		var id = es.attrs.request;
-		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:id, shellid:term.id});
+		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:term.request, shellid:term.id});
 		// console.log(tag.root().toString());
 		t.sendWyliodrin(from, tag, false);
 	}
@@ -73,7 +74,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	{
 		// console.log('terminal error');
 		var id = es.attrs.request;
-		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:id});
+		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:term.request});
 		t.sendWyliodrin(from, tag, false);
 	}
 	return term;
