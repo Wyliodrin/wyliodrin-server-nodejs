@@ -26,8 +26,6 @@ function wireless (ssid, scan_ssid, psk, wlanrestart)
 			});
 		}
 	});
-
-
 }
 
 function load()

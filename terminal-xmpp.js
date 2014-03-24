@@ -106,15 +106,15 @@ function shell_stanza(t, from, to, es, error)
 						// terminal.attachTerminal(from, id);	
 						terminal.destroyTerminal(id, from, 'stop', function(code, from){
 							var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, code:code});
-							t.sendWyliodrin(from[i], tag);
-							var t = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
-							projectsDict.set(es.attrs.projectid,t.id);
+							t.sendWyliodrin(from, tag);
+							var term = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
+							projectsDict.set(es.attrs.projectid,term.id);
 						});
 					}
 					else
 					{
-						var t = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
-						projectsDict.set(es.attrs.projectid,t.id);
+						var term = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
+						projectsDict.set(es.attrs.projectid,term.id);
 					}					
 					
 				}
