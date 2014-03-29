@@ -1,25 +1,45 @@
 "use strict";
+var f4js = require('fuse4js');
 var child_process = require('child_process');
 var fs = require ('fs');
-var f4js = require('fuse4js');
 
 var files_xmpp =null;
-var fuse = null;
+var xmpp = null;
+var wxmpp = null;
+
 var ERROR = -2;
+
 var mountFile = null;
+var fuse = null;
+var owner = null;
+
+function canMount()
+{
+  return fuse;
+}
 
 function load(modules)
 {
 	files_xmpp = modules.files_xmpp;
-  fuse = modules.fuse;
-  mountFile = modules.config.mountFile;
-  console.log("loaded");
+  xmpp = modules.xmpp;
+  wxmpp = modules.wxmpp;
 }
 
-function canMount()
+function loadConfig(configs)
 {
-  return fuse.canMount();
+  mountFile = configs.mountFile;
+  try
+  {
+  	fuse = fs.existsSync ('/dev/fuse');
+  }
+  catch(e)
+  {
+    fuse = false;
+  }
+  owner = configs.owner;
+
 }
+
 
 /*
  * Handler for the getattr() system call.
@@ -43,7 +63,6 @@ function getattr(path, cb)
    		err = ERROR; 		
    		cb(err, stat);
    });
-   console.log("got attribute");
 };
 
 //---------------------------------------------------------------------------
@@ -57,7 +76,6 @@ function getattr(path, cb)
 function readdir(path, cb) 
 {
 	// console.log ('file.js read dir path = '+path);
-  console.log('readdir');
   files_xmpp.readDir(path,function(err, names){
   	// console.log ('file.js responding read dir');
   	if(err != 0)
@@ -78,7 +96,7 @@ function readdir(path, cb)
  *     read(), write(), and release() calls.
  */
 function open(path, flags, cb) {
-  console.log('open');
+  
   // files_xmpp.open(path, function(err){
   //   cb(err);
   // });
@@ -99,7 +117,6 @@ function open(path, flags, cb) {
  */
 
 function read(path, offset, len, buf, fh, cb) {
-  console.log('read');
   files_xmpp.read(path,offset,len, function(err,data,length){
     if(err == 0)
     {
@@ -311,7 +328,6 @@ function read(path, offset, len, buf, fh, cb) {
  * cb: a callback to call when you're done initializing. It takes no arguments.
  */
 function init(cb) {
-  console.log('init');
   cb();
 }
 
@@ -330,7 +346,6 @@ function init(cb) {
  *  * c = undefined
  */
 function setxattr(path, name, value, size, a, b, c) {
-  console.log('setxattr');
   cb(0);
 }
 
@@ -342,7 +357,6 @@ function setxattr(path, name, value, size, a, b, c) {
 //  *     and stat is the result in the form of a statvfs structure (when err === 0)
 //  */
 function statfs(cb) {
-  console.log("statfs");
   cb(0, {
       bsize: 1000000,
       frsize: 1000000,
@@ -365,7 +379,6 @@ function statfs(cb) {
  * cb: a callback to call when you're done. It takes no arguments.
  */
 function destroy(cb) { 
-  console.log('destroy');
   cb();
 }
 
@@ -389,12 +402,31 @@ function destroy(cb) {
    statfs: statfs
 };
 
-function start()
+
+function main()
 {
-  f4js.start(mountFile, handlers, true);
-  console.log("fuse started");
+  if(canMount())
+  {
+    child_process.exec('sudo umount -f '+mountFile, function (err, stdout, stderr)
+    {
+      f4js.start(mountFile, handlers, true);
+    });
+  }
+  if(wxmpp.checkConnected)
+  {
+    if(wxmpp.ownerIsAvailable())
+    {
+      var t = wxmpp.getConnection();
+      var tag = new xmpp.Element('status',{fuse:canMount()});
+      if(xmpp.ownerIsAvailable())
+        t.sendWyliodrin(owner, tag, false);
+      else
+        t.sendWyliodrin(owner, tag, true);
+    }
+  }
 }
 
+exports.main = main;
 exports.load = load;
+exports.loadConfig = loadConfig;
 exports.canMount = canMount;
-exports.start = start;

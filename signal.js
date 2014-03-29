@@ -16,12 +16,10 @@ function load(modules)
 
 function startSocketServer()
 {
-		console.log('start socket');	
 		var server = net.createServer(function(c){
 			console.log('id = '+id);
 		var id = null;
 		carrier.carry(c, function(line){
-		// console.log('line = '+line);
 			var tokens = line.split(' ');
 			if(!id)
 			{
@@ -84,10 +82,6 @@ function startSocketClient(id)
 	var client = net.connect({port: 8124},
     function() { //'connect' listener
   	client.write('id '+id+'\n');
-	client.write('temperature 123\n');
-	client.write('light 156\n');
-	//client.write('sensor');
-	//client.write(' 1234\n');
 });
 client.on('end',function(data){
 	console.log('connection ended ');

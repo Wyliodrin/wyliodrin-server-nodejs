@@ -88,7 +88,7 @@ xmpp.Client.prototype.sendWyliodrin = function (to, stanza, store)
     // console.log('send wyliodrin');
         stanza.attrs.xmlns = WYLIODRIN_NAMESPACE;
         var s=new xmpp.Element ('message', {to: to}).cnode(stanza);
-         // console.log ('sent = '+s.root().toString());
+         console.log ('sent = '+s.root().toString());
         if(!store)
         {
             // console.log('send');

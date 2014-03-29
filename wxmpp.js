@@ -20,28 +20,15 @@ var delay = 100;
 
 var intervalID = null;
 
-
-function load(modules)
+function initConnection(modules,functie)
 {
 	xmpp = modules.xmpp;
-	terminal_xmpp = modules.terminal_xmpp;
-	build_xmpp = modules.build_xmpp;
-	files_xmpp = modules.files_xmpp;
 	config = modules.config;
-	XMPP = modules.XMPP;
-	signal_xmpp = modules.signal_xmpp;
-	info = modules.info;
-}
-
-function connect()
-{
 	if(!isConnected)
 	{
 		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:true, preferredSaslMechanism:'PLAIN'});
 		connection.connection.socket.setTimeout (0);
 		connection.connection.socket.setKeepAlive (true, 100);
-		isConnected = true;
-		signal_xmpp.sendSignalBuffer();
 		connection.on ('error', function(error)
 		{
 			reconnect ();
@@ -59,12 +46,18 @@ function connect()
 		connection.on ('online', function()
 		{
 			delay = 100;
+			isConnected = true;
 		  console.log (config.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
 		     );
+		  if(functie != null)
+		  {
+		  	console.log('functie != null');
+		  	functie();
+		  }
 		  connection.send(new xmpp.Element('presence',
 		  {
 		  	type:'subscribe',
@@ -82,14 +75,6 @@ function connect()
 			isConnected = false;
 			reconnect ();
 		});
-	//	wxmpp.on ('stanza', function (stanza)
-	//	{
-	//	  console.log (this.jid+'>'+stanza.root().toString());
-	//	  if (stanza.is('message') && stanza.attrs.type !== 'error')
-	//	  {
-	//	  	shells = stanza.getChild ('shells', 'wyliodrin');
-	//	 } 			  
-	//	});
 		connection.load(connection, function (from, to, stanza, error)
 		{
 			if (stanza.getName()=='presence')
@@ -121,7 +106,7 @@ function connect()
 				{
 					console.log('unavailable');
 					available = false;
-					files_xmpp.ownerUnavailable();
+					ownerUnavailable();
 					// if(intervalID)
 					// {
 					//		clearInterval(intervalID);
@@ -130,12 +115,36 @@ function connect()
 				}
 			}
 		});		
-		connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
-		connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
-		connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.filesStanza);
-		connection.tag('signal', XMPP.WYLIODRIN_NAMESPACE, signal_xmpp.signalStanza);
+	}
+}
 
-		isConnected = true;
+function load(modules)
+{
+	xmpp = modules.xmpp;
+	terminal_xmpp = modules.terminal_xmpp;
+	build_xmpp = modules.build_xmpp;
+	files_xmpp = modules.files_xmpp;
+	config = modules.config;
+	XMPP = modules.XMPP;
+	signal_xmpp = modules.signal_xmpp;
+	info = modules.info;
+}
+
+function loadSettings()
+{
+	connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
+	connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
+	connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.filesStanza);
+	connection.tag('signal', XMPP.WYLIODRIN_NAMESPACE, signal_xmpp.signalStanza);
+	if(signal_xmpp != null)
+		signal_xmpp.sendSignalBuffer();
+}
+
+function ownerUnavailable()
+{
+	if(files_xmpp != null)
+	{
+		files_xmpp.ownerUnavailable();
 	}
 }
 
@@ -175,9 +184,10 @@ function checkConnected()
 	return isConnected;
 }
 
-exports.connect = connect;
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;
 exports.load = load;
 exports.ownerIsAvailable = ownerIsAvailable;
+exports.initConnection = initConnection;
+exports.loadSettings = loadSettings;
 

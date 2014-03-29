@@ -57,7 +57,7 @@ function sendSignalBuffer()
 		console.log('send buffer');
 		var t = wxmpp.getConnection();
 		var tag = new xmpp.Element('signals');
-		for(i=0; i<signals.length; i++)
+		for(var i=0; i<signals.length; i++)
 		{
 			if(signals[i].value)
 			{

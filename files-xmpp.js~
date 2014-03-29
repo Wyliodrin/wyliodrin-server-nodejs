@@ -8,23 +8,26 @@ var requests = null;
 var owner = null;
 var config = null;
 
-
 function load(modules)
 {
-	config = modules.config;
 	xmpp = modules.xmpp;
 	wxmpp = modules.wxmpp;
-	mountFile = config.mountFile;
-	owner = config.owner;
-	requests = dict();	
+
+	requests = dict();
+	
+	config = modules.config;
+}
+
+function loadConfig(confs)
+{
+	owner = confs.owner;
 }
 
 function files_stanza(t, from, to, es, error)
 {
-	console.log('files stanza');
+
 	if(!error)
 	{
-		console.log("! err");
 		var action = es.attrs.action;
 		if(action == 'attributes')
 		{
@@ -114,7 +117,6 @@ function files_stanza(t, from, to, es, error)
 function getAttr(path, sendResult)
 {
 	// console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
-	console.log("check connected "+wxmpp.checkConnected());
 	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())
@@ -217,6 +219,7 @@ function read(path,offset,len,sendResult)
 exports.read = read;
 exports.ownerUnavailable = ownerUnavailable;
 exports.load = load;
+exports.loadConfig = loadConfig;
 exports.filesStanza = files_stanza;
 exports.readDir = readDir;
 exports.getAttr = getAttr;

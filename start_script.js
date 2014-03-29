@@ -1,126 +1,94 @@
+"use strict"
 var fs = require('fs');
-var CONFIG_FILE ='/boot/wyliodrin.json';
-var sys = require ('child_process');
-var ejs = require ('ejs');
+var path = require('path');
+var wificonfig = require('./wificonfig.js');
+var log = require('./log');
 
-var d;
-var modulesDict;
-var _ = require('underscore');
+var CONFIG_FILE =path.join(__dirname, 'wyliodrin.json');
+var E_NO_CONF = -1;
+var loadModules = null;
+var data_wyliodrin = null;
+var modulesDict = null;
 
-function wireless (ssid, scan_ssid, psk, wlanrestart)
-{
-	fs.readFile ('libs/'+d.gadget+'/wireless/wireless_form.conf', function (err, filewifiform)
-	{
-		if (err) console.log ('error wireless '+err);
-		else
-		{
-			console.log (filewifiform.toString());
-			filewifi = ejs.render (filewifiform.toString(), {ssid:d.ssid, scan_ssid:d.scan_ssid, psk:d.psk});
-			fs.writeFile ('libs/wireless/wireless.conf', filewifi, function (err)
-			{
-				if (err) console.log ('error wireless '+err);
-				if (wlanrestart) sys.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
-				{
-					if (error!=0) console.log ('error wireless '+stderr);
-				});
-			});
-		}
-	});
-}
+/*
+* Start steps:
+*	1. search /boot/wyliodrin.json file
+*		if exists --> Step 2
+* 		else search local wyliodrin.json file
+*			if not exists --> ERROR
+*			else --> Step 4
+*
+*  2. search local wyliodrin.json file
+*		if exists compare /boot/wyliodrin.json file
+*			if different restartWifi = true && --> Step 3
+*			else --> Step 4
+*		else restartWifi = true && --> Step 3
+*  
+*  3. replace local wyliodrin.json with /boot/wyliodrin.json --> Step 4
+*  
+*  4. restartWifi if true && --> Step 5
+*
+*  5. connect XMPP --> start fuse --> start socket 
+*		
+* 
+*/
 
 function load()
-{
-	var file_data = null;
-	var file_data_boot = null;
-	var file_data_wyliodrin = null;
-	
+{	
 	try
 	{
-		file_data_wyliodrin = fs.readFileSync('./wyliodrin.json');
+		var file_data_wyliodrin = fs.readFileSync('conf/wyliodrin.json');
+		data_wyliodrin = JSON.parse(file_data_wyliodrin);
 	}
-	catch (ex2)
+	catch(e)
 	{
-		
+		log.putError('cannot read local config file '+e);
 	}
-
-	
-
-	try
-	{
-		file_data_boot = fs.readFileSync(CONFIG_FILE);
-		if (file_data_boot!=null)
-		{
-			fs.writeFileSync ('./wyliodrin.json', file_data_boot);
-		}
-	}
-	catch (ex)
-	{
-	}
-
-	var newsettings = true;
-	if (file_data_boot!=null && file_data_wyliodrin!=null) newsettings = file_data_boot.toString()!=file_data_wyliodrin.toString();
-
-	console.log ('new settings '+newsettings);
-
-	if (file_data_boot) file_data = file_data_boot;
-	else file_data = file_data_wyliodrin;
-
-	if (file_data!=null)
-	{
-		d = JSON.parse(file_data);
-		if (newsettings && d.ssid && d.ssid!='')
-		{
-			wireless (d.ssid, d.scan_ssid, d.psk, true);
-		}
 		var xmpp_temp = require('./xmpp_library.js');
-		modulesDict = {	config:d, terminal:require('./terminal'),
-								wxmpp:require('./wxmpp'),
-								build_xmpp:require('./build-xmpp'),
-								files_xmpp:require('./files-xmpp'),
-								files:require('./files'),
-								terminal_xmpp:require('./terminal-xmpp'),							
-								xmpp:xmpp_temp.xmpp,
-								XMPP:xmpp_temp,
-								build:require('./build'),
-								signal_xmpp:require('./signal-xmpp'),
-								signal:require('./signal'),
-								info:require('./info')
-							};
-	
+		console.log('required');
+		modulesDict = {	config:data_wyliodrin,
+						terminal:require('./terminal'),
+						wxmpp:require('./wxmpp'),
+						build_xmpp:require('./build-xmpp'),
+						files_xmpp:require('./files-xmpp'),
+						files:require('./files'),
+						terminal_xmpp:require('./terminal-xmpp'),							
+						xmpp:xmpp_temp.xmpp,
+						XMPP:xmpp_temp,
+						build:require('./build'),
+						signal_xmpp:require('./signal-xmpp'),
+						signal:require('./signal'),
+						info:require('./info'),
+						log:require('./log'),
+						fuse:require('./fuse')
+					   };
+		modulesDict.wxmpp.load(modulesDict);	   
+		modulesDict.wxmpp.initConnection(modulesDict, 
+			function()
+			{
+				modulesDict.wxmpp.loadSettings();
+				modulesDict.files.load(modulesDict);
+				modulesDict.fuse.init(modulesDict, function(){
+												initRest();});});
+}
+
+function initRest()
+{
 		modulesDict.terminal.load(modulesDict);
-		modulesDict.wxmpp.load(modulesDict);
 		modulesDict.build_xmpp.load(modulesDict);
 		modulesDict.files_xmpp.load(modulesDict);
-		modulesDict.files.load(modulesDict);
 		modulesDict.terminal_xmpp.load(modulesDict);
 		modulesDict.build.load(modulesDict);
 		modulesDict.signal.load(modulesDict);
-		//xmpp_temp.load(modulesDict);
-		modulesDict.files_xmpp.loadConfig(d);
-		modulesDict.build.loadConfig(d);
-		modulesDict.terminal_xmpp.loadConfig(d);
-		modulesDict.files.loadConfig(d);
+		modulesDict.build.loadConfig(data_wyliodrin);
+		modulesDict.terminal_xmpp.loadConfig(data_wyliodrin);
 		modulesDict.signal_xmpp.load(modulesDict);
 		modulesDict.info.load(modulesDict);
-	
-		console.log('loaded');
-		
-		modulesDict.wxmpp.connect();
-		modulesDict.files.main();
+		//modulesDict.files.main();
 		modulesDict.signal.startSocketServer();
-	}
-	else
-	{
-		console.log ('cannot load wyliodrin.json');
-		setTimeout (function ()
-		{
-			console.log ('exiting');
-		}, 50000);
-	}
 }
 
-load();
-
-
-exports.config = d;
-exports.modules = modulesDict;
+wificonfig.init();
+setTimeout(function(){	
+	load();},30000);
+		
