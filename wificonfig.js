@@ -3,6 +3,7 @@ var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
 var ejs = require ('ejs');
+var log = require ('./log');
 
 var RASPBERRY = 'raspberry';
 var GALILEO = 'galileo';
@@ -12,17 +13,18 @@ var RETRY_TIME = 2000;
 
 var WIFICONF = path.join(__dirname, 'conf/wireless/wireless.conf');
 
-function init()
+function init(functie)
 {
 	console.log('init');
-	isRaspberry();
-	isGalileo();
+	isRaspberry(functie);
+	isGalileo(functie);
 }
 
 /* Function checks if the board is a raspberry pi. 
 		Step one. */
-function isRaspberry()
+function isRaspberry(functie)
 {
+	console.log('is raspberry');
 	var child  = child_process.exec('cat /proc/cpuinfo | grep BCM',
 		function(error, stdout, stderr)
 		{
@@ -30,22 +32,23 @@ function isRaspberry()
 				log.putError('exec error');
 			if(stdout != '')
 			{
-				findConfigFile(RASPBERRY);
+				findConfigFile(RASPBERRY,functie);
 			}
 		});
 }
 
 /* Function checks if the board is a galileo. 
 		Step one. */
-function isGalileo()
+function isGalileo(functie)
 {
 	//TODO
 }
 
 /* Function searches for config file depending on the platform.  
 	Step two. */
-function findConfigFile(platform)
+function findConfigFile(platform, functie)
 {
+	console.log('find config file');
 	if(platform == RASPBERRY)
 	{	var d = null;
 		var resetWIFI = false;
@@ -104,12 +107,17 @@ function findConfigFile(platform)
 			if(!resetWIFI)
 			{
 				if(!fs.existsSync(WIFICONF))
-					wifi(wifiNewData);
+					wifi(wifiNewData, functie);
+				else functie();
 			}
 			else
 			{
-				wifi(wifiNewData);
+				wifi(wifiNewData, functie);
 			}
+		}
+		else
+		{
+			functie();
 		}		
 	}
 }
@@ -122,56 +130,68 @@ function getConfigData()
 		d = JSON.parse(d);
 		return d;
 	}
-	catch(e)
+	catch(e){}
 	return null;
 }
 
-function wifi(d)
+function wifi(d, functie)
+{
+	console.log('wifi');
+	if(d != null)
 	{
-		if(d != null)
+		var WIFIFORM = path.join(__dirname,'conf',d.gadget,'/wireless/wireless_form.conf');
+		try
 		{
-			var WIFIFORM = path.join(__dirname,'conf',d.gadget,'/wireless/wireless_form.conf');
+			var wifiData = fs.readFileSync(WIFIFORM);
+			var fileWifi = ejs.render (wifiData.toString(), {ssid:d.ssid, scan_ssid:d.scan_ssid, psk:d.psk});
 			try
 			{
-				var wifiData = fs.readFileSync(WIFIFORM);
-				var fileWifi = ejs.render (wifiData.toString(), {ssid:d.ssid, scan_ssid:d.scan_ssid, psk:d.psk});
-				try
+				fs.writeFileSync(WIFICONF, fileWifi);
+				child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
 				{
-					fs.writeFileSync(WIFICONF, fileWifi);
-					child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
+					if (error!=null) 
 					{
-						if (error!=null) 
-						{
-							console.log("retry "+stderr);
-							/* retry after RETY_TIME miliseconds */
-							setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
+						console.log("retry "+stderr);
+						/* retry after RETY_TIME miliseconds */
+						setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
+									{
+										if (error!=null) 
 										{
-											if (error!=null) 
-											{
-												/* retry after 2*RETRY_TIME miliseconds */
-								
-												setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
+											/* retry after 2*RETRY_TIME miliseconds */
+							
+											setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
+												{
+													if (error!=null) 
 													{
-														if (error!=null) 
-														{
-															log.putError('Wifi error' +stderr);	
-														}
-													})}, 2*RETRY_TIME);
-											}
-										})}, RETRY_TIME);							
-						}
-					});
-				}
-				catch(e)
-				{
-					log.putError('Cannot write wifi file '+e);
-				}
+														log.putError('Wifi error' +stderr);	
+													}
+													else
+													{
+														functie();
+													}
+												})}, 2*RETRY_TIME);
+										}
+										else
+										{
+											functie();
+										}
+									})}, RETRY_TIME);							
+					}
+					else
+					{
+						functie();
+					}
+				});
 			}
 			catch(e)
 			{
-				log.putError('Cannot read wifi file '+e);
+				log.putError('Cannot write wifi file '+e);
 			}
-		}		
-	}
-
+		}
+		catch(e)
+		{
+			log.putError('Cannot read wifi file '+e);
+		}
+	}		
+}
 exports.init = init;

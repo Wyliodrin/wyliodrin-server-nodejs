@@ -88,7 +88,4 @@ function initRest()
 		modulesDict.signal.startSocketServer();
 }
 
-wificonfig.init();
-setTimeout(function(){	
-	load();},30000);
-		
+wificonfig.init(function(){load()});

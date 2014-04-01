@@ -1,3 +1,4 @@
+"use strict"
 var dict = require('dict');
 
 var projectsDict = dict({});
@@ -32,8 +33,11 @@ function loadConfig(configs)
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
 	var term = terminal.allocTerminal(from);
+	var width;
+	var height;
 	term.request = es.attrs.request;
 	// console.log('term allocated');
+	// console.log (es);
 	if(!es.attrs.height)
 		height = 0;
 	else
