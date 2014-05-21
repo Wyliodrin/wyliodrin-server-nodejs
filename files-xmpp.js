@@ -1,4 +1,3 @@
-
 var dict = require('dict');
 var _ = require('underscore');
 
@@ -22,9 +21,10 @@ function load(modules)
 
 function files_stanza(t, from, to, es, error)
 {
-
+	console.log('files stanza');
 	if(!error)
 	{
+		console.log("! err");
 		var action = es.attrs.action;
 		if(action == 'attributes')
 		{
@@ -114,6 +114,7 @@ function files_stanza(t, from, to, es, error)
 function getAttr(path, sendResult)
 {
 	// console.log ('owner is available attr'+wxmpp.ownerIsAvailable());
+	console.log("check connected "+wxmpp.checkConnected());
 	if(wxmpp.checkConnected())
 	{
 		if(wxmpp.ownerIsAvailable())

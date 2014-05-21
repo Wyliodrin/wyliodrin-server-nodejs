@@ -1,3 +1,4 @@
+"use strict"
 var dict = require('dict');
 
 var projectsDict = dict({});
@@ -32,7 +33,11 @@ function loadConfig(configs)
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
 	var term = terminal.allocTerminal(from);
+	var width;
+	var height;
+	term.request = es.attrs.request;
 	// console.log('term allocated');
+	// console.log (es);
 	if(!es.attrs.height)
 		height = 0;
 	else
@@ -57,7 +62,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		{
 			if (from) for(var i=0; i<from.length; i++)
 			{
-				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",}).t(data);
+				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",request:term.request}).t(data);
 				t.sendWyliodrin(from[i], tag, false);
 			}
 		});
@@ -65,7 +70,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	{
 		// console.log('terminal ok');
 		var id = es.attrs.request;
-		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:id, shellid:term.id});
+		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:term.request, shellid:term.id});
 		// console.log(tag.root().toString());
 		t.sendWyliodrin(from, tag, false);
 	}
@@ -73,7 +78,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	{
 		// console.log('terminal error');
 		var id = es.attrs.request;
-		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:id});
+		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:term.request});
 		t.sendWyliodrin(from, tag, false);
 	}
 	return term;
@@ -106,14 +111,14 @@ function shell_stanza(t, from, to, es, error)
 						terminal.destroyTerminal(id, from, 'stop', function(code, from){
 							var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, code:code});
 							t.sendWyliodrin(from, tag);
-							var t = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
-							projectsDict.set(es.attrs.projectid,t.id);
+							var term = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
+							projectsDict.set(es.attrs.projectid,term.id);
 						});
 					}
 					else
 					{
-						var t = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
-						projectsDict.set(es.attrs.projectid,t.id);
+						var term = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
+						projectsDict.set(es.attrs.projectid,term.id);
 					}					
 					
 				}

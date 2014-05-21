@@ -1,15 +1,19 @@
 "use strict";
 var child_process = require('child_process');
 var fs = require ('fs');
+var f4js = require('fuse4js');
 
 var files_xmpp =null;
 var fuse = null;
 var ERROR = -2;
+var mountFile = null;
 
 function load(modules)
 {
 	files_xmpp = modules.files_xmpp;
   fuse = modules.fuse;
+  mountFile = modules.config.mountFile;
+  console.log("loaded");
 }
 
 function canMount()
@@ -39,6 +43,7 @@ function getattr(path, cb)
    		err = ERROR; 		
    		cb(err, stat);
    });
+   console.log("got attribute");
 };
 
 //---------------------------------------------------------------------------
@@ -52,6 +57,7 @@ function getattr(path, cb)
 function readdir(path, cb) 
 {
 	// console.log ('file.js read dir path = '+path);
+  console.log('readdir');
   files_xmpp.readDir(path,function(err, names){
   	// console.log ('file.js responding read dir');
   	if(err != 0)
@@ -72,7 +78,7 @@ function readdir(path, cb)
  *     read(), write(), and release() calls.
  */
 function open(path, flags, cb) {
-  
+  console.log('open');
   // files_xmpp.open(path, function(err){
   //   cb(err);
   // });
@@ -93,6 +99,7 @@ function open(path, flags, cb) {
  */
 
 function read(path, offset, len, buf, fh, cb) {
+  console.log('read');
   files_xmpp.read(path,offset,len, function(err,data,length){
     if(err == 0)
     {
@@ -304,6 +311,7 @@ function read(path, offset, len, buf, fh, cb) {
  * cb: a callback to call when you're done initializing. It takes no arguments.
  */
 function init(cb) {
+  console.log('init');
   cb();
 }
 
@@ -322,6 +330,7 @@ function init(cb) {
  *  * c = undefined
  */
 function setxattr(path, name, value, size, a, b, c) {
+  console.log('setxattr');
   cb(0);
 }
 
@@ -333,6 +342,7 @@ function setxattr(path, name, value, size, a, b, c) {
 //  *     and stat is the result in the form of a statvfs structure (when err === 0)
 //  */
 function statfs(cb) {
+  console.log("statfs");
   cb(0, {
       bsize: 1000000,
       frsize: 1000000,
@@ -355,6 +365,7 @@ function statfs(cb) {
  * cb: a callback to call when you're done. It takes no arguments.
  */
 function destroy(cb) { 
+  console.log('destroy');
   cb();
 }
 
@@ -378,5 +389,12 @@ function destroy(cb) {
    statfs: statfs
 };
 
+function start()
+{
+  f4js.start(mountFile, handlers, true);
+  console.log("fuse started");
+}
+
 exports.load = load;
 exports.canMount = canMount;
+exports.start = start;

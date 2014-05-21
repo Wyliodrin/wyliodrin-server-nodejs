@@ -15,7 +15,7 @@ function load(modules)
 
 function sendStartInfo(from)
 {
-	if(wxmpp.checkConnected())
+	if(wxmpp != null && wxmpp.checkConnected())
 	{
 		var t = wxmpp.getConnection();
 		var tag = new xmpp.Element('info', {board:boardType, uptime:os.uptime(), loadavg1:os.loadavg()[0],

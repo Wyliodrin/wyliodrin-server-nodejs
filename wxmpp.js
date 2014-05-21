@@ -20,7 +20,7 @@ var delay = 100;
 
 var intervalID = null;
 
-function initConnection(modules)
+function initConnection(modules,functie)
 {
 	xmpp = modules.xmpp;
 	config = modules.config;
@@ -29,7 +29,6 @@ function initConnection(modules)
 		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:true, preferredSaslMechanism:'PLAIN'});
 		connection.connection.socket.setTimeout (0);
 		connection.connection.socket.setKeepAlive (true, 100);
-		//isConnected = true;
 		connection.on ('error', function(error)
 		{
 			reconnect ();
@@ -47,12 +46,18 @@ function initConnection(modules)
 		connection.on ('online', function()
 		{
 			delay = 100;
+			isConnected = true;
 		  console.log (config.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
 		     );
+		  if(functie != null)
+		  {
+		  	console.log('functie != null');
+		  	functie();
+		  }
 		  connection.send(new xmpp.Element('presence',
 		  {
 		  	type:'subscribe',
