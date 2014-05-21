@@ -13,6 +13,7 @@
 	"node-stringprep":"*",
 	"fuse4js":"*",
 	"carrier":"*",
-	"ejs":"*"
+	"ejs":"*",
+	"mkdirp":"*"
 	}
-	}
+}

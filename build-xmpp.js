@@ -18,6 +18,7 @@ function buildStanza(t, from, to, es, error)
 		{
 			build.make(es.attrs.projectid, "make", ["build"], es.attrs.address, function(data,source, code)
 			{
+				if (data) data = new Buffer (data).toString ('base64');
 				if(source)
 				{
 					var tag = new xmpp.Element("make", {action:es.attrs.action, response:"working",

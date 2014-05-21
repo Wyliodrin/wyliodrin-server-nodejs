@@ -12,7 +12,7 @@ function load(modules)
 {
 	files_xmpp = modules.files_xmpp;
   fuse = modules.fuse;
-  mountFile = modules.config.mountFile;
+  mountFile = modules.settings.mountFile;
   console.log("loaded");
 }
 

@@ -4,8 +4,8 @@ var path = require('path');
 var wificonfig = require('./wificonfig.js');
 var log = require('./log');
 var settings = require ('./conf/wyliodrin_settings.js');
+var mkdirp = require ('mkdirp');
 
-// var CONFIG_FILE =path.join(__dirname, 'wyliodrin.json');
 var E_NO_CONF = -1;
 var loadModules = null;
 var data_wyliodrin = null;
@@ -38,7 +38,7 @@ function load()
 {	
 	try
 	{
-		var file_data_wyliodrin = fs.readFileSync(settings[settings.BOARD].config_file);
+		var file_data_wyliodrin = fs.readFileSync(settings.config_file);
 		data_wyliodrin = JSON.parse(file_data_wyliodrin);
 	}
 	catch(e)
@@ -63,17 +63,15 @@ function load()
 					log:require('./log'),
 					fuse:require('./fuse')
 				   };
+	modulesDict.log.load (modulesDict);
 	modulesDict.wxmpp.load(modulesDict);	   
-	modulesDict.wxmpp.initConnection(modulesDict, 
-		function()
-		{
-			modulesDict.wxmpp.loadSettings();
-			modulesDict.files.load(modulesDict);
-			modulesDict.fuse.init(modulesDict, function()
-			{
-				initRest();
-			});
-		});
+	modulesDict.wxmpp.initConnection(modulesDict);
+	modulesDict.wxmpp.loadSettings();
+	modulesDict.files.load(modulesDict);
+	modulesDict.fuse.init(modulesDict, function()
+	{
+		initRest();
+	});
 }
 
 function initRest()
@@ -92,7 +90,10 @@ function initRest()
 		modulesDict.signal.startSocketServer();
 }
 
-wificonfig.init(settings, function()
+wificonfig.init(settings, function(s)
 	{
-		load()
+		settings = s;
+		log.putLog ('Creating home directory in '+settings.home);
+		mkdirp.sync (settings.home);
+		load();
 	});

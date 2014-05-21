@@ -1,6 +1,7 @@
 var f4js = require('fuse4js');
 var fs = require('fs');
 var child_process = require('child_process');
+var mkdirp = require ('mkdirp');
 
 function canMount()
 {
@@ -21,15 +22,19 @@ function canMount()
 function init(modules, functie)
 {
 	var config = modules.config;
-	var mountFile = config.mountFile;
+  var settings = modules.settings;
+	var mountFile = settings.mountFile;
   var wxmpp = modules.wxmpp;
+  var log = modules.log;
   var didFunction = false;
   if(canMount())
   {
-  	child_process.exec('sudo umount -f '+mountFile, function (err, stdout, stderr)
+  	child_process.exec(settings.umount+' '+mountFile, function (err, stdout, stderr)
     {
       if (err == 0)
       {
+        log.putLog ('Creating fuse mounting directory in '+mountFile);
+        mkdirp.sync (mountFile);
          if(wxmpp.checkConnected)
         {
           if(wxmpp.ownerIsAvailable())

@@ -82,8 +82,8 @@ function findConfigFile(platform, functie)
 {
 	log.putLog ('Board is '+platform);
 	log.putLog('Reading config file');
-	settings.BOARD = platform;
-	var JSON_PATH = settings[settings.BOARD].config_file;
+	settings = settings[platform];
+	var JSON_PATH = settings.config_file;
 	var d = null;
 	var resetWIFI = false;
 	var start = true;
@@ -107,7 +107,7 @@ function findConfigFile(platform, functie)
 					// if(!fs.existsSync(WIFICONF))
 					// 	wifi(newJsonData, functie);
 					// else 
-					functie();
+					functie(settings);
 				}
 				else
 				{
@@ -173,32 +173,32 @@ function wifi(d, functie)
 													}
 													else
 													{
-														functie();
+														functie(settings);
 													}
 												})}, 2*RETRY_TIME);
 										}
 										else
 										{
-											functie();
+											functie(settings);
 										}
 									})}, RETRY_TIME);							
 					}
 					else
 					{
-						functie();
+						functie(settings);
 					}
 				});
 			}
 			catch(e)
 			{
 				log.putError('Cannot write wifi file '+e);
-				functie ();
+				functie (settings);
 			}
 		}
 		catch(e)
 		{
 			log.putError('Cannot read wifi file '+e);
-			functie ();
+			functie (settings);
 		}
 	}
 	else
