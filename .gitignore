@@ -12,7 +12,7 @@ logs
 results
 
 wyliodrin.json
-libs/raspberrypi/wireless/wireless.conf
+conf/wireless/wireless.conf
 
 node_modules/
 download/
