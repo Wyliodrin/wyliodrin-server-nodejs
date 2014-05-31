@@ -23,8 +23,24 @@ function init(s, functie)
 {
 	settings = s;
 	console.log('Starting Wyliodrin');
-	isRaspberry(functie);
-	isGalileo(functie);
+	var board;
+	try
+	{
+		board = fs.readFileSync ('board.type', 'utf8');
+	}
+	catch (ex)
+	{
+		console.log (ex);
+	}
+	if (board)
+	{
+		functie (settings[board]);
+	}
+	else
+	{
+		isRaspberry(functie);
+		isGalileo(functie);
+	}
 }
 
 /* Function checks if the board is a raspberry pi. 
