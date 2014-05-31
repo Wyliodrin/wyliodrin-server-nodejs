@@ -7,6 +7,7 @@ var build_xmpp = null;
 var files_xmpp = null;
 
 var isConnected = false;
+var connecting = false;
 
 var connection = null;
 
@@ -18,35 +19,68 @@ var signal_xmpp = null;
 var info = null;
 var delay = 100;
 
+var log = null;
+
 var intervalID = null;
 
-function initConnection(modules,functie)
+var functie = null;
+
+function initConnection (modules, fns)
 {
 	xmpp = modules.xmpp;
 	config = modules.config;
+	log = modules.log;
+	functie = fns;
+	connect ();
+}
+
+function connect()
+{
 	if(!isConnected)
 	{
-		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:true, preferredSaslMechanism:'PLAIN'});
+		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:false, preferredSaslMechanism:'PLAIN'});
 		connection.connection.socket.setTimeout (0);
 		connection.connection.socket.setKeepAlive (true, 100);
+		connecting = false;
 		connection.on ('error', function(error)
 		{
-			reconnect ();
-			console.error (error);
-			isConnected = false;
+			console.log ('error');
+			if (!connecting)
+			{
+				reconnect ();
+				console.error (error);
+				isConnected = false;
+			}
 		});
 
 		connection.on ('disconnect', function()
 		{
-			reconnect ();
-		  console.error ('disconnect');
-		  isConnected = false;
+			console.log ('disconnect');
+			if (!connecting)
+			{
+				reconnect ();
+		  		console.error ('disconnect');
+		  		isConnected = false;
+			}
+		});
+
+
+		connection.on ('close', function()
+		{
+			console.log ('close');
+			if (!connecting)
+			{
+				reconnect ();
+		  		console.error ('disconnect');
+		  		isConnected = false;
+			}
 		});
 
 		connection.on ('online', function()
 		{
 			delay = 100;
 			isConnected = true;
+			connecting=false;
 		  console.log (config.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
@@ -56,13 +90,13 @@ function initConnection(modules,functie)
 		  if(functie != null)
 		  {
 		  	console.log('functie != null');
-		  	functie();
 		  }
 		  connection.send(new xmpp.Element('presence',
 		  {
 		  	type:'subscribe',
 		  	to:config.owner
 		  }));
+		  log.flush ();
 		});
 
 		connection.on ('rawStanza', function (stanza)
@@ -72,8 +106,12 @@ function initConnection(modules,functie)
 		
 		connection.on ('end', function ()
 		{
-			isConnected = false;
-			reconnect ();
+			console.log ('end');
+			if (!connecting)
+			{
+				isConnected = false;
+				reconnect ();
+			}
 		});
 		connection.load(connection, function (from, to, stanza, error)
 		{
@@ -150,6 +188,7 @@ function ownerUnavailable()
 
 function reconnect ()
 {
+	connecting = true;
 	console.log ('reconnecting '+delay);
 	setTimeout (function ()
 	{

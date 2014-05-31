@@ -1,6 +1,6 @@
 "use strict";
 
-var xmpp = require ('node-xmpp');
+var xmpp = require ('node-xmpp-client');
 var dict = require ('dict');
 var _ = require ('underscore');
 

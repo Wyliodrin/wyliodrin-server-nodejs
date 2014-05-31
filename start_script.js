@@ -1,10 +1,10 @@
-"use strict"
+"use strict";
 var fs = require('fs');
 var path = require('path');
 var wificonfig = require('./wificonfig.js');
 var log = require('./log');
-
-var CONFIG_FILE =path.join(__dirname, 'wyliodrin.json');
+var settings = require ('./conf/wyliodrin_settings.js');
+var mkdirp = require ('mkdirp');
 var E_NO_CONF = -1;
 var loadModules = null;
 var data_wyliodrin = null;
@@ -37,13 +37,18 @@ function load()
 {	
 	try
 	{
+<<<<<<< HEAD
 		var file_data_wyliodrin = fs.readFileSync('conf/wyliodrin.json');
+=======
+		var file_data_wyliodrin = fs.readFileSync(settings.config_file);
+>>>>>>> master
 		data_wyliodrin = JSON.parse(file_data_wyliodrin);
 	}
 	catch(e)
 	{
 		log.putError('cannot read local config file '+e);
 	}
+<<<<<<< HEAD
 		var xmpp_temp = require('./xmpp_library.js');
 		console.log('required');
 		modulesDict = {	config:data_wyliodrin,
@@ -70,6 +75,35 @@ function load()
 				modulesDict.files.load(modulesDict);
 				modulesDict.fuse.init(modulesDict, function(){
 												initRest();});});
+=======
+	var xmpp_temp = require('./xmpp_library.js');
+	modulesDict = {	settings:settings,
+					config:data_wyliodrin,
+					terminal:require('./terminal'),
+					wxmpp:require('./wxmpp'),
+					build_xmpp:require('./build-xmpp'),
+					files_xmpp:require('./files-xmpp'),
+					files:require('./files'),
+					terminal_xmpp:require('./terminal-xmpp'),							
+					xmpp:xmpp_temp.xmpp,
+					XMPP:xmpp_temp,
+					build:require('./build'),
+					signal_xmpp:require('./signal-xmpp'),
+					signal:require('./signal'),
+					info:require('./info'),
+					log:require('./log'),
+					fuse:require('./fuse')
+				   };
+	modulesDict.log.load (modulesDict);
+	modulesDict.wxmpp.load(modulesDict);	   
+	modulesDict.wxmpp.initConnection(modulesDict);
+	modulesDict.wxmpp.loadSettings();
+	modulesDict.files.load(modulesDict);
+	modulesDict.fuse.init(modulesDict, function()
+	{
+		initRest();
+	});
+>>>>>>> master
 }
 
 function initRest()
@@ -88,4 +122,14 @@ function initRest()
 		modulesDict.signal.startSocketServer();
 }
 
+<<<<<<< HEAD
 wificonfig.init(function(){load()});
+=======
+wificonfig.init(settings, function(s)
+	{
+		settings = s;
+		log.putLog ('Creating home directory in '+settings.home);
+		mkdirp.sync (settings.home);
+		load();
+	});
+>>>>>>> master

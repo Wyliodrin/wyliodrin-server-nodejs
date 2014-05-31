@@ -4,32 +4,50 @@ var fs = require('fs');
 var path = require('path');
 var ejs = require ('ejs');
 var log = require ('./log');
+var settings;
 
 var RASPBERRY = 'raspberry';
+var ARDUINO_GALILEO = 'arduinogalileo';
+
 var GALILEO = 'galileo';
-var RASPBERRY_PATH = '/boot/wyliodrin.json';
-var RASPBERRY_CONFIG_FILE = path.join(__dirname,'conf/wyliodrin.json');
 var RETRY_TIME = 2000;
 
 var WIFICONF = path.join(__dirname, 'conf/wireless/wireless.conf');
 
-function init(functie)
+function init(s, functie)
 {
-	console.log('init');
-	isRaspberry(functie);
-	isGalileo(functie);
+	settings = s;
+	console.log('Starting Wyliodrin');
+	var board;
+	try
+	{
+		board = fs.readFileSync ('board.type', 'utf8');
+	}
+	catch (ex)
+	{
+		console.log (ex);
+	}
+	if (board)
+	{
+		functie (settings[board]);
+	}
+	else
+	{
+		isRaspberry(functie);
+		isGalileo(functie);
+	}
 }
 
 /* Function checks if the board is a raspberry pi. 
 		Step one. */
 function isRaspberry(functie)
 {
-	console.log('is raspberry');
+	console.log('Is it a Raspberry Pi?');
 	var child  = child_process.exec('cat /proc/cpuinfo | grep BCM',
 		function(error, stdout, stderr)
 		{
 			if(error != null)
-				log.putError('exec error');
+				log.putError('\t not Raspberry Pi');
 			if(stdout != '')
 			{
 				findConfigFile(RASPBERRY,functie);
@@ -41,97 +59,91 @@ function isRaspberry(functie)
 		Step one. */
 function isGalileo(functie)
 {
-	//TODO
+	console.log('Is it an Arduino Galileo?');
+	var child  = child_process.exec('cat /proc/cpuinfo | grep GenuineIntel',
+		function(error, stdout, stderr)
+		{
+			if(error != null)
+				log.putError('\t not Arduino Galileo');
+			if(stdout != '')
+			{
+				findConfigFile(ARDUINO_GALILEO,functie);
+			}
+		});
+}
+
+function findSSID (done)
+{
+	child_process.exec ('iwgetid -r', function (error, stdout, stderr)
+	{
+		if (!error)
+		{
+			done (stdout);
+		}
+		else
+		{
+			done (null);
+		}
+	});
 }
 
 /* Function searches for config file depending on the platform.  
 	Step two. */
 function findConfigFile(platform, functie)
 {
-	console.log('find config file');
-	if(platform == RASPBERRY)
-	{	var d = null;
-		var resetWIFI = false;
-		if(fs.existsSync(RASPBERRY_PATH))
+	log.putLog ('Board is '+platform);
+	log.putLog('Reading config file');
+	settings = settings[platform];
+	var JSON_PATH = settings.config_file;
+	var d = null;
+	var resetWIFI = false;
+	var start = true;
+	if(fs.existsSync(JSON_PATH))
+	{
+		var data = fs.readFileSync(JSON_PATH);
+		try
 		{
-			var data = fs.readFileSync(RASPBERRY_PATH);
-			try
+			var newJsonData = JSON.parse(data);
+			findSSID (function (ssid)
 			{
-				var newJsonData = JSON.parse(data);
-				/* checks if the ssid data has changed */
-				if(fs.existsSync(RASPBERRY_CONFIG_FILE))
-				{
-					d = fs.readFileSync(RASPBERRY_CONFIG_FILE);
-					try
-					{
-						d = JSON.parse(d);
-						if((newJsonData.ssid != d.ssid != '') || (newJsonData.psk != d.psk))
-						{
-							resetWIFI = true;
-						}
-					}
-					catch(e)
-					{
-						resetWIFI = true;
-						log.putError('local config not json');
-					}
-				}
-				else
+				if(newJsonData.ssid != '' && ssid!=newJsonData)
 				{
 					resetWIFI = true;
 				}
-				if(fs.existsSync(RASPBERRY_CONFIG_FILE))
-					fs.unlinkSync(RASPBERRY_CONFIG_FILE);
-				try
-				{
-					fs.writeFileSync(RASPBERRY_CONFIG_FILE, data);
-				}
-				catch(e)
-				{
-					log.putError('Cannot copy config file'+e);
-				}
-			}
-			catch(e)
-			{
-				log.putError('Config file not json');
-			}
-		}
-		else if(!fs.existsSync(RASPBERRY_CONFIG_FILE))
-		{
-			log.putError('No configuration file');
-		}
-		/* resets wifi if data has changed */
-		var wifiNewData = getConfigData();
-		if(wifiNewData != null)
-		{
-			if(!resetWIFI)
-			{
-				if(!fs.existsSync(WIFICONF))
-					wifi(wifiNewData, functie);
-				else functie();
-			}
-			else
-			{
-				wifi(wifiNewData, functie);
-			}
-		}
-		else
-		{
-			functie();
-		}		
-	}
-}
 
-function getConfigData()
-{
-	try
-	{
-		var d = fs.readFileSync(RASPBERRY_CONFIG_FILE);
-		d = JSON.parse(d);
-		return d;
+				log.putLog ('Starting');
+				/* resets wifi if data has changed */
+				if(!resetWIFI)
+				{
+					// if(!fs.existsSync(WIFICONF))
+					// 	wifi(newJsonData, functie);
+					// else 
+					functie(settings);
+				}
+				else
+				{
+					wifi(newJsonData, functie);
+				}
+			});
+		}
+		catch(e)
+		{
+			log.putError('Cannot load config file');
+			start = false;
+		}
 	}
-	catch(e){}
-	return null;
+	else
+	{
+		start = false;
+	}
+	if (!start)
+	{
+		log.putLog ('Not starting, waiting to exit');
+		setTimeout (function ()
+		{
+			process.exit (0);
+		}, 600000);
+	}
 }
 
 function wifi(d, functie)
@@ -140,6 +152,11 @@ function wifi(d, functie)
 	if(d != null)
 	{
 		var WIFIFORM = path.join(__dirname,'conf',d.gadget,'/wireless/wireless_form.conf');
+		if (!fs.existsSync(WIFIFORM)) 
+		{
+			log.putLog ('Board specific WiFi Form not found, using default');
+			WIFIFORM = path.join(__dirname,'conf/wireless/wireless_form.conf');
+		}
 		try
 		{
 			var wifiData = fs.readFileSync(WIFIFORM);
@@ -151,7 +168,7 @@ function wifi(d, functie)
 				{
 					if (error!=null) 
 					{
-						console.log("retry "+stderr);
+						console.log("Error resetting Wifi, retrying "+stderr);
 						/* retry after RETY_TIME miliseconds */
 						setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
 									{
@@ -167,31 +184,37 @@ function wifi(d, functie)
 													}
 													else
 													{
-														functie();
+														functie(settings);
 													}
 												})}, 2*RETRY_TIME);
 										}
 										else
 										{
-											functie();
+											functie(settings);
 										}
 									})}, RETRY_TIME);							
 					}
 					else
 					{
-						functie();
+						functie(settings);
 					}
 				});
 			}
 			catch(e)
 			{
 				log.putError('Cannot write wifi file '+e);
+				functie (settings);
 			}
 		}
 		catch(e)
 		{
 			log.putError('Cannot read wifi file '+e);
+			functie (settings);
 		}
+	}
+	else
+	{
+		log.putError ('No cofiguration file');
 	}		
 }
 exports.init = init;

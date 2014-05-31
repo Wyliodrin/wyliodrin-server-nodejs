@@ -4,6 +4,7 @@ var dict = require('dict');
 var projectsDict = dict({});
 var xmpp = null;
 var terminal = null;
+var settings = null;
 
 var sys = require ('child_process');
 
@@ -20,11 +21,12 @@ function load(modules)
 	xmpp = modules.xmpp;
 	terminal = modules.terminal;
 	wxmpp = modules.wxmpp;
+	settings = modules.settings;
+	buildFile = settings.buildFile;
 }
 
 function loadConfig(configs)
 {
-	buildFile = configs.buildFile;
 	home = configs.home;
 }
 
@@ -111,13 +113,13 @@ function shell_stanza(t, from, to, es, error)
 						terminal.destroyTerminal(id, from, 'stop', function(code, from){
 							var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, code:code});
 							t.sendWyliodrin(from, tag);
-							var term = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
+							var term = makeTerminal(t, from, to, es, error, settings.run[0], settings.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
 							projectsDict.set(es.attrs.projectid,term.id);
 						});
 					}
 					else
 					{
-						var term = makeTerminal(t, from, to, es, error, 'sudo', ['-E', 'make', 'run'], buildFile+'/'+es.attrs.projectid);
+						var term = makeTerminal(t, from, to, es, error, settings.run[0], settings.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
 						projectsDict.set(es.attrs.projectid,term.id);
 					}					
 					
