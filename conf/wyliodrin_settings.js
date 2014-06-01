@@ -7,6 +7,8 @@ var settings =
 		home: '/wyliodrin',
 		mountFile: '/wyliodrin/projects/mount',
 		buildFile: '/wyliodrin/projects/build',
+		umount: 'sudo umount -f',
+		run: ['sudo', '-E', 'make']
 	},
 	
 	arduinogalileo:{
@@ -14,6 +16,8 @@ var settings =
 		home: '/wyliodrin',
 		mountFile: '/wyliodrin/projects/mount',
 		buildFile: '/wyliodrin/projects/build',
+		umount: 'umount -f',
+		run: ['make']
 	},
 
 	fpga:{	
@@ -21,6 +25,8 @@ var settings =
 		home: '/wyliodrin',
 		mountFile: '/wyliodrin/projects/mount',
 		buildFile: '/wyliodrin/projects/build',
+		umount: 'sudo umount -f',
+		run: ['make']
 	}
 };
 

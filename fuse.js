@@ -22,15 +22,10 @@ function canMount()
 function init(modules, functie)
 {
 	var config = modules.config;
-<<<<<<< HEAD
-	var mountFile = config.mountFile;
-  var wxmpp = modules.wxmpp;
-=======
   var settings = modules.settings;
 	var mountFile = settings.mountFile;
   var wxmpp = modules.wxmpp;
   var log = modules.log;
->>>>>>> master
   var didFunction = false;
   if(canMount())
   {
@@ -38,11 +33,8 @@ function init(modules, functie)
     {
       if (err == 0)
       {
-<<<<<<< HEAD
-=======
         log.putLog ('Creating fuse mounting directory in '+mountFile);
         mkdirp.sync (mountFile);
->>>>>>> master
          if(wxmpp.checkConnected)
         {
           if(wxmpp.ownerIsAvailable())
