@@ -178,6 +178,7 @@ function loadSettings()
 	connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
 	connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.filesStanza);
 	connection.tag('signal', XMPP.WYLIODRIN_NAMESPACE, signal_xmpp.signalStanza);
+	connection.tag('info', XMPP.WYLIODRIN_NAMESPACE, info.infoStanza);
 	if(signal_xmpp != null)
 		signal_xmpp.sendSignalBuffer();
 }
