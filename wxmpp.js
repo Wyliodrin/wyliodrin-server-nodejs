@@ -38,7 +38,7 @@ function connect()
 {
 	if(!isConnected)
 	{
-		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:false, preferred:'PLAIN', websocket: {url: 'wss://wxmpp.wyliodrin.org/ws/server?username='+config.jid+'&password='+config.password+'&resource=wyliodrin'}});
+		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:false, preferred:'PLAIN', websock: {url: 'wss://wxmpp.wyliodrin.org/ws/server?username='+config.jid+'&password='+config.password+'&resource=wyliodrin'}});
 		if (connection.connection && connection.connection.socket)
 		{
 			connection.connection.socket.setTimeout (0);

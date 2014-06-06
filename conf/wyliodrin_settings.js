@@ -2,7 +2,7 @@
 
 var settings =
 {
-	raspberrypi:{
+	raspberry:{
 		config_file: '/boot/wyliodrin.json',
 		home: '/wyliodrin',
 		mountFile: '/wyliodrin/projects/mount',
