@@ -17,23 +17,24 @@ function load(modules)
 	xmpp = modules.xmpp;
 	wxmpp = modules.wxmpp;
 	
-	var t = wxmpp.getConnection();
+	
 
 		setInterval(function(){
+			var t = wxmpp.getConnection();
 			if (t)
 			{
 				processes (function (ps)
 				{
-					var elem = new xmpp.Element('info',{data:'ps', request:'request id'});
+					var elem = new xmpp.Element('info',{data:'ps'});
 					ps.forEach(function( item ){
 						elem.c('ps',{name:'',pid:item.pid,cpu:item['%CPU'],mem:item.VSZ}).up();
 					});
 						
 					  console.log (ps);
-					 t.sendWyliodrin('', elem);
+					 t.sendWyliodrin(modules.config.owner, elem);
 					});
 			}
-			},10000);
+			},1000);
 }
 
 function sendStartInfo(from)

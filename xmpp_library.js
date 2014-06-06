@@ -74,7 +74,7 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
                                         }
                                         catch (e)
                                         {
-                                            throw (e);
+                                            //throw (e);
                                         }
                                 }
                         });
