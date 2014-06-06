@@ -62,7 +62,7 @@ function sendInfo(from)
 	}
 }
 
-/*function info_stanza(t, from, to, es, error)
+function info_stanza(t, from, to, es, error)
 {
 	console.log('info stanza');
 	if (!error)
@@ -82,16 +82,23 @@ function sendInfo(from)
 		{
 			//send
 			timer = setInterval(function(){
-				processes (function (ps)
+				if (count <= 30 && es.attrs.action == 'send')
 				{
-					var elem = new xmpp.Element('info',{data:'ps', request:'request id'});
-					ps.forEach(function( item ){
-						elem.c('ps',{name:'',pid:item.pid,cpu:item.CPU,mem:item.VSZ}).up();
+					processes (function (ps)
+					{
+						var elem = new xmpp.Element('info',{data:'ps', request:'request id'});
+						ps.forEach(function( item ){
+							elem.c('ps',{name:'',pid:item.pid,cpu:item.CPU,mem:item.VSZ}).up();
+						});
+						
+					    //console.log (ps);
+					    if (t)
+					    {
+					    	t.sendWyliodrin(from, elem);
+					    }
 					});
-					
-				    //console.log (ps);
-				    t.sendWyliodrin(from, elem);
-				});
+					count = count + 1;
+				}
 			},10000);
 			
 			
@@ -102,7 +109,7 @@ function sendInfo(from)
 			clearInterval(timer);
 		}
 	}
-}*/
+}
 
 
 function processes (list)
@@ -137,6 +144,7 @@ function kill (pid)
         if (done) done (err);
     });
 }
+
 
 exports.sendStartInfo = sendStartInfo;
 exports.load = load;
