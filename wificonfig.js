@@ -29,6 +29,7 @@ function init(s, functie)
 	}
 	if (board)
 	{
+		settings[board].platform = board;
 		functie (settings[board]);
 	}
 	else
@@ -94,6 +95,7 @@ function findConfigFile(platform, functie)
 	log.putLog ('Board is '+platform);
 	log.putLog('Reading config file');
 	settings = settings[platform];
+	settings.platform = platform;
 	var JSON_PATH = settings.config_file;
 	var d = null;
 	var resetWIFI = false;

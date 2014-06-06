@@ -23,7 +23,8 @@ var processArray = [];
 
 function loadConfig(configs)
 {
-	gadget = configs.gadget;
+	console.log (settings);
+	gadget = settings.platform;
 	port = configs.port;
 //	try
 //	{
