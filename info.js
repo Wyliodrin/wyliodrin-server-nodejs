@@ -28,7 +28,7 @@ function load(modules)
 					elem.c('ps',{name:'',pid:item.pid,cpu:item['%CPU'],mem:item.VSZ}).up();
 				});
 					
-				  //console.log (ps);
+				  console.log (ps);
 				 t.sendWyliodrin('', elem);
 				});
 			},10000);
