@@ -18,21 +18,22 @@ function load(modules)
 	wxmpp = modules.wxmpp;
 	
 	var t = wxmpp.getConnection();
-	if (t)
-	{
+
 		setInterval(function(){
-			processes (function (ps)
+			if (t)
 			{
-				var elem = new xmpp.Element('info',{data:'ps', request:'request id'});
-				ps.forEach(function( item ){
-					elem.c('ps',{name:'',pid:item.pid,cpu:item['%CPU'],mem:item.VSZ}).up();
-				});
-					
-				  console.log (ps);
-				 t.sendWyliodrin('', elem);
-				});
+				processes (function (ps)
+				{
+					var elem = new xmpp.Element('info',{data:'ps', request:'request id'});
+					ps.forEach(function( item ){
+						elem.c('ps',{name:'',pid:item.pid,cpu:item['%CPU'],mem:item.VSZ}).up();
+					});
+						
+					  console.log (ps);
+					 t.sendWyliodrin('', elem);
+					});
+			}
 			},10000);
-	}
 }
 
 function sendStartInfo(from)
