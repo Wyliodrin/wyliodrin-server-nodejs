@@ -20,31 +20,31 @@ function load(modules)
 	wxmpp = modules.wxmpp;
 	
 	setInterval(function(){
-		if (projectSendDict.size > 0)
-		{
+		//if (projectSendDict.size > 0)
+		//{
 			if (wxmpp && wxmpp.checkConnected())
 			{
 				var t = wxmpp.getConnection();
-				projectSendDict.forEach(function(value,key){
+				//projectSendDict.forEach(function(value,key){
 					processes (function (ps)
 					{
-						var elem = new xmpp.Element('info',{data:'ps'});
+						var elem = new xmpp.Element('info',{data:'ps', loadavg:os.loadavg()[0]*100, totalmem:os.totalmem(), freemem:os.freemem()});
 						ps.forEach(function( item ){
 							elem.c('ps',{name:item.COMMAND,pid:item.PID,cpu:item['%CPU'],mem:item.VSZ}).up();
 						});
 							
 						  // console.log (ps);
 						 t.sendWyliodrin(modules.config.owner, elem);
-					});
-					value = value -1;
-					if (value <= 0)
-					{
-						projectSendDict.delete(key);
-					}						
+					//});
+					// value = value -1;
+					// if (value <= 0)
+					// {
+					// 	projectSendDict.delete(key);
+					// }						
 				});
 			}
-		}
-	},3000);
+		//}
+	},1000);
 }
 
 function sendStartInfo(from)
