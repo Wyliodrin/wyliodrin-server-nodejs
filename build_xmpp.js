@@ -1,14 +1,7 @@
 "use strict";
-var xmpp = null;
-var build = null;
-var wxmpp = null;
-
-function load(modules)
-{
-	xmpp = modules.xmpp;
-	build = modules.build;
-	wxmpp = modules.wxmpp;
-}
+var xmpp = require('./xmpp_library.js').xmpp;
+var build = require('./build');
+var wxmpp = require('./wxmpp');
 
 function buildStanza(t, from, to, es, error)
 {
@@ -43,4 +36,3 @@ function buildStanza(t, from, to, es, error)
 }
 
 exports.buildStanza = buildStanza;
-exports.load = load;

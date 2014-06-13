@@ -2,35 +2,19 @@
 var dict = require('dict');
 
 var projectsDict = dict({});
-var xmpp = null;
-var terminal = null;
-var settings = null;
+var xmpp = require('./xmpp_library.js').xmpp;
+var terminal = require('./terminal');
+var config = require('./settings').config;
 
 var sys = require ('child_process');
 
 var COMMAND = '/bin/bash';
 
-var buildFile = null;
+var buildFile = config.buildFile;
 var INVALID_ID = -2;
 
-var wxmpp = null;
-var home = null;
-
-function load(modules)
-{
-	xmpp = modules.xmpp;
-	terminal = modules.terminal;
-	wxmpp = modules.wxmpp;
-	settings = modules.settings;
-	buildFile = settings.buildFile;
-}
-
-function loadConfig(configs)
-{
-	home = configs.home;
-}
-
-
+var wxmpp = require('./wxmpp');
+var home = config.home;
 
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
@@ -198,6 +182,4 @@ function notifyClosedTerminal(id, from)
 
 exports.notifyClosedTerminal = notifyClosedTerminal;
 exports.shellStanza = shell_stanza;
-exports.load = load;
-exports.loadConfig = loadConfig;
 exports.closeProject = closeProject;

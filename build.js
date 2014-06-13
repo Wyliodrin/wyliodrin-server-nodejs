@@ -10,40 +10,22 @@ var COPY_ERROR = 2;
 var WGET_ERROR = 3;
 var PATH_OK = 0;
 
-var mountPath = null;
-var buildFile = null;
-var settings = null;
-var files = null;
-var gadget = null;
-var signalTimeout = null;
-var port = null;
-var log = null;
+var files = require('./files.js');
+var log = require('./log.js');
 
 var processArray = [];
 
-function loadConfig(configs)
-{
-	console.log (settings);
-	gadget = settings.platform;
-	port = configs.port;
-//	try
-//	{
-		signalTimeout = parseInt(configs.timeout);
-//	}
-//	catch(e)	
-}
+var config = require ('./settings.js').config.config;
+var buildFile = config.buildFile;
+var mountPath = config.mountFile;
 
-function load(modules)
-{
-	files = modules.files;
-	log = modules.log;
-	settings = modules.settings;
-	console.log (settings);
-	buildFile = settings.buildFile;
-	mountPath = settings.mountFile;
-	log.putLog ('Creating build directory in '+buildFile);
-    mkdirp.sync (buildFile);
-}
+var gadget = config.platform;
+var port = require('./settings').config.networkConfig;
+
+var signalTimeout = parseInt(config.timeout);
+
+log.putLog ('Creating build directory in '+buildFile);
+mkdirp.sync (buildFile);
 
 function validatePath(id, returnPath)
 {
@@ -57,7 +39,7 @@ function validatePath(id, returnPath)
 
 function startBuildProcess(command, args, path, sendOutput, done, id)
 {
-	var makeProcess = child_process.spawn(command,args,{cwd:path, env:_.extend(process.env,{wyliodrinid:id, wyliodrinport:port})});
+	var makeProcess = child_process.spawn(command,args,{cwd:path, env:_.extend(process.env,{wyliodrin_project:id, wyliodrinport:port})});
 	processArray[id] = makeProcess;
 	makeProcess.stdout.on('data', function(data){
 		// var out = new Buffer(data).toString('base64');
@@ -183,5 +165,3 @@ function killProcess(id)
 }
 
 exports.make = make;
-exports.load = load;
-exports.loadConfig = loadConfig;

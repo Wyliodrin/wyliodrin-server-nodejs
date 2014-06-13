@@ -1,23 +1,14 @@
 var dict = require('dict');
 var _ = require('underscore');
 
-var xmpp = null;
-var wxmpp = null;
+var xmpp = require('./xmpp_library.js').xmpp;
+var wxmpp = require('./wxmpp');
+var requests = dict();
 
-var requests = null;
-var owner = null;
-var config = null;
+var config = require ('./settings.js').config;
+var mountFile = config.mountFile;
+var owner = config.owner;
 
-
-function load(modules)
-{
-	config = modules.config;
-	xmpp = modules.xmpp;
-	wxmpp = modules.wxmpp;
-	mountFile = config.mountFile;
-	owner = config.owner;
-	requests = dict();	
-}
 
 function files_stanza(t, from, to, es, error)
 {
@@ -216,7 +207,6 @@ function read(path,offset,len,sendResult)
 
 exports.read = read;
 exports.ownerUnavailable = ownerUnavailable;
-exports.load = load;
 exports.filesStanza = files_stanza;
 exports.readDir = readDir;
 exports.getAttr = getAttr;

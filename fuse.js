@@ -2,11 +2,17 @@ var f4js = require('fuse4js');
 var fs = require('fs');
 var child_process = require('child_process');
 var mkdirp = require ('mkdirp');
+var config = require('./settings').config.config;
+var mountFile = config.mountFile;
+var wxmpp = require('./wxmpp');
+var log = require('./log');
+var files = require('./files');
+
 
 function canMount()
 {
-	var fuse;
-	try
+  var fuse;
+  try
   {
     fuse = fs.existsSync ('/dev/fuse');
     console.log("fuse = "+fuse);
@@ -19,17 +25,12 @@ function canMount()
   return fuse;
 }
 
-function init(modules, functie)
+function init()
 {
-	var config = modules.config;
-  var settings = modules.settings;
-	var mountFile = settings.mountFile;
-  var wxmpp = modules.wxmpp;
-  var log = modules.log;
   var didFunction = false;
   if(canMount())
   {
-  	child_process.exec(settings.umount+' '+mountFile, function (err, stdout, stderr)
+  	child_process.exec(config.umount+' '+mountFile, function (err, stdout, stderr)
     {
 	console.log (err);
       {
@@ -48,8 +49,7 @@ function init(modules, functie)
           }
         }
       }
-      modules.files.start();
-      functie();
+      files.start();
     });
   }
 }

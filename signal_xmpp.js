@@ -1,19 +1,11 @@
 "use strict";
-var xmpp = null;
-var wxmpp = null;
-var owner = null;
-var signal = null;
-
+var xmpp = require('./xmpp_library.js').xmpp;
+var wxmpp = require('./wxmpp');
+var config = require('./settings').config;
+var owner = config.owner;
+var signal = require('./signal');
 
 var signals = [];
-
-function load(modules)
-{
-	xmpp = modules.xmpp;
-	wxmpp = modules.wxmpp;
-	owner = modules.config.owner;
-	signal = modules.signal;
-}
 
 function sendSignal(s)
 {
@@ -71,9 +63,9 @@ function sendSignalBuffer()
 			}			
 		}
 		if(wxmpp.ownerIsAvailable())
-				t.sendWyliodrin(owner, tag, false);
-			else
-				t.sendWyliodrin(owner, tag, true);
+			t.sendWyliodrin(owner, tag, false);
+		else
+			t.sendWyliodrin(owner, tag, true);
 	}	
 }
 
@@ -93,4 +85,3 @@ function signalStanza(t, from, to, es, error)
 
 exports.sendSignalBuffer = sendSignalBuffer;
 exports.sendSignal = sendSignal;
-exports.load = load;

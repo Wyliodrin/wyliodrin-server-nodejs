@@ -82,10 +82,11 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
                 else
                 if (stanza.is('presence'))
                 {
-                        var name = stanza.getName ();
-                        var error = stanza.attrs.type == 'error';
-                        if (t.tags().has(name)) t.tags().get(name)(t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), stanza, error);
-                        else if (t.other) t.other (new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), stanza, error);
+            
+                    var name = stanza.getName ();
+                    var error = stanza.attrs.type == 'error';
+                    if (t.tags().has(name)) t.tags().get(name)(t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), stanza, error);
+                    else if (t.other) t.other (new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), stanza, error);
                 }
         });
 }
@@ -106,22 +107,21 @@ xmpp.Client.prototype.tag = function (name, namespace, activity)
 
 xmpp.Client.prototype.sendWyliodrin = function (to, stanza, store)
 {
-    console.log('send wyliodrin');
-        stanza.attrs.xmlns = WYLIODRIN_NAMESPACE;
-        var s=new xmpp.Element ('message', {to: to}).cnode(stanza);
-         console.log ('sent = '+s.root().toString());
-        if(!store)
-        {
-            // console.log('send');
-        	this.send (s);
-        }
-        else
-        {
-        	if(stanzas.length<bufferSize)
-        	{
-        		stanzas.push(s);
-        	}
-        } 
+    stanza.attrs.xmlns = WYLIODRIN_NAMESPACE;
+    var s=new xmpp.Element ('message', {to: to}).cnode(stanza);
+     console.log ('sent = '+s.root().toString());
+    if(!store)
+    {
+        // console.log('send');
+    	this.send (s);
+    }
+    else
+    {
+    	if(stanzas.length<bufferSize)
+    	{
+    		stanzas.push(s);
+    	}
+    } 
 }
 
 xmpp.Client.prototype.emptyStanzaBuffer = function()

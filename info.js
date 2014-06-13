@@ -2,10 +2,8 @@
 
 var os = require('os');
 var dict = require ('dict');
-
-var boardType = null;
-var xmpp = null;
-var wxmpp = null;
+var xmpp = require('./xmpp_library.js').xmpp;
+var wxmpp = require('./wxmpp');
 var child_process = require('child_process');
 
 
@@ -13,12 +11,13 @@ var count = 1;
 var projectSendDict = dict();
 var timer;
 
-function load(modules)
-{
-	boardType = modules.config.gadget;
-	xmpp = modules.xmpp;
-	wxmpp = modules.wxmpp;
-	
+var config = require('./settings').config.config;
+var networkConfig = require('./settings').config.networkConfig;
+
+var boardType = config.board;
+
+function load()
+{	
 	setInterval(function(){
 		//if (projectSendDict.size > 0)
 		//{
@@ -33,8 +32,8 @@ function load(modules)
 							elem.c('ps',{name:item.COMMAND,pid:item.PID,cpu:item['%CPU'],mem:item.VSZ}).up();
 						});
 							
-						  // console.log (ps);
-						 t.sendWyliodrin(modules.config.owner, elem);
+						  //console.log ("owner = "+networkConfig.owner);
+							t.sendWyliodrin(networkConfig.owner, elem);
 					//});
 					// value = value -1;
 					// if (value <= 0)
@@ -44,7 +43,7 @@ function load(modules)
 				});
 			}
 		//}
-	},1000);
+	},10000000);
 }
 
 function sendStartInfo(from)
@@ -59,6 +58,7 @@ function sendStartInfo(from)
 		{
 			tag.c('cpu', {model:cpus[i].model, speed:cpus[i].speed});
 		}
+		//console.log("from start info = "+from);
 		t.sendWyliodrin(from, tag);
 	}
 }
@@ -76,10 +76,10 @@ function sendInfo(from)
 
 function info_stanza(t, from, to, es, error)
 {
-	console.log('info stanza');
+	//console.log('info stanza');
 	if (!error)
 	{
-		console.log("! err");
+		//console.log("! err");
 		var action = es.attrs.action;
 		if (action == 'kill')
 		{

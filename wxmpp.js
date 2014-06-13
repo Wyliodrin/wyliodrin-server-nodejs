@@ -1,36 +1,35 @@
 "use strict";
-var xmpp = null;
+var xmpp = require('./xmpp_library.js').xmpp;
 var dict = require('dict');
 var fs = require('fs');
-var terminal_xmpp = null;
-var build_xmpp = null;
-var files_xmpp = null;
+var terminal_xmpp = require('./terminal_xmpp');
+var build_xmpp = require('./build_xmpp');
+var files_xmpp = require('./files_xmpp');
 
 var isConnected = false;
 var connecting = false;
 
 var connection = null;
 
-var config = null;
-var XMPP = null;
+var config = require('./settings').config;
+var XMPP = require('./xmpp_library');
 
 var available = false;
-var signal_xmpp = null;
-var info = null;
+var signal_xmpp = require('./signal_xmpp');
+var info = require('./info');
 var delay = 100;
 
-var log = null;
+var log = require('./log');
 
 var intervalID = null;
 
-var functie = null;
+//var functie = null;
 
-function initConnection (modules, fns)
+var networkConfig = require('./settings').config.networkConfig;
+
+function initConnection() //(fns)
 {
-	xmpp = modules.xmpp;
-	config = modules.config;
-	log = modules.log;
-	functie = fns;
+	//functie = fns;
 	connect ();
 }
 
@@ -38,7 +37,9 @@ function connect()
 {
 	if(!isConnected)
 	{
-		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:false, preferred:'PLAIN', websock: {url: 'wss://wxmpp.wyliodrin.org/ws/server?username='+config.jid+'&password='+config.password+'&resource=wyliodrin'}});
+		connection = new xmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
+			reconnect:false, preferred:'PLAIN', 
+			websock: {url: 'wss://wxmpp.wyliodrin.org/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
 		if (connection.connection && connection.connection.socket)
 		{
 			connection.connection.socket.setTimeout (0);
@@ -85,27 +86,27 @@ function connect()
 			delay = 100;
 			isConnected = true;
 			connecting=false;
-		  console.log (config.jid+"> online");
+		  console.log (networkConfig.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
 		     );
-		  if(functie != null)
-		  {
-		  	console.log('functie != null');
-		  }
+		  // if(functie != null)
+		  // {
+		  // 	console.log('functie != null');
+		  // }
 		  connection.send(new xmpp.Element('presence',
 		  {
 		  	type:'subscribe',
-		  	to:config.owner
+		  	to:networkConfig.owner
 		  }));
 		  log.flush ();
 		});
 
 		connection.on ('rawStanza', function (stanza)
 		{
-		  console.log (config.jid+'>'+stanza.root().toString());
+		  console.log (networkConfig.jid+'>'+stanza.root().toString());
 		});
 		
 		connection.on ('end', function ()
@@ -124,7 +125,7 @@ function connect()
 				console.log('presence');
 				if (stanza.attrs.type == 'subscribe')
 				{
-					if (from == config.owner)
+					if (from == networkConfig.owner)
 					{
 						connection.send(new xmpp.Element('presence',
 		  				{
@@ -139,6 +140,7 @@ function connect()
 					console.log('available');
 					available = true;
 					connection.emptyStanzaBuffer(); 
+					console.log("wxmpp from start info = "+from);
 					info.sendStartInfo(from);
 					//intervalID = setInterval(function(){	
 					//info.sendInfo(from);}, 2000);
@@ -158,18 +160,6 @@ function connect()
 			}
 		});		
 	}
-}
-
-function load(modules)
-{
-	xmpp = modules.xmpp;
-	terminal_xmpp = modules.terminal_xmpp;
-	build_xmpp = modules.build_xmpp;
-	files_xmpp = modules.files_xmpp;
-	config = modules.config;
-	XMPP = modules.XMPP;
-	signal_xmpp = modules.signal_xmpp;
-	info = modules.info;
 }
 
 function loadSettings()
@@ -230,8 +220,7 @@ function checkConnected()
 
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;
-exports.load = load;
 exports.ownerIsAvailable = ownerIsAvailable;
 exports.initConnection = initConnection;
-exports.loadSettings = loadSettings;
+//exports.loadSettings = loadSettings;
 

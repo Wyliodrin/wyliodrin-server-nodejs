@@ -3,7 +3,7 @@ var pty = require('pty.js');
 var exec = require ('child_process').exec;
 var _ = require('underscore');
 
-var terminal_xmpp = null;
+var terminal_xmpp = require('./terminal_xmpp');
 var MAX_TERMINALS = 1024;
 var TERMINAL_ROWS = 24;
 var TERMINAL_COLS = 80;
@@ -11,23 +11,17 @@ var TERMINAL_COLS = 80;
 var TERMINAL_E_NOT_FOUND = 1;
 var TERMINAL_OK = 0;
 var TERMINAL_E_NOT_ALLOC = 2;
-
+var settings = require('./settings').config;
+var config = settings.config;
+var networkConfig = settings.networkConfig;
 var terminals=[];
-var port;
-var home = null;
+var port = parseInt(networkConfig.port);
+var home = config.home;
 
-function load(modules)
+for(var i=0; i<MAX_TERMINALS; i++)
 {
-	port = parseInt(modules.config.port);
-	home = modules.config.home;
-	// console.log('port = '+port);
-	terminal_xmpp = modules.terminal_xmpp;
-	for(var i=0; i<MAX_TERMINALS; i++)
-	{
-		terminals[i] = null;
-	}
+	terminals[i] = null;
 }
-
 
 function alloc_terminal(from)
 {
@@ -194,8 +188,6 @@ exports.startTerminal = start_terminal;
 exports.sendKeysToTerminal = sendKeysToTerminal;
 exports.TERMINAL_OK = TERMINAL_OK;
 exports.MAX_TERMINALS = MAX_TERMINALS;
-
-exports.load = load;
 exports.attachTerminal = attachTerminal;
 
 

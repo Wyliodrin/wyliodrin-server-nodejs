@@ -3,18 +3,12 @@ var child_process = require('child_process');
 var fs = require ('fs');
 var f4js = require('fuse4js');
 
-var files_xmpp =null;
-var fuse = null;
+var files_xmpp = require('./files_xmpp');
+var fuse = require('./fuse');
 var ERROR = -2;
-var mountFile = null;
 
-function load(modules)
-{
-	files_xmpp = modules.files_xmpp;
-  fuse = modules.fuse;
-  mountFile = modules.settings.mountFile;
-  console.log("loaded");
-}
+var config = require ('./settings.js').config.config;
+var mountFile = config.mountFile;
 
 function canMount()
 {
@@ -395,6 +389,5 @@ function start()
   console.log("fuse started");
 }
 
-exports.load = load;
 exports.canMount = canMount;
 exports.start = start;
