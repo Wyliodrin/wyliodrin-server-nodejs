@@ -6,6 +6,8 @@ var carrier = require('carrier');
 var signal_http = require('./signal_http');
 var _ = require ('underscore');
 
+var query = 0;
+
 var redis = require("redis");
 
 var socketArray = [];
@@ -25,6 +27,7 @@ function connectRedis()
 {
 	try{
 		var channelClient = redis.createClient();
+
 		channelClient.subscribe(CHANNEL);
 
 
@@ -32,6 +35,11 @@ function connectRedis()
 
 	channelClient.on("error", function (err) {
         log.putError(err);
+    });
+
+    client.on ('error', function (err)
+    {
+    	log.putError(err);
     });
 
     /*
@@ -48,6 +56,7 @@ function connectRedis()
 */
 
     channelClient.on("message", function(channel, message){
+    	console.log (message);
 	var pos = message.indexOf(SUBMESSAGE);
 	if(pos > -1)
 	{
@@ -60,6 +69,8 @@ function connectRedis()
 			client.lrange(proj,0,-1,function(error, items){
 			if(items.length != 0)
 			{
+				var count = items.length;
+				console.log('count = '+count);
 				var j = JSON.parse(items[0]);
 				var signal = {'projectid':'',
 							'gadgetid':'',
@@ -77,21 +88,34 @@ function connectRedis()
 					delete s.session;
 					signal.data.push(JSON.stringify(s));					
 				}
-				signal_http.sendSignal(signal, function(rc){
-					if(rc == 200)
-					{
-						client.ltrim(proj, items.length,-1);
-						client.lrange(proj,0,-1,function(error, items){
+				query=query+1;
+				console.log ('https '+query);
+					signal_http.sendSignal(signal, function(e, rc){
+						query = query - 1;
+						console.log ('response');
+						if(!e && rc == 200)
+						{
+							
+							console.log('status code 200 ' + count);
+							client.ltrim(proj, count,-1, function(err, result){
+								console.log(err);
+								console.log(result);
+								client.lrange(proj,0,-1,function(error, items){
+								d.delete(proj);
+								console.log ('items.count = '+items.count);
+								if(items.count > 0){
+									console.log("another publish signal:"+proj);
+									client.publish("wyliodrin","signal:"+proj);
+								}
+							});
+							});					
+							
+						}
+						else
+						{
 							d.delete(proj);
-							if(items.count > 0)
-								client.publish("wyliodrin","signal:"+proj);
-						});
-					}
-					else
-					{
-						d.delete(proj);
-					}
-				});
+						}
+					});				
 			}
 			else
 			{
@@ -104,7 +128,7 @@ function connectRedis()
 }
 catch(e)
 {
-	log.putError("Redis not connected");
+	log.putError("Redis not connected"); 	
 }
 }
 

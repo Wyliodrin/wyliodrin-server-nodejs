@@ -79,7 +79,7 @@ function destroy_terminal(id,from,action, sendResponse)
 				else
 				{
 					t.terminal.destroy();
-					exec ('sudo kill -9 '+t.terminal.pid);
+					exec (config.stop+' '+t.terminal.pid);
 					terminals[id] = null;
 					sendResponse(TERMINAL_OK, [from]);
 				}
@@ -88,7 +88,7 @@ function destroy_terminal(id,from,action, sendResponse)
 			{
 				var from = t.from;
 				t.terminal.destroy();
-				exec ('sudo kill -9 '+t.terminal.pid);
+				exec (config.stop+' '+t.terminal.pid);
 				terminals[id] = null;
 				sendResponse(TERMINAL_OK, from);
 			}

@@ -3,7 +3,7 @@
 var wxmpp = require('./wxmpp');
 var xmpp = require('./xmpp_library.js').xmpp;
 var logs = [];
-var config = require('./settings').config;
+var config = require('./settings').config.networkConfig;
 
 function flush ()
 {

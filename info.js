@@ -16,25 +16,40 @@ var networkConfig = require('./settings').config.networkConfig;
 
 var boardType = config.board;
 
-function sendInfo(requestid)
+function load()
 {	
-	if (wxmpp && wxmpp.checkConnected())
-	{
-		var t = wxmpp.getConnection();
-		processes (function (ps)
+	setInterval(function(){
+		if (projectSendDict.size > 0)
 		{
-			var elem = new xmpp.Element('info',{request:requestid, data:'ps', loadavg:os.loadavg()[0]*100, totalmem:os.totalmem(), freemem:os.freemem()});
-			ps.forEach(function( item ){
-				elem.c('ps',{name:item.COMMAND,pid:item.PID,cpu:item['%CPU'],mem:item.VSZ}).up();
-			});
-				
-			t.sendWyliodrin(networkConfig.owner, elem);					
-	});
-	}
+			console.log("projectSendDict.size > 0");
+			if (wxmpp && wxmpp.checkConnected())
+			{
+				var t = wxmpp.getConnection();
+				projectSendDict.forEach(function(value,key){
+					processes (function (ps)
+					{
+						var elem = new xmpp.Element('info',{data:'ps', loadavg:os.loadavg()[0]*100, totalmem:os.totalmem(), freemem:os.freemem()});
+						ps.forEach(function( item ){
+							elem.c('ps',{name:item.COMMAND,pid:item.PID,cpu:item['%CPU'],mem:item.VSZ}).up();
+						});
+
+						  //console.log ("owner = "+networkConfig.owner);
+							t.sendWyliodrin(networkConfig.owner, elem);
+					});
+					value = value -1;
+					if (value <= 0)
+					 {
+					 	projectSendDict.delete(key);
+					 }						
+				});
+			}
+		}
+	},3000);
 }
 
 function sendStartInfo(from)
 {
+	console.log("start info from -"+from);
 	if(wxmpp != null && wxmpp.checkConnected())
 	{
 		var t = wxmpp.getConnection();
@@ -51,6 +66,7 @@ function sendStartInfo(from)
 
 function sendInfo(from)
 {
+	console.log("send info from -"+from);
 	if(wxmpp.checkConnected())
 	{
 		var t = wxmpp.getConnection();
@@ -76,17 +92,20 @@ function info_stanza(t, from, to, es, error)
 		}
 		else if (action == 'send')
 		{
-			//send
+			console.log("info stanza send");
 			var request_id = es.attrs.request;
-			sendInfo(request_id);
+			if(config.pstimes)
+				projectSendDict.set(request_id.toString(),config.pstimes);
+			else
+				projectSendDict.set(request_id.toString(), 30);
 			
 		}
-		// else if (action == 'stop')
-		// {
-		// 	//stop sending
-		// 	var request_id = es.attrs.request;
-		// 	projectSendDict.delete(request_id.toString());
-		// }
+		else if (action == 'stop')
+		{
+			//stop sending
+			var request_id = es.attrs.request;
+			projectSendDict.delete(request_id.toString());
+		}
 	}
 }
 
@@ -114,11 +133,14 @@ function processes (list)
     });
 }
 
-function kill (pid)
+function kill (pid, done)
 {
-    child_process.exec ('kill -KILL '+pid, function (error, stdout, stderr)
+	console.log (networkConfig.stop+' '+pid);
+    child_process.exec (config.stop+' '+pid, function (error, stdout, stderr)
     {
-        if (done) done (err);
+    	console.log(error);
+    	console.log(stdout);
+        if (done) done (error);
     });
 }
 
@@ -147,3 +169,5 @@ function listprocesse (psls, pslist)
 
 exports.sendStartInfo = sendStartInfo;
 exports.sendInfo = sendInfo;
+exports.load = load;
+exports.info_stanza = info_stanza;

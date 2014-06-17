@@ -26,12 +26,22 @@ function sendSignal(signal, functie)
 	  method: 'POST',
 	  headers: {
           'Content-Type': 'application/json',
-          'Content-Length': s.length
+          'Content-Length': s.length,
+          'Connection': 'close'
       }
 	};
 
 	var req = https.request(options, function(res) {
-	  functie(res.statusCode);
+		console.log("codul de eroare :"+res.statusCode);
+	  functie(false, res.statusCode);
+	});
+
+	req.on('socket', function (socket) {
+	    socket.setTimeout(2000);  
+	    	socket.on('timeout', function() {
+        		console.log ('socket timeout');
+        		req.abort();
+    		});
 	});
 
 	req.write(s);
@@ -39,6 +49,7 @@ function sendSignal(signal, functie)
 
 	req.on('error', function(e) {
 	  console.error(e);
+	  functie (e);
 	});
 }
 

@@ -9,6 +9,7 @@ var settings =
 		buildFile: '/wyliodrin/projects/build',
 		umount: 'sudo umount -f',
 		run: ['sudo', '-E', 'make'],
+		stop: ['sudo kill -9'],
 		board:"raspberrypi"
 	},
 	
@@ -19,6 +20,7 @@ var settings =
 		buildFile: '/wyliodrin/projects/build',
 		umount: 'umount -f',
 		run: ['make'],
+		stop: ['kill -9'],
 		board:"arduinogalileo"
 	},
 
@@ -29,6 +31,7 @@ var settings =
 		buildFile: '/wyliodrin/projects/build',
 		umount: 'sudo umount -f',
 		run: ['make'],
+		stop: ['kill -9'],
 		board:"fpga"
 	}
 };

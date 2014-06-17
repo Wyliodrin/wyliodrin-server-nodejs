@@ -66,7 +66,7 @@ function wifi(functie)
 	if (!fs.existsSync(WIFIFORM)) 
 	{
 		//console.log('Board specific WiFi Form not found, using default');
-		log.putLog ('Board specific WiFi Form not found, using default');
+		console.log ('Board specific WiFi Form not found, using default');
 		WIFIFORM = path.join(__dirname,'conf/wireless/wireless_form.conf');
 	}
 	try

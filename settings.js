@@ -74,7 +74,7 @@ exports.load = function (start)
 	}
 	catch (ex)
 	{
-		console.error(ex);
+		console.error('Board type not found, trying autodetect');
 	}
 	if (board)
 	{

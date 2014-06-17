@@ -21,6 +21,8 @@ function start ()
 		signal.connectRedis();
 		var signal_http = require('./signal_http');
 		signal_http.load();
+		var info = require('./info');
+		info.load();
 		//signal_http.sendSignal("skf");
 	});
 }

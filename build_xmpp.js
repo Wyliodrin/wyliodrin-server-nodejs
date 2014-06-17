@@ -33,6 +33,13 @@ function buildStanza(t, from, to, es, error)
 				}
 			});
 		}
+		else if(es.attrs.action == "close")
+		{
+			if(build.buildArray[es.attrs.projectid] != null)
+			{
+				build.killProcess();
+			}
+		}
 	}	
 }
 

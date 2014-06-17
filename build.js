@@ -160,3 +160,5 @@ function killProcess(id)
 }
 
 exports.make = make;
+exports.killProcess = killProcess;
+exports.buildArray = processArray;

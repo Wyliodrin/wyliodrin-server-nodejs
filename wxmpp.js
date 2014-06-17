@@ -36,9 +36,16 @@ function connect()
 {
 	if(!isConnected)
 	{
-		connection = new xmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
-			reconnect:false, preferred:'PLAIN', 
-			websock: {url: 'wss://wxmpp.wyliodrin.org/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
+		if(networkConfig.firewall){
+			connection = new xmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
+				reconnect:false, preferred:'PLAIN', 
+				websocket: {url: 'wss://wxmpp.wyliodrin.org/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
+		}
+		else
+		{
+			connection = new xmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
+				reconnect:false, preferred:'PLAIN'});
+		}
 		if (connection.connection && connection.connection.socket)
 		{
 			connection.connection.socket.setTimeout (0);
@@ -142,7 +149,7 @@ function connect()
 					available = true;
 					connection.emptyStanzaBuffer(); 
 					//console.log("wxmpp from start info = "+from);
-					info.sendStartInfo(from);
+					// info.sendStartInfo(from);
 					//intervalID = setInterval(function(){	
 					//info.sendInfo(from);}, 2000);
 					
@@ -168,7 +175,8 @@ function loadSettings()
 	connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
 	connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
 	connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.filesStanza);
-	connection.tag('info', XMPP.WYLIODRIN_NAMESPACE, info.infoStanza);
+	connection.tag('info', XMPP.WYLIODRIN_NAMESPACE, info.info_stanza);
+	connection.tag('ps', XMPP.WYLIODRIN_NAMESPACE, info.info_stanza);
 }
 
 function ownerUnavailable()
