@@ -131,10 +131,10 @@ function connect()
 				//console.log('presence');
 				if (stanza.attrs.type == 'subscribe')
 				{
-					console.log (networkConfig.owner+' '+stanza.toString());
+					//console.log (networkConfig.owner+' '+stanza.toString());
 					if (from == networkConfig.owner)
 					{
-						console.log ('sending subscribed to '+networkConfig.owner);
+						//console.log ('sending subscribed to '+networkConfig.owner);
 						connection.send(new xmpp.Element('presence',
 		  				{
 		  					type:'subscribed',

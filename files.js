@@ -367,7 +367,7 @@ function destroy(cb) {
 
 function start()
 {
-  f4js.start(mountFile, handlers, true);
+  f4js.start(mountFile, handlers, false);
 }
 
 exports.canMount = canMount;

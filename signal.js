@@ -46,17 +46,18 @@ function connectRedis()
 {
    "projectid":"89452744-4f73-4c29-a58a-83ab3bda5fe2", -se pune din clientul nodejs 
    "gadgetid":"alexandru.radovici_galileo@wyliodrin.org", -se pune din clientul nodejs
-   "userid":""
+   "userid":"",
+   "session":""
    "timestamp":"12",
-   "signals":{
-    "s1":"1",
-   "s3":"3"
+   "signals":[
+    {"s1":"1"},
+   {"s3":"3"}]
    }
 }
 */
 
     channelClient.on("message", function(channel, message){
-    	console.log (message);
+    	//console.log (message);
 	var pos = message.indexOf(SUBMESSAGE);
 	if(pos > -1)
 	{
@@ -70,7 +71,7 @@ function connectRedis()
 			if(items.length != 0)
 			{
 				var count = items.length;
-				console.log('count = '+count);
+				//console.log('count = '+count);
 				var j = JSON.parse(items[0]);
 				var signal = {'projectid':'',
 							'gadgetid':'',
@@ -86,28 +87,27 @@ function connectRedis()
 					var s = JSON.parse(items[i]);
 					delete s.userid;
 					delete s.session;
-					signal.data.push(JSON.stringify(s));					
+					signal.data.push(s);					
 				}
 				query=query+1;
-				console.log ('https '+query);
+				//console.log ('https '+query);
 					signal_http.sendSignal(signal, function(e, rc){
 						query = query - 1;
-						console.log ('response');
+						//console.log ('response');
 						if(!e && rc == 200)
 						{
 							
-							console.log('status code 200 ' + count);
+							//console.log('status code 200 ' + count);
 							client.ltrim(proj, count,-1, function(err, result){
-								console.log(err);
-								console.log(result);
-								client.lrange(proj,0,-1,function(error, items){
+								//console.log(err);
+								//console.log(result);
+								
 								d.delete(proj);
-								console.log ('items.count = '+items.count);
-								if(items.count > 0){
-									console.log("another publish signal:"+proj);
-									client.publish("wyliodrin","signal:"+proj);
-								}
-							});
+								//console.log ('items.count = '+items.count);								
+								//console.log("another publish signal:"+proj);
+								client.publish("wyliodrin","signal:"+proj);
+							
+							
 							});					
 							
 						}

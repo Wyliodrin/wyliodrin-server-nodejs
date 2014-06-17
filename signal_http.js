@@ -32,14 +32,14 @@ function sendSignal(signal, functie)
 	};
 
 	var req = https.request(options, function(res) {
-		console.log("codul de eroare :"+res.statusCode);
+		//console.log("codul de eroare :"+res.statusCode);
 	  functie(false, res.statusCode);
 	});
 
 	req.on('socket', function (socket) {
 	    socket.setTimeout(2000);  
 	    	socket.on('timeout', function() {
-        		console.log ('socket timeout');
+        		//console.log ('socket timeout');
         		req.abort();
     		});
 	});

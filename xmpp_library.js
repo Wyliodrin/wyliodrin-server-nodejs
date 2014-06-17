@@ -33,7 +33,7 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
 
         this.on ('stanza', function (stanza)
         {
-                console.log ('received = '+stanza.toString());
+                //console.log ('received = '+stanza.toString());
                 if (stanza.is('iq'))
                 {
                         var p = stanza.getChild ('ping');

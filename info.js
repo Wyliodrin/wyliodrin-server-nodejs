@@ -21,7 +21,7 @@ function load()
 	setInterval(function(){
 		if (projectSendDict.size > 0)
 		{
-			console.log("projectSendDict.size > 0");
+			//console.log("projectSendDict.size > 0");
 			if (wxmpp && wxmpp.checkConnected())
 			{
 				var t = wxmpp.getConnection();
@@ -49,7 +49,7 @@ function load()
 
 function sendStartInfo(from)
 {
-	console.log("start info from -"+from);
+	//console.log("start info from -"+from);
 	if(wxmpp != null && wxmpp.checkConnected())
 	{
 		var t = wxmpp.getConnection();
@@ -66,7 +66,7 @@ function sendStartInfo(from)
 
 function sendInfo(from)
 {
-	console.log("send info from -"+from);
+	//console.log("send info from -"+from);
 	if(wxmpp.checkConnected())
 	{
 		var t = wxmpp.getConnection();
@@ -92,7 +92,7 @@ function info_stanza(t, from, to, es, error)
 		}
 		else if (action == 'send')
 		{
-			console.log("info stanza send");
+			//console.log("info stanza send");
 			var request_id = es.attrs.request;
 			if(config.pstimes)
 				projectSendDict.set(request_id.toString(),config.pstimes);
@@ -135,11 +135,11 @@ function processes (list)
 
 function kill (pid, done)
 {
-	console.log (networkConfig.stop+' '+pid);
+	//console.log (networkConfig.stop+' '+pid);
     child_process.exec (config.stop+' '+pid, function (error, stdout, stderr)
     {
-    	console.log(error);
-    	console.log(stdout);
+    	//console.log(error);
+    	//console.log(stdout);
         if (done) done (error);
     });
 }
