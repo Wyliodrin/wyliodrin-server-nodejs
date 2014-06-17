@@ -15,11 +15,9 @@ function canMount()
   try
   {
     fuse = fs.existsSync ('/dev/fuse');
-    console.log("fuse = "+fuse);
   }
   catch(e)
   {
-    console.log("not file "+e);
     fuse = false;
   }
   return fuse;
@@ -32,7 +30,6 @@ function init()
   {
   	child_process.exec(config.umount+' '+mountFile, function (err, stdout, stderr)
     {
-	console.log (err);
       {
         log.putLog ('Creating fuse mounting directory in '+mountFile);
         mkdirp.sync (mountFile);

@@ -49,7 +49,7 @@ function connect()
 		loadSettings ();
 		connection.on ('error', function(error)
 		{
-			console.log ('error');
+			//console.log ('error');
 			if (!connecting)
 			{
 				reconnect ();
@@ -60,7 +60,7 @@ function connect()
 
 		connection.on ('disconnect', function()
 		{
-			console.log ('disconnect');
+			//console.log ('disconnect');
 			if (!connecting)
 			{
 				reconnect ();
@@ -72,7 +72,7 @@ function connect()
 
 		connection.on ('close', function()
 		{
-			console.log ('close');
+			//console.log ('close');
 			if (!connecting)
 			{
 				reconnect ();
@@ -86,7 +86,7 @@ function connect()
 			delay = 100;
 			isConnected = true;
 			connecting=false;
-		  console.log (networkConfig.jid+"> online");
+		  //console.log (networkConfig.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
@@ -106,12 +106,12 @@ function connect()
 
 		connection.on ('rawStanza', function (stanza)
 		{
-		  console.log (networkConfig.jid+'>'+stanza.root().toString());
+		  //console.log (networkConfig.jid+'>'+stanza.root().toString());
 		});
 		
 		connection.on ('end', function ()
 		{
-			console.log ('end');
+			//console.log ('end');
 			if (!connecting)
 			{
 				isConnected = false;
@@ -122,7 +122,7 @@ function connect()
 		{
 			if (stanza.getName()=='presence')
 			{
-				console.log('presence');
+				//console.log('presence');
 				if (stanza.attrs.type == 'subscribe')
 				{
 					if (from == networkConfig.owner)
@@ -137,10 +137,10 @@ function connect()
 				}
 				else if(!stanza.attrs.type || stanza.attrs.type == 'available')
 				{
-					console.log('available');
+					//console.log('available');
 					available = true;
 					connection.emptyStanzaBuffer(); 
-					console.log("wxmpp from start info = "+from);
+					//console.log("wxmpp from start info = "+from);
 					info.sendStartInfo(from);
 					//intervalID = setInterval(function(){	
 					//info.sendInfo(from);}, 2000);
@@ -148,7 +148,7 @@ function connect()
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{
-					console.log('unavailable');
+					//console.log('unavailable');
 					available = false;
 					ownerUnavailable();
 					// if(intervalID)
@@ -184,7 +184,7 @@ function ownerUnavailable()
 function reconnect ()
 {
 	connecting = true;
-	console.log ('reconnecting '+delay);
+	//console.log ('reconnecting '+delay);
 	setTimeout (function ()
 	{
 		delay = delay * 2;

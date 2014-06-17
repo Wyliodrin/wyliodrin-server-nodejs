@@ -1,6 +1,6 @@
 "use strict"
 var dict = require('dict');
-
+var log = require('log');
 var projectsDict = dict({});
 var xmpp = require('./xmpp_library.js').xmpp;
 var terminal = require('./terminal');
@@ -19,7 +19,7 @@ var home = config.home;
 
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
-	console.log('make terminal');
+	//console.log('make terminal');
 	var term = terminal.allocTerminal(from);
 	var width;
 	var height;
@@ -51,14 +51,14 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		{
 			if (from) for(var i=0; i<from.length; i++)
 			{
-				console.log('started terminal with from = '+from[i]);
+	//			console.log('started terminal with from = '+from[i]);
 				var tag = new xmpp.Element('shells',{shellid:term.id,action:"keys",request:term.request}).t(data);
 				t.sendWyliodrin(from[i], tag, false);
 			}
 		});
 	if(rc == terminal.TERMINAL_OK)
 	{
-		console.log('terminal ok');
+	//	console.log('terminal ok');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:term.request, shellid:term.id});
 		// console.log(tag.root().toString());
@@ -66,7 +66,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	}
 	else
 	{
-		console.log('terminal error');
+	//	console.log('terminal error');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:term.request});
 		t.sendWyliodrin(from, tag, false);
@@ -86,18 +86,18 @@ function shell_stanza(t, from, to, es, error)
 		{
 			if(!es.attrs.projectid)
 			{
-				console.log('open terminal '+home);
+				//console.log('open terminal '+home);
 				makeTerminal(t, from, to, es, error, COMMAND, [], home);		
 			}
 			else
 			{
 				if(es.attrs.projectid.indexOf('/') == -1)
 				{
-					console.log("hos not /");
+	//				console.log("hos not /");
 					if(projectsDict.has(es.attrs.projectid))
 					{
 						// console.log('attachTerminal');
-						console.log('terminal in dict');
+	//					console.log('terminal in dict');
 						var id = projectsDict.get(es.attrs.projectid);
 						// terminal.attachTerminal(from, id);	
 						terminal.destroyTerminal(id, from, 'stop', function(code, from){
@@ -111,11 +111,11 @@ function shell_stanza(t, from, to, es, error)
 					}
 					else
 					{
-						console.log('no terminal in dict');
+	//					console.log('no terminal in dict');
 						try{
-							console.log (buildFile+'/'+es.attrs.projectid);
+	//						console.log (buildFile+'/'+es.attrs.projectid);
 						var term = makeTerminal(t, from, to, es, error, config.run[0], config.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
-						} catch(e){console.log (e);}
+						} catch(e){log.putError(e);}
 						projectsDict.set(es.attrs.projectid,term.id);
 					}					
 					
@@ -127,7 +127,7 @@ function shell_stanza(t, from, to, es, error)
 		{
 			sys.exec ('sudo poweroff', function (error, stdout, stderr)
 			{
-				if (error) console.log ('poweroff error '+stderr);
+				if (error) log.putError('poweroff error '+stderr);
 			});
 		}
 		if(es.attrs.action == 'close' || es.attrs.action == 'stop')

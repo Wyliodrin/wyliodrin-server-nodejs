@@ -21,9 +21,6 @@ var mountPath = config.mountFile;
 
 var gadget = config.board;
 
-console.log("gadget = "+gadget);
-//process.exit(1);
-
 var networkConfig = require('./settings').config.networkConfig;
 var port = networkConfig.port;
 
@@ -69,17 +66,14 @@ function make(id, command, args, address, userid, sendOutput)
 		if(buildPath)
 		if(true)
 		{
-			console.log('build path');
 			child_process.exec('rm -rf '+buildPath, {maxBuffer:10*1024, cwd:buildFile},
 				function(error, stdout, stderr){
 					if(files.canMount())
 					{
-						console.log('can mount');
 						child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
 						function(error, stdout, stderr){
 							if (!error)
 							{	
-								console.log ('ln -s Makefile.'+gadget+' Makefile '+buildPath+'/'+id);
 								child_process.exec ('ln -s Makefile.'+gadget+' Makefile', {cwd: buildPath}, function (err, stdout, stderr)
 								{
 									if (!error)
@@ -88,14 +82,12 @@ function make(id, command, args, address, userid, sendOutput)
 									}
 									else
 									{
-										console.log ('ln error: '+err);
 										sendOutput ("ln error: "+err, "system", error.code);
 									}
 								});
 							}
 							else
 							{
-								console.log ('cp error: '+error);
 								sendOutput ("cp error: "+error, "system", error.code);
 							}
 					
@@ -111,11 +103,9 @@ function make(id, command, args, address, userid, sendOutput)
 					}
 					else
 					{
-						console.log('address = '+address);
 						child_process.exec('wget --no-check-certificate '+address, {maxBuffer:30*1024, cwd:buildFile},function(error,stdout,stderr){
 							if(!error)
 							{
-								console.log("fisier = "+path.basename(address));
 								child_process.exec('tar xf '+path.basename(address), {maxBuffer:30*1024, cwd:buildFile},
 									function(error, stdout, stderr){
 										child_process.exec('rm -rf '+path.basename(address), {maxBuffer:30*1024, cwd:buildFile},
@@ -143,7 +133,6 @@ function make(id, command, args, address, userid, sendOutput)
 							}
 							else
 							{
-								console.log (error);
 								sendOutput("Wget error", "system", error.code);
 							}
 						});

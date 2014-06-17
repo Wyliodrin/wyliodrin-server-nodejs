@@ -65,14 +65,14 @@ function wifi(functie)
 	var WIFIFORM = path.join(__dirname,'conf',config.board,'/wireless/wireless_form.conf');
 	if (!fs.existsSync(WIFIFORM)) 
 	{
-		console.log('Board specific WiFi Form not found, using default');
-		//log.putLog ('Board specific WiFi Form not found, using default');
+		//console.log('Board specific WiFi Form not found, using default');
+		log.putLog ('Board specific WiFi Form not found, using default');
 		WIFIFORM = path.join(__dirname,'conf/wireless/wireless_form.conf');
 	}
 	try
 	{
 		var wifiData = fs.readFileSync(WIFIFORM);
-		console.log("wifidata = "+networkConfig.ssid);
+		//console.log("wifidata = "+networkConfig.ssid);
 		var fileWifi = ejs.render (wifiData.toString(), {ssid:networkConf.ssid,
 							scan_ssid:networkConf.scan_ssid, psk:networkConf.psk});
 		try
@@ -82,7 +82,7 @@ function wifi(functie)
 			{
 				if (error!=null) 
 				{
-					console.log("Error resetting Wifi, retrying "+stderr);
+					log.putLog("Error resetting Wifi, retrying "+stderr);
 					/* retry after RETY_TIME miliseconds */
 					setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
 								{

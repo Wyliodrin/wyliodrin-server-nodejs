@@ -23,7 +23,6 @@ function sendInfo(requestid)
 		var t = wxmpp.getConnection();
 		processes (function (ps)
 		{
-			console.log("\n\nps = "+ps.length);
 			var elem = new xmpp.Element('info',{request:requestid, data:'ps', loadavg:os.loadavg()[0]*100, totalmem:os.totalmem(), freemem:os.freemem()});
 			ps.forEach(function( item ){
 				elem.c('ps',{name:item.COMMAND,pid:item.PID,cpu:item['%CPU'],mem:item.VSZ}).up();
@@ -63,10 +62,8 @@ function sendInfo(from)
 
 function info_stanza(t, from, to, es, error)
 {
-	//console.log('info stanza');
 	if (!error)
 	{
-		//console.log("! err");
 		var action = es.attrs.action;
 		if (action == 'kill')
 		{
@@ -127,7 +124,6 @@ function kill (pid)
 
 function listprocesse (psls, pslist)
 {
-	// console.log (psls);
 	var ps = []; 
     var lines = psls.split ('\n');
     var columns = lines[0].trim().split (' ');

@@ -1,6 +1,7 @@
 var settings = require ('./conf/wyliodrin_settings.js');
 var child_process = require ('child_process');
 var fs = require ('fs');
+var log = require('log');
 
 var config = {config:null,
 				networkConfig:null};
@@ -9,13 +10,11 @@ var config = {config:null,
 		Step one. */
 function isRaspberry(functie)
 {
-	console.log('Is it a Raspberry Pi?');
 	var child  = child_process.exec('cat /proc/cpuinfo | grep BCM',
 		function(error, stdout, stderr)
 		{
 			if(error != null)
 			{
-				console.log('\t not Raspberry Pi');
 				functie (null);
 			}
 			if(stdout != '')
@@ -29,18 +28,15 @@ function isRaspberry(functie)
 		Step one. */
 function isGalileo(functie)
 {
-	console.log('Is it an Arduino Galileo?');
 	var child  = child_process.exec('cat /proc/cpuinfo | grep GenuineIntel',
 		function(error, stdout, stderr)
 		{
 			if(error != null)
 			{
-				console.log('\t not Arduino Galileo');
 				functie (null);
 			}
 			if(stdout != '')
 			{
-				console.log('functie');
 				functie ('arduinogalileo');
 			}
 		});
@@ -59,22 +55,18 @@ exports.load = function (start)
 		}
 		catch(e)
 		{
-			console.log('cannot read local config file '+e);
+			log.putError("No configuration file");
 		}
 		if (!config.config) setTimeout (function ()
 		{
-			console.log ('no config file');
 			process.exit (0);
 		}, 10000);
 		else
 		{
-			console.log('exports conf');
 			exports.config = config;
 			start ();
 		}
 	};
-
-	console.log('Starting Wyliodrin');
 	var board = null;
 	try
 	{
@@ -82,7 +74,7 @@ exports.load = function (start)
 	}
 	catch (ex)
 	{
-		// console.log (ex);
+		log.putError(ex);
 	}
 	if (board)
 	{

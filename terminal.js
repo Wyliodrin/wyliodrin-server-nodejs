@@ -17,8 +17,6 @@ var networkConfig = settings.networkConfig;
 var terminals=[];
 var port = parseInt(networkConfig.port);
 var home = config.home;
-console.log("home = "+home);
-
 for(var i=0; i<MAX_TERMINALS; i++)
 {
 	terminals[i] = null;
@@ -103,9 +101,7 @@ function destroy_terminal(id,from,action, sendResponse)
 
 function start_terminal(id, projectId, command, args, width, height, requestid, userid, env, send_data)
 {
-	console.log('start terminal with env = '+env);
 	var t = find_terminal_by_id(id);
-	//console.log(t.id);
 	var termWidth = TERMINAL_COLS;
 	var termHeight = TERMINAL_ROWS;
 	if(t != null)
@@ -114,7 +110,6 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 			termWidth = width;
 		if(height != 0)
 			termHeight = height;
-		// console.log('not null');
 		var term = pty.spawn(command, args, {
 		  name: 'xterm',
 		  cols: termWidth,
@@ -127,22 +122,14 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 		t.terminal = term;
 		t.projectId = projectId;
 		term.on('data', function(data)
-		{
-			// var b=	new Buffer(data);
-			// for(i=0; i<b.length; i++)
-			// {
-			// 	console.log(b[i]);
-			// }
-	
+		{	
 			var data64 = new Buffer(data).toString('base64');
 			send_data(data64, t.from);
 			// send_data(data);
 		});
 		term.on('exit', function(){
-			// console.log('terminal closed');
 			if(t.projectId)
 			{
-				// console.log('term has proj id');
 				terminal_xmpp.closeProject(t.projectId);
 			}
 			terminal_xmpp.notifyClosedTerminal(id, t.from);
@@ -157,9 +144,7 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 
 function sendKeysToTerminal(id, keys)
 {
-	// console.log ('sending keys');
 	var t = find_terminal_by_id(id);
-	// console.log (t);
 	if(t != null)
 	{
 		for (var i=0; i<keys.length; i++)
@@ -170,7 +155,6 @@ function sendKeysToTerminal(id, keys)
 	}
 	else
 	{
-		console.log ('terminal not found '+id);
 		return TERMINAL_E_NOT_FOUND;
 	}
 }

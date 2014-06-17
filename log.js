@@ -7,7 +7,6 @@ var config = require('./settings').config;
 
 function flush ()
 {
-	console.log('wxmpp = '+wxmpp);
 	while (wxmpp && wxmpp.checkConnected && wxmpp.checkConnected() && logs.length > 0)
 	{
 		var log = logs[0];
@@ -27,7 +26,6 @@ function send (type, str, timestamp)
 function putLog(log)
 {
 	send ('debug', log, new Date());
-	console.log(log);
 }
 
 function putError(error)

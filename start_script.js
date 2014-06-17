@@ -11,7 +11,6 @@ function start ()
 {
 	config = settings.config.config;
 	networkConfig = settings.config.networkConfig;
-	console.log('start '+JSON.stringify(settings.config, null, 2));
 	var wifi = require('./wificonfig');
 	wifi.init(function(){
 		var wxmpp = require('./wxmpp');
