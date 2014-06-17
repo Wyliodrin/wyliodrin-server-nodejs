@@ -10,6 +10,7 @@ var settings =
 		umount: 'sudo umount -f',
 		run: ['sudo', '-E', 'make'],
 		stop: ['sudo kill -9'],
+		sudo: 'sudo',
 		board:"raspberrypi"
 	},
 	
@@ -21,6 +22,7 @@ var settings =
 		umount: 'umount -f',
 		run: ['make'],
 		stop: ['kill -9'],
+		sudo:'',
 		board:"arduinogalileo"
 	},
 
@@ -32,6 +34,7 @@ var settings =
 		umount: 'sudo umount -f',
 		run: ['make'],
 		stop: ['kill -9'],
+		sudo:'sudo',
 		board:"fpga"
 	}
 };

@@ -3,14 +3,13 @@ var fs = require('fs');
 var path = require('path');
 var E_NO_CONF = -1;
 var settings = require('./settings');
+var child_process = require('child_process');
 settings.load (start);
 var config;
 var networkConfig;
 
-function start ()
+function start2()
 {
-	config = settings.config.config;
-	networkConfig = settings.config.networkConfig;
 	var wifi = require('./wificonfig');
 	wifi.init(function(){
 		var wxmpp = require('./wxmpp');
@@ -25,6 +24,27 @@ function start ()
 		info.load();
 		//signal_http.sendSignal("skf");
 	});
+}
+
+
+function start ()
+{
+	config = settings.config.config;
+	networkConfig = settings.config.networkConfig;
+	if(networkConfig.setdate && networkConfig.timezone)
+	{
+		child_process.exec(config.sudo+' date -s "$(curl -s --head http://google.com | grep ^Date: | sed \'s/Date: //g\')"',
+			function(err, stdout, stderr){
+				child_process.exec(config.sudo+' ln -sf /usr/share/zoneinfo/'+networkConfig.timezone+' /etc/localtime',
+					function(err, stdout, stderr){
+						start2();
+					});				
+			});
+	}
+	else
+	{
+		start2();
+	}
 }
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
