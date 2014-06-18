@@ -24,7 +24,7 @@ function findSSID (done)
 	{
 		if (!error)
 		{
-			done (stdout);
+			done (stdout.replace (/\n$/, ''));
 		}
 		else
 		{
@@ -62,6 +62,20 @@ function findConfigFile(funct)
 
 function wifi(functie)
 {
+	if (config.board == 'arduinogalileo')
+	{
+		child_process.exec ('./conf/arduinogalileo_wifi.sh "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
+		{
+			console.log ('Setting up wifi');
+			console.log (stdout);
+			setTimeout (function ()
+			{
+				functie ();
+			}, 10000);
+		});
+	}
+	else
+	{
 	var WIFIFORM = path.join(__dirname,'conf',config.board,'/wireless/wireless_form.conf');
 	if (!fs.existsSync(WIFIFORM)) 
 	{
@@ -124,6 +138,7 @@ function wifi(functie)
 	{
 		//log.putError('Cannot read wifi file '+e);
 		 functie ();
+	}
 	}	
 }
 exports.init = init;
