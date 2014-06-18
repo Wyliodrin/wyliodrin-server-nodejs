@@ -125,7 +125,7 @@ function shell_stanza(t, from, to, es, error)
 		}
 		if(es.attrs.action == 'poweroff')
 		{
-			sys.exec ('sudo poweroff', function (error, stdout, stderr)
+			sys.exec (config.sudo+' poweroff', function (error, stdout, stderr)
 			{
 				if (error) log.putError('poweroff error '+stderr);
 			});
