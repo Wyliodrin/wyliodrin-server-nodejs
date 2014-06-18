@@ -6,8 +6,8 @@
     "start": "node start_script.js"
 },
 "dependencies": {
-	"pty.js": "0.2.4",
 	"node-xmpp-client":"1.0.0-alpha2",
+	"pty.js":"git://github.com/Wyliodrin/pty.js.git",
 	"dict":"1.4.0",
 	"underscore":"1.6.0",
 	"node-stringprep":"0.2.3",

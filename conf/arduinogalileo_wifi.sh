@@ -5,7 +5,7 @@ connmanctl enable wifi
 sleep 1
 connmanctl scan wifi
 WIFIHASH=`connmanctl services | grep "$1" | awk '{print $NF}'`
-if test -n $WIFIHASH; then
+if test -n "$WIFIHASH"; then
   mkdir -p /var/lib/connman/$WIFIHASH
   WIFICONFIG=/var/lib/connman/$WIFIHASH/settings
   echo "[$WIFIHASH]" > $WIFICONFIG
