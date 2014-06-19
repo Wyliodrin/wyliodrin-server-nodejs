@@ -73,7 +73,7 @@ WSConnection.prototype.stopParser = function() {
 }
 
 WSConnection.prototype.onmessage = function(msg) {
-    console.log('ws msg <--', msg.data)
+    // console.log('ws msg <--', msg.data)
     if (msg && msg.data && this.parser)
         this.parser.write(msg.data)
 }
@@ -121,7 +121,7 @@ WSConnection.prototype.startStream = function() {
 WSConnection.prototype.send = function(stanza) {
     if (stanza.root) stanza = stanza.root()
     stanza = stanza.toString()
-    console.log('ws send -->', stanza)
+    // console.log('ws send -->', stanza)
     this.websocket.send(stanza)
 }
 
