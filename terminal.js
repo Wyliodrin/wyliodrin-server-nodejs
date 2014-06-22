@@ -78,8 +78,8 @@ function destroy_terminal(id,from,action, sendResponse)
 				}
 				else
 				{
-					t.terminal.destroy();
 					exec (config.stop+' '+t.terminal.pid);
+					t.terminal.destroy();
 					terminals[id] = null;
 					sendResponse(TERMINAL_OK, [from]);
 				}
@@ -87,8 +87,8 @@ function destroy_terminal(id,from,action, sendResponse)
 			else
 			{
 				var from = t.from;
-				t.terminal.destroy();
 				exec (config.stop+' '+t.terminal.pid);
+				t.terminal.destroy();
 				terminals[id] = null;
 				sendResponse(TERMINAL_OK, from);
 			}
