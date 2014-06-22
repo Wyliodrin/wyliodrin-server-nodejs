@@ -71,18 +71,18 @@ function destroy_terminal(id,from,action, sendResponse)
 		{
 			if(action = 'close')
 			{
-				if(t.from.length > 1)
-				{
-					t.from.pop(from);
-					sendResponse(TERMINAL_OK, [from]);
-				}
-				else
-				{
+				// if(t.from.length > 1)
+				// {
+				// 	t.from.pop(from);
+				// 	sendResponse(TERMINAL_OK, [from]);
+				// }
+				// else
+				// {
 					exec (config.stop+' '+t.terminal.pid);
 					t.terminal.destroy();
 					terminals[id] = null;
 					sendResponse(TERMINAL_OK, [from]);
-				}
+				// }
 			}
 			else
 			{
