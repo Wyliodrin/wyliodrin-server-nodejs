@@ -116,7 +116,7 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 		  rows: termHeight,
 		  cwd: env,
 		  env:_.extend(process.env,{HOME:home,wyliodrin_project:projectId, wyliodrin_port:port,
-		  		wyliodrin_session:requestid, wyliodrin_userid:userid})
+		  		wyliodrin_session:requestid, wyliodrin_userid:userid, wyliodrin_board:config.board})
 		});
 	
 		t.terminal = term;
