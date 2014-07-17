@@ -19,20 +19,10 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
         {
         	bufferSize = buffer;
         }
-        // this.on ('iq', function (stanza)
-        // {
-        //         var p = stanza.getChild ('ping', 'urn:xmpp:ping');
-        //		console.log (stanza.root().toString());
-	//         console.log ('stanza');
-        //         if (p && p.type == 'get')
-        //         {
-        //                 console.log ('ping');
-        //                 t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
-        //         }
-        // });
 
         this.on ('stanza', function (stanza)
         {
+                t.ping = true;
                 // console.log ('received = '+stanza.toString());
                 if (stanza.is('iq'))
                 {

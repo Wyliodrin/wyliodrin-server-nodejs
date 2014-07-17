@@ -51,13 +51,15 @@ function connect()
 			connection.connection.socket.setTimeout (0);
 			connection.connection.socket.setKeepAlive (true, 100);
 		}
+		connection.ping = true;
 		connecting = false;
 		loadSettings ();
 		connection.on ('error', function(error)
 		{
-			//console.log ('error');
+			console.log ('XMPP error');
 			if (!connecting)
 			{
+				clearInterval (connection.interval);
 				reconnect ();
 				console.error (error);
 				isConnected = false;
@@ -66,9 +68,10 @@ function connect()
 
 		connection.on ('disconnect', function()
 		{
-			//console.log ('disconnect');
+			console.log ('XMPP disconnect');
 			if (!connecting)
 			{
+				clearInterval (connection.interval);
 				reconnect ();
 		  		console.error ('disconnect');
 		  		isConnected = false;
@@ -78,9 +81,10 @@ function connect()
 
 		connection.on ('close', function()
 		{
-			//console.log ('close');
+			console.log ('XMPP close');
 			if (!connecting)
 			{
+				clearInterval (connection.interval);
 				reconnect ();
 		  		console.error ('disconnect');
 		  		isConnected = false;
@@ -92,6 +96,34 @@ function connect()
 			delay = 100;
 			isConnected = true;
 			connecting=false;
+			connection.interval = setInterval (function ()
+			{
+				if (!connection.nr) connection.nr = 0;
+			    if (connection.ping)
+			    {
+			        connection.nr = 0;
+			        connection.ping = false;
+			    }
+			    else
+			    {
+			        connection.nr ++;
+			    }
+			    // console.log ('ping nr '+connection.nr);
+			    if (connection.nr > 50)
+			    {
+			    	try
+			    	{
+			        	connection.nr = 0;
+			        	connection.disconnect ();
+			        }
+			        catch (e)
+			        {
+			        	isConnected = false;
+			        	clearInterval (connection.interval);
+			        	reconnect ();
+			        }
+			    }
+			}, 1000);
 		  //console.log (networkConfig.jid+"> online");
 		  connection.send(new xmpp.Element('presence',
 		           {}).
@@ -117,9 +149,10 @@ function connect()
 		
 		connection.on ('end', function ()
 		{
-			//console.log ('end');
+			console.log ('XMPP end');
 			if (!connecting)
 			{
+				clearInterval (connection.interval);
 				isConnected = false;
 				reconnect ();
 			}
@@ -190,7 +223,7 @@ function ownerUnavailable()
 function reconnect ()
 {
 	connecting = true;
-	//console.log ('reconnecting '+delay);
+	console.log ('reconnecting '+delay);
 	setTimeout (function ()
 	{
 		delay = delay * 2;

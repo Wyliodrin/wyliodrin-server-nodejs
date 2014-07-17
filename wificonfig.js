@@ -8,6 +8,8 @@ var set = require('./settings').config;
 var config = set.config;
 var networkConfig = set.networkConfig;
 
+var WIFICONF = './conf/wireless/wireless.conf';
+
 var RASPBERRY = 'raspberry';
 var ARDUINO_GALILEO = 'arduinogalileo';
 
@@ -76,19 +78,21 @@ function wifi(functie)
 	}
 	else
 	{
-	var WIFIFORM = path.join(__dirname,'conf',config.board,'/wireless/wireless_form.conf');
+		var FORM = 'wireless_form.conf';
+		if (networkConfig.psk.length==0) FORM = 'wireless-open_form.conf';
+	var WIFIFORM = path.join(__dirname,'conf',config.board,'/wireless/'+FORM);
 	if (!fs.existsSync(WIFIFORM)) 
 	{
 		//console.log('Board specific WiFi Form not found, using default');
 		console.log ('Board specific WiFi Form not found, using default');
-		WIFIFORM = path.join(__dirname,'conf/wireless/wireless_form.conf');
+		WIFIFORM = path.join(__dirname,'conf/wireless/'+FORM);
 	}
 	try
 	{
 		var wifiData = fs.readFileSync(WIFIFORM);
 		//console.log("wifidata = "+networkConfig.ssid);
-		var fileWifi = ejs.render (wifiData.toString(), {ssid:networkConf.ssid,
-							scan_ssid:networkConf.scan_ssid, psk:networkConf.psk});
+		var fileWifi = ejs.render (wifiData.toString(), {ssid:networkConfig.ssid,
+							scan_ssid:networkConfig.scan_ssid, psk:networkConfig.psk});
 		try
 		{
 			fs.writeFileSync(WIFICONF, fileWifi);
