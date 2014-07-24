@@ -57,6 +57,7 @@ function connect()
 		connection.on ('error', function(error)
 		{
 			console.log ('XMPP error');
+			console.log (error);
 			if (!connecting)
 			{
 				clearInterval (connection.interval);
