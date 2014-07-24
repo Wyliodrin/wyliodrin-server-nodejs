@@ -39,7 +39,7 @@ function connect()
 		if(networkConfig.firewall){
 			connection = new xmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
 				reconnect:false, preferred:'PLAIN', 
-				websocket: {url: 'wss://wxmpp.wyliodrin.org/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
+				websocket: {url: 'wss://wxmpp.wyliodrin.com/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
 		}
 		else
 		{
