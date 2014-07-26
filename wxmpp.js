@@ -110,12 +110,13 @@ function connect()
 			        connection.nr ++;
 			    }
 			    // console.log ('ping nr '+connection.nr);
-			    if (connection.nr > 50)
+			    if (networkConfig.firewall == false && connection.nr > 50)
 			    {
+				console.log ('ping timeout');
 			    	try
 			    	{
 			        	connection.nr = 0;
-			        	connection.disconnect ();
+					connection.disconnect ();
 			        }
 			        catch (e)
 			        {
