@@ -12,6 +12,10 @@ function start2()
 {
 	var wifi = require('./wificonfig');
 	wifi.init(function(){
+		if (networkConfig.nameserver && networkConfig.nameserver.length > 0)
+		{
+			fs.writeFileSync ("/etc/resolv.conf", "nameserver "+networkConfig.nameserver);
+		}
 		var wxmpp = require('./wxmpp');
 		wxmpp.initConnection();
 		var fuse = require('./fuse');
