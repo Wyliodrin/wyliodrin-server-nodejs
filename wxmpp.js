@@ -42,11 +42,13 @@ function connect()
 		connection.connection.socket.setTimeout (0);
 		connection.connection.socket.setKeepAlive (true, 100);
 		connecting = false;
+		connection.reconnect = true;
 		connection.on ('error', function(error)
 		{
 			console.log ('error');
-			if (!connecting)
+			if (!connecting && connection.reconnect)
 			{
+				connection.reconnect = false;
 				reconnect ();
 				console.error (error);
 				isConnected = false;
@@ -56,9 +58,10 @@ function connect()
 		connection.on ('disconnect', function()
 		{
 			console.log ('disconnect');
-			if (!connecting)
+			if (!connecting && connection.reconnect)
 			{
-				reconnect ();
+				// connection.reconnect = false;
+				// reconnect ();
 		  		console.error ('disconnect');
 		  		isConnected = false;
 			}
@@ -68,8 +71,9 @@ function connect()
 		connection.on ('close', function()
 		{
 			console.log ('close');
-			if (!connecting)
+			if (!connecting && connection.reconnect)
 			{
+				connection.reconnect = false;
 				reconnect ();
 		  		console.error ('disconnect');
 		  		isConnected = false;
