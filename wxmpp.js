@@ -53,13 +53,15 @@ function connect()
 		}
 		connection.ping = true;
 		connecting = false;
+		connection.reconnect = true;
 		loadSettings ();
 		connection.on ('error', function(error)
 		{
 			console.log ('XMPP error');
 			console.log (error);
-			if (!connecting)
+			if (!connecting && connection.reconnect)
 			{
+				connection.reconnect = false;
 				clearInterval (connection.interval);
 				reconnect ();
 				console.error (error);
@@ -73,7 +75,7 @@ function connect()
 			if (!connecting)
 			{
 				clearInterval (connection.interval);
-				reconnect ();
+				// reconnect ();
 		  		console.error ('disconnect');
 		  		isConnected = false;
 			}
@@ -83,8 +85,9 @@ function connect()
 		connection.on ('close', function()
 		{
 			console.log ('XMPP close');
-			if (!connecting)
+			if (!connecting && connection.reconnect)
 			{
+				connection.reconnect = false;
 				clearInterval (connection.interval);
 				reconnect ();
 		  		console.error ('disconnect');
@@ -116,7 +119,7 @@ function connect()
 			    	try
 			    	{
 			        	connection.nr = 0;
-					connection.disconnect ();
+					connection.end ();
 			        }
 			        catch (e)
 			        {
