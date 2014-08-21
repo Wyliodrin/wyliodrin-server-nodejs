@@ -49,6 +49,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	var rc = terminal.startTerminal(term.id, es.attrs.projectid, command, args, width, height, term.request,
 			es.attrs.userid, env, function (data, from)
 		{
+			t = wxmpp.getConnection ();
 			if (from) for(var i=0; i<from.length; i++)
 			{
 	//			console.log('started terminal with from = '+from[i]);
