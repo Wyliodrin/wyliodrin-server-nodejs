@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# redis
+#install redis
+sudo apt-get install redis-server
+sudo apt-get install libhiredis-dev
+
 # raspberry pi user
 USER=pi
 
