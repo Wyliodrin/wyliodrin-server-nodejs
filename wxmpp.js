@@ -51,86 +51,87 @@ function connect()
 			connection.connection.socket.setTimeout (0);
 			connection.connection.socket.setKeepAlive (true, 100);
 		}
-		connection.ping = true;
+		var xmpp = connection;
+		xmpp.ping = true;
 		connecting = false;
-		connection.reconnect = true;
+		xmpp.reconnect = true;
 		loadSettings ();
-		connection.on ('error', function(error)
+		xmpp.on ('error', function(error)
 		{
 			console.log ('XMPP error');
 			console.log (error);
-			if (!connecting && connection.reconnect)
+			if (!connecting && xmpp.reconnect)
 			{
-				connection.reconnect = false;
-				clearInterval (connection.interval);
+				xmpp.reconnect = false;
+				clearInterval (xmpp.interval);
 				reconnect ();
 				console.error (error);
 				isConnected = false;
 			}
 		});
 
-		connection.on ('disconnect', function()
+		xmpp.on ('disconnect', function()
 		{
 			console.log ('XMPP disconnect');
 			if (!connecting)
 			{
-				clearInterval (connection.interval);
-				// reconnect ();
-		  		console.error ('disconnect');
-		  		isConnected = false;
-			}
-		});
-
-
-		connection.on ('close', function()
-		{
-			console.log ('XMPP close');
-			if (!connecting && connection.reconnect)
-			{
-				connection.reconnect = false;
-				clearInterval (connection.interval);
+				clearInterval (xmpp.interval);
 				reconnect ();
 		  		console.error ('disconnect');
 		  		isConnected = false;
 			}
 		});
 
-		connection.on ('online', function()
+
+		xmpp.on ('close', function()
+		{
+			console.log ('XMPP close');
+			if (!connecting && xmpp.reconnect)
+			{
+				xmpp.reconnect = false;
+				clearInterval (xmpp.interval);
+				reconnect ();
+		  		console.error ('disconnect');
+		  		isConnected = false;
+			}
+		});
+
+		xmpp.on ('online', function()
 		{
 			delay = 100;
 			isConnected = true;
 			connecting=false;
-			connection.interval = setInterval (function ()
+			xmpp.interval = setInterval (function ()
 			{
-				if (!connection.nr) connection.nr = 0;
-			    if (connection.ping)
+				if (!xmpp.nr) xmpp.nr = 0;
+			    if (xmpp.ping)
 			    {
-			        connection.nr = 0;
-			        connection.ping = false;
+			        xmpp.nr = 0;
+			        xmpp.ping = false;
 			    }
 			    else
 			    {
-			        connection.nr ++;
+			        xmpp.nr ++;
 			    }
 			    // console.log ('ping nr '+connection.nr);
-			    if (networkConfig.firewall == false && connection.nr > 50)
+			    if (networkConfig.firewall == false && xmpp.nr > 50)
 			    {
 				console.log ('ping timeout');
 			    	try
 			    	{
-			        	connection.nr = 0;
-					connection.end ();
+			        	xmpp.nr = 0;
+					xmpp.end ();
 			        }
 			        catch (e)
 			        {
 			        	isConnected = false;
-			        	clearInterval (connection.interval);
+			        	clearInterval (xmpp.interval);
 			        	reconnect ();
 			        }
 			    }
 			}, 1000);
 		  //console.log (networkConfig.jid+"> online");
-		  connection.send(new xmpp.Element('presence',
+		  xmpp.send(new xmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
@@ -139,7 +140,7 @@ function connect()
 		  // {
 		  // 	console.log('functie != null');
 		  // }
-		  connection.send(new xmpp.Element('presence',
+		  xmpp.send(new xmpp.Element('presence',
 		  {
 		  	type:'subscribe',
 		  	to:networkConfig.owner
@@ -147,22 +148,22 @@ function connect()
 		  log.flush ();
 		});
 
-		connection.on ('rawStanza', function (stanza)
+		xmpp.on ('rawStanza', function (stanza)
 		{
 		  //console.log (networkConfig.jid+'>'+stanza.root().toString());
 		});
 		
-		connection.on ('end', function ()
+		xmpp.on ('end', function ()
 		{
 			console.log ('XMPP end');
 			if (!connecting)
 			{
-				clearInterval (connection.interval);
+				clearInterval (xmpp.interval);
 				isConnected = false;
 				reconnect ();
 			}
 		});
-		connection.load(connection, function (from, to, stanza, error)
+		xmpp.load(xmpp, function (from, to, stanza, error)
 		{
 			if (stanza.getName()=='presence')
 			{
@@ -173,7 +174,7 @@ function connect()
 					if (from == networkConfig.owner)
 					{
 						//console.log ('sending subscribed to '+networkConfig.owner);
-						connection.send(new xmpp.Element('presence',
+						xmpp.send(new xmpp.Element('presence',
 		  				{
 		  					type:'subscribed',
 		  					to:networkConfig.owner
@@ -185,7 +186,7 @@ function connect()
 				{
 					//console.log('available');
 					available = true;
-					connection.emptyStanzaBuffer(); 
+					xmpp.emptyStanzaBuffer(); 
 					//console.log("wxmpp from start info = "+from);
 					// info.sendStartInfo(from);
 					//intervalID = setInterval(function(){	
