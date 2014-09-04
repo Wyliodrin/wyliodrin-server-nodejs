@@ -1,5 +1,5 @@
 "use strict";
-var xmpp = require('./xmpp_library.js').xmpp;
+var libxmpp = require('./xmpp_library.js').xmpp;
 var dict = require('dict');
 var fs = require('fs');
 var terminal_xmpp = require('./terminal_xmpp');
@@ -37,13 +37,13 @@ function connect()
 	if(!isConnected)
 	{
 		if(networkConfig.firewall){
-			connection = new xmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
+			connection = new libxmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
 				reconnect:false, preferred:'PLAIN', 
 				websocket: {url: 'wss://wxmpp.wyliodrin.com/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
 		}
 		else
 		{
-			connection = new xmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
+			connection = new libxmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
 				reconnect:false, preferred:'PLAIN'});
 		}
 		if (connection.connection && connection.connection.socket)
@@ -131,7 +131,7 @@ function connect()
 			    }
 			}, 1000);
 		  //console.log (networkConfig.jid+"> online");
-		  xmpp.send(new xmpp.Element('presence',
+		  xmpp.send(new libxmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
@@ -140,7 +140,7 @@ function connect()
 		  // {
 		  // 	console.log('functie != null');
 		  // }
-		  xmpp.send(new xmpp.Element('presence',
+		  xmpp.send(new libxmpp.Element('presence',
 		  {
 		  	type:'subscribe',
 		  	to:networkConfig.owner
@@ -174,7 +174,7 @@ function connect()
 					if (from == networkConfig.owner)
 					{
 						//console.log ('sending subscribed to '+networkConfig.owner);
-						xmpp.send(new xmpp.Element('presence',
+						xmpp.send(new libxmpp.Element('presence',
 		  				{
 		  					type:'subscribed',
 		  					to:networkConfig.owner
