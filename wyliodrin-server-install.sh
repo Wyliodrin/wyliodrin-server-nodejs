@@ -35,6 +35,7 @@ cd ..
 
 # install wyliodrin-server-nodejs
 npm install
+./patch.sh
 sudo adduser $USER $FUSE
 sudo mkdir /wyliodrin
 sudo chown $USER:$USER /wyliodrin
