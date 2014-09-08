@@ -114,7 +114,8 @@ function connect()
 			        xmpp.nr ++;
 			    }
 			    // console.log ('ping nr '+connection.nr);
-			    if (networkConfig.firewall == false && xmpp.nr > (networkConfig.ping || 50))
+			    if (!networkConfig.ping || networkConfig.ping == 0) networkConfig = 50;
+			    if (networkConfig.firewall == false && xmpp.nr > networkConfig.ping)
 			    {
 				console.log ('ping timeout');
 			    	try
