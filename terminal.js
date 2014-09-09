@@ -3,7 +3,7 @@ var pty = require('pty.js');
 var exec = require ('child_process').exec;
 var _ = require('underscore');
 
-var terminal_xmpp = null;
+var terminal_xmpp = require('./terminal_xmpp');
 var MAX_TERMINALS = 1024;
 var TERMINAL_ROWS = 24;
 var TERMINAL_COLS = 80;
@@ -11,23 +11,16 @@ var TERMINAL_COLS = 80;
 var TERMINAL_E_NOT_FOUND = 1;
 var TERMINAL_OK = 0;
 var TERMINAL_E_NOT_ALLOC = 2;
-
+var settings = require('./settings').config;
+var config = settings.config;
+var networkConfig = settings.networkConfig;
 var terminals=[];
-var port;
-var home = null;
-
-function load(modules)
+var port = parseInt(networkConfig.port);
+var home = config.home;
+for(var i=0; i<MAX_TERMINALS; i++)
 {
-	port = parseInt(modules.config.port);
-	home = modules.config.home;
-	// console.log('port = '+port);
-	terminal_xmpp = modules.terminal_xmpp;
-	for(var i=0; i<MAX_TERMINALS; i++)
-	{
-		terminals[i] = null;
-	}
+	terminals[i] = null;
 }
-
 
 function alloc_terminal(from)
 {
@@ -78,24 +71,24 @@ function destroy_terminal(id,from,action, sendResponse)
 		{
 			if(action = 'close')
 			{
-				if(t.from.length > 1)
-				{
-					t.from.pop(from);
-					sendResponse(TERMINAL_OK, [from]);
-				}
-				else
-				{
+				// if(t.from.length > 1)
+				// {
+				// 	t.from.pop(from);
+				// 	sendResponse(TERMINAL_OK, [from]);
+				// }
+				// else
+				// {
+					exec (config.stop+' '+t.terminal.pid);
 					t.terminal.destroy();
-					exec ('sudo kill -9 '+t.terminal.pid);
 					terminals[id] = null;
 					sendResponse(TERMINAL_OK, [from]);
-				}
+				// }
 			}
 			else
 			{
 				var from = t.from;
+				exec (config.stop+' '+t.terminal.pid);
 				t.terminal.destroy();
-				exec ('sudo kill -9 '+t.terminal.pid);
 				terminals[id] = null;
 				sendResponse(TERMINAL_OK, from);
 			}
@@ -106,11 +99,9 @@ function destroy_terminal(id,from,action, sendResponse)
 	else sendResponse(TERMINAL_E_NOT_FOUND);	
 }
 
-function start_terminal(id, projectId, command, args, width, height, env, send_data)
+function start_terminal(id, projectId, command, args, width, height, requestid, userid, env, send_data)
 {
-	// console.log('start terminal');
 	var t = find_terminal_by_id(id);
-	//console.log(t.id);
 	var termWidth = TERMINAL_COLS;
 	var termHeight = TERMINAL_ROWS;
 	if(t != null)
@@ -119,34 +110,26 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 			termWidth = width;
 		if(height != 0)
 			termHeight = height;
-		// console.log('not null');
 		var term = pty.spawn(command, args, {
 		  name: 'xterm',
 		  cols: termWidth,
 		  rows: termHeight,
 		  cwd: env,
-		  env:_.extend(process.env,{HOME:home,wyliodrin_id:projectId, wyliodrin_port:port})
+		  env:_.extend(process.env,{HOME:home,wyliodrin_project:projectId, wyliodrin_port:port,
+		  		wyliodrin_session:requestid, wyliodrin_userid:userid, wyliodrin_board:config.board})
 		});
 	
 		t.terminal = term;
 		t.projectId = projectId;
 		term.on('data', function(data)
-		{
-			// var b=	new Buffer(data);
-			// for(i=0; i<b.length; i++)
-			// {
-			// 	console.log(b[i]);
-			// }
-	
+		{	
 			var data64 = new Buffer(data).toString('base64');
 			send_data(data64, t.from);
 			// send_data(data);
 		});
 		term.on('exit', function(){
-			// console.log('terminal closed');
 			if(t.projectId)
 			{
-				// console.log('term has proj id');
 				terminal_xmpp.closeProject(t.projectId);
 			}
 			terminal_xmpp.notifyClosedTerminal(id, t.from);
@@ -161,9 +144,7 @@ function start_terminal(id, projectId, command, args, width, height, env, send_d
 
 function sendKeysToTerminal(id, keys)
 {
-	// console.log ('sending keys');
 	var t = find_terminal_by_id(id);
-	// console.log (t);
 	if(t != null)
 	{
 		for (var i=0; i<keys.length; i++)
@@ -174,7 +155,6 @@ function sendKeysToTerminal(id, keys)
 	}
 	else
 	{
-		console.log ('terminal not found '+id);
 		return TERMINAL_E_NOT_FOUND;
 	}
 }
@@ -194,8 +174,6 @@ exports.startTerminal = start_terminal;
 exports.sendKeysToTerminal = sendKeysToTerminal;
 exports.TERMINAL_OK = TERMINAL_OK;
 exports.MAX_TERMINALS = MAX_TERMINALS;
-
-exports.load = load;
 exports.attachTerminal = attachTerminal;
 
 

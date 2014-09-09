@@ -35,6 +35,7 @@ cd ..
 
 # install wyliodrin-server-nodejs
 npm install
+./patch.sh
 sudo adduser $USER $FUSE
 sudo mkdir /wyliodrin
 sudo chown $USER:$USER /wyliodrin
@@ -47,36 +48,5 @@ sudo ln -s `pwd`/libs /usr/local/lib/wyliodrin
 # install mplayer
 sudo apt-get -y install mplayer
 
-# install java
-sudo apt-get -y install oracle-java7-jdk
-
-# install free pascal
-sudo apt-get -y install fpc
-
-# install mono
-sudo apt-get -y install mono-devel
-
-# install objective-c
-sudo apt-get install -y gnustep-core-devel
-
 # install python, python-dev, pyserial,  pybass, mplayer.py
 sudo apt-get -y install python python-dev python-setuptools
-
-cd download
-if git clone https://github.com/baudm/mplayer.py.git
-then
-	cd mplayer.py
-	sudo python setup.py install
-	cd ..
-fi
-cd ..
-
-cd download
-if git clone https://github.com/Wyliodrin/pybass.git
-then
-	cd pybass
-	sudo python setup.py install
-	cd ..
-fi
-cd ..
-

@@ -1,36 +1,34 @@
 "use strict";
-var xmpp = null;
+var libxmpp = require('./xmpp_library.js').xmpp;
 var dict = require('dict');
 var fs = require('fs');
-var terminal_xmpp = null;
-var build_xmpp = null;
-var files_xmpp = null;
+var terminal_xmpp = require('./terminal_xmpp');
+var build_xmpp = require('./build_xmpp');
+var files_xmpp = require('./files_xmpp');
 
 var isConnected = false;
 var connecting = false;
 
 var connection = null;
 
-var config = null;
-var XMPP = null;
+var config = require('./settings').config;
+var XMPP = require('./xmpp_library');
 
 var available = false;
-var signal_xmpp = null;
-var info = null;
+var info = require('./info');
 var delay = 100;
 
-var log = null;
+var log = require('./log');
 
 var intervalID = null;
 
-var functie = null;
+//var functie = null;
 
-function initConnection (modules, fns)
+var networkConfig = require('./settings').config.networkConfig;
+
+function initConnection() //(fns)
 {
-	xmpp = modules.xmpp;
-	config = modules.config;
-	log = modules.log;
-	functie = fns;
+	//functie = fns;
 	connect ();
 }
 
@@ -38,115 +36,167 @@ function connect()
 {
 	if(!isConnected)
 	{
-		connection = new xmpp.Client({jid:config.jid,password:config.password,reconnect:false, preferredSaslMechanism:'PLAIN'});
-		connection.connection.socket.setTimeout (0);
-		connection.connection.socket.setKeepAlive (true, 100);
-		connecting = false;
-		connection.reconnect = true;
-		connection.on ('error', function(error)
+		if(networkConfig.firewall){
+			connection = new libxmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
+				reconnect:false, preferred:'PLAIN', 
+				websocket: {url: 'wss://wxmpp.wyliodrin.com/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
+		}
+		else
 		{
-			console.log ('error');
-			if (!connecting && connection.reconnect)
+			connection = new libxmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
+				reconnect:false, preferred:'PLAIN'});
+		}
+		if (connection.connection && connection.connection.socket)
+		{
+			connection.connection.socket.setTimeout (0);
+			connection.connection.socket.setKeepAlive (true, 100);
+		}
+		var xmpp = connection;
+		xmpp.ping = true;
+		connecting = false;
+		xmpp.reconnect = true;
+		loadSettings ();
+		xmpp.on ('error', function(error)
+		{
+			console.log ('XMPP error');
+			console.log (error);
+			if (!connecting && xmpp.reconnect)
 			{
-				connection.reconnect = false;
+				xmpp.reconnect = false;
+				clearInterval (xmpp.interval);
 				reconnect ();
 				console.error (error);
 				isConnected = false;
 			}
 		});
 
-		connection.on ('disconnect', function()
+		xmpp.on ('disconnect', function()
 		{
-			console.log ('disconnect');
-			if (!connecting && connection.reconnect)
+			console.log ('XMPP disconnect');
+			if (!connecting)
 			{
-				// connection.reconnect = false;
-				// reconnect ();
-		  		console.error ('disconnect');
-		  		isConnected = false;
-			}
-		});
-
-
-		connection.on ('close', function()
-		{
-			console.log ('close');
-			if (!connecting && connection.reconnect)
-			{
-				connection.reconnect = false;
+				clearInterval (xmpp.interval);
 				reconnect ();
 		  		console.error ('disconnect');
 		  		isConnected = false;
 			}
 		});
 
-		connection.on ('online', function()
+
+		xmpp.on ('close', function()
+		{
+			console.log ('XMPP close');
+			if (!connecting && xmpp.reconnect)
+			{
+				xmpp.reconnect = false;
+				clearInterval (xmpp.interval);
+				reconnect ();
+		  		console.error ('disconnect');
+		  		isConnected = false;
+			}
+		});
+
+		xmpp.on ('online', function()
 		{
 			delay = 100;
 			isConnected = true;
 			connecting=false;
-		  console.log (config.jid+"> online");
-		  connection.send(new xmpp.Element('presence',
+			xmpp.interval = setInterval (function ()
+			{
+				if (!xmpp.nr) xmpp.nr = 0;
+			    if (xmpp.ping)
+			    {
+			        xmpp.nr = 0;
+			        xmpp.ping = false;
+			    }
+			    else
+			    {
+			        xmpp.nr ++;
+			    }
+			    // console.log ('ping nr '+connection.nr);
+			    if (!networkConfig.ping || networkConfig.ping == 0) networkConfig = 50;
+			    if (networkConfig.firewall == false && xmpp.nr > networkConfig.ping)
+			    {
+				console.log ('ping timeout');
+			    	try
+			    	{
+			        	xmpp.nr = 0;
+					xmpp.end ();
+			        }
+			        catch (e)
+			        {
+			        	isConnected = false;
+			        	clearInterval (xmpp.interval);
+			        	reconnect ();
+			        }
+			    }
+			}, 1000);
+		  //console.log (networkConfig.jid+"> online");
+		  xmpp.send(new libxmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
 		      c('status').t('Happily echoing your <message/> stanzas')
 		     );
-		  if(functie != null)
-		  {
-		  	console.log('functie != null');
-		  }
-		  connection.send(new xmpp.Element('presence',
+		  // if(functie != null)
+		  // {
+		  // 	console.log('functie != null');
+		  // }
+		  xmpp.send(new libxmpp.Element('presence',
 		  {
 		  	type:'subscribe',
-		  	to:config.owner
+		  	to:networkConfig.owner
 		  }));
 		  log.flush ();
 		});
 
-		connection.on ('rawStanza', function (stanza)
+		xmpp.on ('rawStanza', function (stanza)
 		{
-		  console.log (config.jid+'>'+stanza.root().toString());
+		  //console.log (networkConfig.jid+'>'+stanza.root().toString());
 		});
 		
-		connection.on ('end', function ()
+		xmpp.on ('end', function ()
 		{
-			console.log ('end');
+			console.log ('XMPP end');
 			if (!connecting)
 			{
+				clearInterval (xmpp.interval);
 				isConnected = false;
 				reconnect ();
 			}
 		});
-		connection.load(connection, function (from, to, stanza, error)
+		xmpp.load(xmpp, function (from, to, stanza, error)
 		{
 			if (stanza.getName()=='presence')
 			{
-				console.log('presence');
+				//console.log('presence');
 				if (stanza.attrs.type == 'subscribe')
 				{
-					if (from == config.owner)
+					//console.log (networkConfig.owner+' '+stanza.toString());
+					if (from == networkConfig.owner)
 					{
-						connection.send(new xmpp.Element('presence',
+						//console.log ('sending subscribed to '+networkConfig.owner);
+						xmpp.send(new libxmpp.Element('presence',
 		  				{
 		  					type:'subscribed',
-		  					to:config.owner
+		  					to:networkConfig.owner
 		  				}));
 
 					}
 				}
 				else if(!stanza.attrs.type || stanza.attrs.type == 'available')
 				{
-					console.log('available');
+					//console.log('available');
 					available = true;
-					connection.emptyStanzaBuffer(); 
-					info.sendStartInfo(from);
+					xmpp.emptyStanzaBuffer(); 
+					//console.log("wxmpp from start info = "+from);
+					// info.sendStartInfo(from);
 					//intervalID = setInterval(function(){	
 					//info.sendInfo(from);}, 2000);
 					
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{
-					console.log('unavailable');
+					//console.log('unavailable');
 					available = false;
 					ownerUnavailable();
 					// if(intervalID)
@@ -160,26 +210,13 @@ function connect()
 	}
 }
 
-function load(modules)
-{
-	xmpp = modules.xmpp;
-	terminal_xmpp = modules.terminal_xmpp;
-	build_xmpp = modules.build_xmpp;
-	files_xmpp = modules.files_xmpp;
-	config = modules.config;
-	XMPP = modules.XMPP;
-	signal_xmpp = modules.signal_xmpp;
-	info = modules.info;
-}
-
 function loadSettings()
 {
 	connection.tag('shells', XMPP.WYLIODRIN_NAMESPACE, terminal_xmpp.shellStanza);
 	connection.tag('make', XMPP.WYLIODRIN_NAMESPACE, build_xmpp.buildStanza);
 	connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.filesStanza);
-	connection.tag('signal', XMPP.WYLIODRIN_NAMESPACE, signal_xmpp.signalStanza);
-	if(signal_xmpp != null)
-		signal_xmpp.sendSignalBuffer();
+	connection.tag('info', XMPP.WYLIODRIN_NAMESPACE, info.info_stanza);
+	connection.tag('ps', XMPP.WYLIODRIN_NAMESPACE, info.info_stanza);
 }
 
 function ownerUnavailable()
@@ -229,8 +266,7 @@ function checkConnected()
 
 exports.getConnection = getConnection;
 exports.checkConnected = checkConnected;
-exports.load = load;
 exports.ownerIsAvailable = ownerIsAvailable;
 exports.initConnection = initConnection;
-exports.loadSettings = loadSettings;
+//exports.loadSettings = loadSettings;
 

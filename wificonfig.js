@@ -3,62 +3,21 @@ var child_process = require('child_process');
 var fs = require('fs');
 var path = require('path');
 var ejs = require ('ejs');
-var log = require ('./log');
+var set = require('./settings').config;
+//console.log("settings = "+JSON.stringify(set,null,2));
+var config = set.config;
+var networkConfig = set.networkConfig;
 
-var settings;
+var WIFICONF = './conf/wireless/wireless.conf';
 
 var RASPBERRY = 'raspberry';
 var ARDUINO_GALILEO = 'arduinogalileo';
 
-var GALILEO = 'galileo';
-// var RASPBERRY_PATH = '/boot/wyliodrin.json';
-// var ARDUINO_GALILEO_PATH = '/media/card/wyliodrin.json';
-// var CONFIG_FILE = path.join(__dirname,'conf/wyliodrin.json');
-
 var RETRY_TIME = 2000;
 
-var WIFICONF = path.join(__dirname, 'conf/wireless/wireless.conf');
-
-function init(s, functie)
+function init(funct)
 {
-	settings = s;
-	console.log('Starting Wyliodrin');
-	isRaspberry(functie);
-	isGalileo(functie);
-}
-
-/* Function checks if the board is a raspberry pi. 
-		Step one. */
-function isRaspberry(functie)
-{
-	console.log('Is it a Raspberry Pi?');
-	var child  = child_process.exec('cat /proc/cpuinfo | grep BCM',
-		function(error, stdout, stderr)
-		{
-			if(error != null)
-				log.putError('\t not Raspberry Pi');
-			if(stdout != '')
-			{
-				findConfigFile(RASPBERRY,functie);
-			}
-		});
-}
-
-/* Function checks if the board is a galileo. 
-		Step one. */
-function isGalileo(functie)
-{
-	console.log('Is it an Arduino Galileo?');
-	var child  = child_process.exec('cat /proc/cpuinfo | grep GenuineIntel',
-		function(error, stdout, stderr)
-		{
-			if(error != null)
-				log.putError('\t not Arduino Galileo');
-			if(stdout != '')
-			{
-				findConfigFile(ARDUINO_GALILEO,functie);
-			}
-		});
+	findConfigFile(funct);
 }
 
 function findSSID (done)
@@ -67,7 +26,7 @@ function findSSID (done)
 	{
 		if (!error)
 		{
-			done (stdout);
+			done (stdout.replace (/\n$/, ''));
 		}
 		else
 		{
@@ -78,132 +37,112 @@ function findSSID (done)
 
 /* Function searches for config file depending on the platform.  
 	Step two. */
-function findConfigFile(platform, functie)
+function findConfigFile(funct)
 {
-	log.putLog ('Board is '+platform);
-	log.putLog('Reading config file');
-	settings = settings[platform];
-	var JSON_PATH = settings.config_file;
-	var d = null;
-	var resetWIFI = false;
-	var start = true;
-	if(fs.existsSync(JSON_PATH))
+	var resetWIFI = false;		
+	findSSID (function (ssid)
 	{
-		var data = fs.readFileSync(JSON_PATH);
+		if(networkConfig.ssid != '' && ssid!=networkConfig.ssid)
+		{
+			resetWIFI = true;
+		}
+
+		//log.putLog ('Starting');
+		//console.log('Starting');
+		/* resets wifi if data has changed */
+		if(resetWIFI)
+		{
+			// if(!fs.existsSync(WIFICONF))
+			// 	wifi(newJsonData, functie);
+			// else 
+			wifi(funct);
+		}
+		else
+			funct();
+	});
+}
+
+function wifi(functie)
+{
+	if (config.board == 'arduinogalileo')
+	{
+		child_process.exec ('./conf/arduinogalileo_wifi.sh "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
+		{
+			console.log ('Setting up wifi');
+			console.log (stdout);
+			setTimeout (function ()
+			{
+				functie ();
+			}, 10000);
+		});
+	}
+	else
+	{
+		var FORM = 'wireless_form.conf';
+		if (networkConfig.psk.length==0) FORM = 'wireless-open_form.conf';
+	var WIFIFORM = path.join(__dirname,'conf',config.board,'/wireless/'+FORM);
+	if (!fs.existsSync(WIFIFORM)) 
+	{
+		//console.log('Board specific WiFi Form not found, using default');
+		console.log ('Board specific WiFi Form not found, using default');
+		WIFIFORM = path.join(__dirname,'conf/wireless/'+FORM);
+	}
+	try
+	{
+		var wifiData = fs.readFileSync(WIFIFORM);
+		//console.log("wifidata = "+networkConfig.ssid);
+		var fileWifi = ejs.render (wifiData.toString(), {ssid:networkConfig.ssid,
+							scan_ssid:networkConfig.scan_ssid, psk:networkConfig.psk});
 		try
 		{
-			var newJsonData = JSON.parse(data);
-			findSSID (function (ssid)
+			fs.writeFileSync(WIFICONF, fileWifi);
+			child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
 			{
-				if(newJsonData.ssid != '' && ssid!=newJsonData)
+				if (error!=null) 
 				{
-					resetWIFI = true;
-				}
-
-				log.putLog ('Starting');
-				/* resets wifi if data has changed */
-				if(!resetWIFI)
-				{
-					// if(!fs.existsSync(WIFICONF))
-					// 	wifi(newJsonData, functie);
-					// else 
-					functie(settings);
+					log.putLog("Error resetting Wifi, retrying "+stderr);
+					/* retry after RETY_TIME miliseconds */
+					setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
+								{
+									if (error!=null) 
+									{
+										/* retry after 2*RETRY_TIME miliseconds */
+						
+										setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
+											{
+												if (error!=null) 
+												{
+													log.putError('Wifi error' +stderr);	
+												}
+												else
+												{
+													functie();
+												}
+											})}, 2*RETRY_TIME);
+									}
+									else
+									{
+										functie();
+									}
+								})}, RETRY_TIME);							
 				}
 				else
 				{
-					wifi(newJsonData, functie);
+					functie();
 				}
 			});
 		}
 		catch(e)
 		{
-			log.putError('Cannot load config file');
-			start = false;
-		}
-	}
-	else
-	{
-		start = false;
-	}
-	if (!start)
-	{
-		log.putLog ('Not starting, waiting to exit');
-		setTimeout (function ()
-		{
-			process.exit (0);
-		}, 600000);
-	}
-}
-
-function wifi(d, functie)
-{
-	console.log('wifi');
-	if(d != null)
-	{
-		var WIFIFORM = path.join(__dirname,'conf',d.gadget,'/wireless/wireless_form.conf');
-		if (!fs.existsSync(WIFIFORM)) 
-		{
-			log.putLog ('Board specific WiFi Form not found, using default');
-			WIFIFORM = path.join(__dirname,'conf/wireless/wireless_form.conf');
-		}
-		try
-		{
-			var wifiData = fs.readFileSync(WIFIFORM);
-			var fileWifi = ejs.render (wifiData.toString(), {ssid:d.ssid, scan_ssid:d.scan_ssid, psk:d.psk});
-			try
-			{
-				fs.writeFileSync(WIFICONF, fileWifi);
-				child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
-				{
-					if (error!=null) 
-					{
-						console.log("Error resetting Wifi, retrying "+stderr);
-						/* retry after RETY_TIME miliseconds */
-						setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
-									{
-										if (error!=null) 
-										{
-											/* retry after 2*RETRY_TIME miliseconds */
-							
-											setTimeout(function(){child_process.exec ('sudo ifdown wlan0; sudo ifup wlan0', function (error, stdout, stderr)
-												{
-													if (error!=null) 
-													{
-														log.putError('Wifi error' +stderr);	
-													}
-													else
-													{
-														functie(settings);
-													}
-												})}, 2*RETRY_TIME);
-										}
-										else
-										{
-											functie(settings);
-										}
-									})}, RETRY_TIME);							
-					}
-					else
-					{
-						functie(settings);
-					}
-				});
-			}
-			catch(e)
-			{
-				log.putError('Cannot write wifi file '+e);
-				functie (settings);
-			}
-		}
-		catch(e)
-		{
-			log.putError('Cannot read wifi file '+e);
+			//log.putError('Cannot write wifi file '+e);
 			functie (settings);
 		}
 	}
-	else
+	catch(e)
 	{
-		log.putError ('No cofiguration file');
-	}		
+		//log.putError('Cannot read wifi file '+e);
+		 functie ();
+	}
+	}	
 }
 exports.init = init;

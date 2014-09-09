@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# redis
+#install redis
+sudo apt-get install redis-server
+sudo apt-get install libhiredis-dev
+
 # raspberry pi user
 USER=pi
 
@@ -19,50 +24,24 @@ echo Installing Raspberry Pi Libraries
 # install wiringpi
 echo Installing WiringPi
 cd download
-git clone git://git.drogon.net/wiringPi
+git clone https://github.com/Wyliodrin/wiringPi.git
 cd wiringPi
 ./build
 cd ..
 
-# bass.dll
-sudo cp libs/raspberrypi/c/bass/linbass* /usr/local/lib
-sudo ldconfig
-
-# perl wiringpi
-echo Installing Perl WiringPi
+# install libwyliodrin
+echo Installing libwyliodrin
 cd download
-git clone --recursive https://github.com/Wyliodrin/WiringPi-Perl.git
-cd WiringPi-Perl
-./build.sh
-cp wiringpi.pm ../../libs/raspberrypi/perl
-cp wiringpi.so ../../libs/raspberrypi/perl
-cd ../..
-
-# php wiringpi
-echo Installing PHP WiringPi
-cd download
-git clone --recursive https://github.com/Wyliodrin/WiringPi-PHP.git
-cd WiringPi-PHP
-./build.sh
-sudo ./install.sh
-echo "extension=wiringpi.so
-pinmapmode=PROGRAM" > wiringpi.ini
-sudo cp wiringpi.ini /etc/php5/conf.d/
-cd ../..
-
-
-
-# node-wiringpi
-echo Installing Node WiringPi
-sudo npm install -g wiring-pi
-
-# python wiringpi2
-echo Installing Python WiringPi2
-cd download
-git clone https://github.com/Gadgetoid/WiringPi2-Python.git
-cd WiringPi2-Python
-sudo python setup.py install
-cd ../..
+git clone https://github.com/Wyliodrin/libwyliodrin.git
+cd libwyliodrin
+mkdir build
+cd build
+cmake -DRASPBERRYPI=ON ..
+make
+sudo make install
+cd ..
+cd ..
+sudo install_social
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service

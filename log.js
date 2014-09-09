@@ -1,24 +1,13 @@
-/*function handles error messages*/
-
-
-
 "use strict";
 
-var wxmpp = null;
-var xmpp = null;
+var wxmpp = require('./wxmpp');
+var xmpp = require('./xmpp_library.js').xmpp;
 var logs = [];
-var config = null;
-
-function load (modulesDict)
-{
-	wxmpp = modulesDict.wxmpp;
-	xmpp = modulesDict.xmpp;
-	config = modulesDict.config;
-}
+var config = require('./settings').config.networkConfig;
 
 function flush ()
 {
-	while (wxmpp && wxmpp.checkConnected() && logs.length > 0)
+	while (wxmpp && wxmpp.checkConnected && wxmpp.checkConnected() && logs.length > 0)
 	{
 		var log = logs[0];
 		logs.splice (0,1);
@@ -37,7 +26,6 @@ function send (type, str, timestamp)
 function putLog(log)
 {
 	send ('debug', log, new Date());
-	console.log(log);
 }
 
 function putError(error)
@@ -49,4 +37,3 @@ function putError(error)
 exports.putLog = putLog;
 exports.putError = putError;
 exports.flush = flush;
-exports.load = load;

@@ -1,101 +1,135 @@
+"use strict"
+
 var net = require('net');
 var util = require('util');
 var carrier = require('carrier');
-var signal_xmpp = null;
+var signal_http = require('./signal_http');
 var _ = require ('underscore');
 
+var query = 0;
+
+var redis = require("redis");
+
 var socketArray = [];
+var config = require('./settings').config.networkConfig;
+var log = require('./log');
 
-var port = null;
+var CHANNEL = "wyliodrin";
 
-function load(modules)
+//message = signal:projectId
+var SUBMESSAGE = "signal";
+var MESSAGE_OFFSET = 7;
+
+var dict = require('dict');
+var d = dict();
+
+function connectRedis()
 {
-	signal_xmpp = modules.signal_xmpp;
-	port = modules.config.port;
+	try{
+		var channelClient = redis.createClient();
+
+		channelClient.subscribe(CHANNEL);
+
+
+	var client = redis.createClient();
+
+	channelClient.on("error", function (err) {
+        log.putError(err);
+    });
+
+    client.on ('error', function (err)
+    {
+    	log.putError(err);
+    });
+
+    /*
+{
+   "projectid":"89452744-4f73-4c29-a58a-83ab3bda5fe2", -se pune din clientul nodejs 
+   "gadgetid":"alexandru.radovici_galileo@wyliodrin.org", -se pune din clientul nodejs
+   "userid":"",
+   "session":""
+   "timestamp":"12",
+   "signals":[
+    {"s1":"1"},
+   {"s3":"3"}]
+   }
 }
+*/
 
-function startSocketServer()
-{
-		var server = net.createServer(function(c){
-			console.log('id = '+id);
-		var id = null;
-		carrier.carry(c, function(line){
-			var tokens = line.split(' ');
-			if(!id)
+    channelClient.on("message", function(channel, message){
+    	//console.log (message);
+	var pos = message.indexOf(SUBMESSAGE);
+	if(pos > -1)
+	{
+		var proj = message.substring(7);
+		if(!d.has(proj))
+		{
+			d.set(proj, 1);
+			var userid;
+			var session;
+			client.lrange(proj,0,-1,function(error, items){
+			if(items.length != 0)
 			{
-				if((tokens.length == 2) && (tokens[0] == "id") && (tokens[1] != 'undefined'))
+				var count = items.length;
+				//console.log('count = '+count);
+				var j = JSON.parse(items[0]);
+				var signal = {'projectid':'',
+							'gadgetid':'',
+							'userid':'',
+							'session':'',
+							'data':[]};
+				signal['projectid'] = proj;
+				signal['gadgetid'] = config.jid;
+				signal['userid'] = j.userid;
+				signal['session']=j.session;			
+				for (var i = 0; i < items.length; i++)
 				{
-					id = tokens[1];
-					socketArray[id] = c;
-					console.log('received id\n');
+					var s = JSON.parse(items[i]);
+					delete s.userid;
+					delete s.session;
+					signal.data.push(s);					
 				}
-				else
-				{
-					console.log('server end connection');
-					c.end();
-				}
+				query=query+1;
+				//console.log ('https '+query);
+					signal_http.sendSignal(signal, function(e, rc){
+						query = query - 1;
+						//console.log ('response');
+						if(!e && rc == 200)
+						{
+							
+							//console.log('status code 200 ' + count);
+							client.ltrim(proj, count,-1, function(err, result){
+								//console.log(err);
+								//console.log(result);
+								
+								d.delete(proj);
+								//console.log ('items.count = '+items.count);								
+								//console.log("another publish signal:"+proj);
+								client.publish("wyliodrin","signal:"+proj);
+							
+							
+							});					
+							
+						}
+						else
+						{
+							d.delete(proj);
+						}
+					});				
 			}
 			else
 			{
-				var signal = tokens[0];
-				var value = tokens[1];
-				if(parseFloat(value) != NaN)
-				{
-					var d = new Date();
-					var time = d.getTime();
-					var s = {signal:signal, value:value, id:id, time:time};
-					signal_xmpp.sendSignal(s, id, time);
-				}
-				else
-				{
-					var d = new Date();
-					var time = d.getTime();
-					var s={signal:signal, component:[], id:id, time:time};
-					var i=1;
-					while(i<(tokens.length-1))
-					{
-						s.component.push({signal:tokens[i], value:tokens[i+1]});
-						i=i+2;
-					}
-					signal_xmpp.sendSignal(s);
-				}
+				d.delete(proj);
 			}
-		});
-	});
-	server.listen(port, function(){console.log('server listening')});
-}
-	
-function setSignal(signal, value, id)
-{
-	if(id)
-	{
-		if(socketArray[id])
-		{
-			c.write(signal+' '+value);
+			});
 		}
-	}
+	} 
+});
 }
-
-function startSocketClient(id)
+catch(e)
 {
-	console.log('startSocketClient '+id);
-	var client = net.connect({port: 8124},
-    function() { //'connect' listener
-  	client.write('id '+id+'\n');
-});
-client.on('end',function(data){
-	console.log('connection ended ');
-	client.end();
-});
-client.on('data', function(data) {
-  console.log('data '+data.toString());
-});
-client.on('error', function(error){
-	console.log('error '+error)
-});
+	log.putError("Redis not connected"); 	
+}
 }
 
-exports.startSocketServer = startSocketServer;
-exports.startSocketClient = startSocketClient;
-exports.load = load;
-exports.setSignal = setSignal;
+exports.connectRedis = connectRedis;
