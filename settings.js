@@ -5,6 +5,7 @@ var fs = require ('fs');
 var config = {config:null,
 				networkConfig:null};
 
+
 /* Function checks if the board is a raspberry pi. 
 		Step one. */
 function isRaspberry(functie)
