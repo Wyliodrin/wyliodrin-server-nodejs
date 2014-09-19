@@ -102,6 +102,7 @@ xmpp.Client.prototype.sendWyliodrin = function (to, stanza, store)
      //console.log ('sent = '+s.root().toString());
     if(!store)
     {
+    	this.ping = true;
         // console.log('send');
     	this.send (s);
     }
@@ -118,6 +119,7 @@ xmpp.Client.prototype.emptyStanzaBuffer = function()
 {
         for (var i = 0; i<stanzas.length; i++)
         {
+        	this.ping = true;
                 this.send(stanzas[i]);
         }
 }
