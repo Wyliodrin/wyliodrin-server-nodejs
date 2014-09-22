@@ -6,7 +6,8 @@ var communication = require('./communication');
 function sendMessage(id, port, data)
 {
 	var t = wxmpp.getConnection ();
-	var tag = new xmpp.Element('communication',{port:port, from:owner}).t(data);
+	var data64 = new Buffer(data).toString('base64');
+	var tag = new xmpp.Element('communication',{port:port}).t(data64);
 	t.sendWyliodrin(id, tag, false);
 }
 
@@ -17,7 +18,7 @@ function messageStanza(t, from, to, es, error)
 		if(!es.attrs.err)
 		{
 			var port = es.attrs.port;
-			var data = es.getText();
+			var data = new Buffer(es.getText(),'base64').toString();
 			communication.sendMessage(from, port, data);
 		}
 	}
