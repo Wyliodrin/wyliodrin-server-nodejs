@@ -9,6 +9,8 @@ var CHANNEL = "communication:";
 var port; 
 var client;
 var channelClient = {};
+
+//port-ul il iau din env daca nu e definit
 function initCommunication(redis_port)
 {
 	port = redis_port;
@@ -24,14 +26,14 @@ function initCommunication(redis_port)
 	}
 }
 
-function openConnection(communication_port, myFunction)
+function openConnection(label, myFunction)
 {
 	try
 	{
 		var chClient = redis.createClient(port, IP, {});
-		channelClient[communication_port] = chClient;
+		channelClient[label] = chClient;
 		
-		chClient.subscribe(CHANNEL+communication_port);
+		chClient.subscribe(CHANNEL+label);
 
 		chClient.on("message", function(channel, message){
 			var mes = JSON.parse(message);
@@ -50,9 +52,9 @@ function sendMessage(id, communication_port, data)
 	client.publish(CHANNEL+communication_port, JSON.stringify(message));
 }
 
-function closeConnection(port)
+function closeConnection(label)
 {
-	var c = channelClient[port];
+	var c = channelClient[label];
 	if (c)
 	{
 		c. quit();

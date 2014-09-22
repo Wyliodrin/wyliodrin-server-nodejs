@@ -3,9 +3,6 @@
 var xmpp = require('./xmpp_library.js').xmpp;
 var wxmpp = require('./wxmpp');
 var communication = require('./communication');
-var config = require ('./settings.js').config;
-var owner = config.networkConfig.owner;
-
 function sendMessage(id, port, data)
 {
 	var t = wxmpp.getConnection ();
@@ -20,7 +17,6 @@ function messageStanza(t, from, to, es, error)
 		if(!es.attrs.err)
 		{
 			var port = es.attrs.port;
-			var from = es.attrs.from;
 			var data = es.getText();
 			communication.sendMessage(from, port, data);
 		}
