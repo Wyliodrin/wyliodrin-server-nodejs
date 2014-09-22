@@ -76,6 +76,18 @@ function wifi(functie)
 			}, 10000);
 		});
 	}
+	else if (config.board == 'edison')
+	{
+		child_process.exec ('configure-edison --changeWiFi WPA-PSK "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
+		{
+			console.log ('Setting up wifi');
+			console.log (stdout);
+			setTimeout (function ()
+			{
+				functie ();
+			}, 10000);
+		});
+	}
 	else
 	{
 		var FORM = 'wireless_form.conf';
