@@ -73,7 +73,7 @@ function wifi(functie)
 			setTimeout (function ()
 			{
 				functie ();
-			}, 10000);
+			}, 5000);
 		});
 	}
 	else if (config.board == 'edison')
