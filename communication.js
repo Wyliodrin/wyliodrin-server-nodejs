@@ -36,9 +36,10 @@ function connectRedis()
 	}
 }
 
-function sendMessage(port, data)
+function sendMessage(from, port, data)
 {
-	client.publish(CHANNEL_PUBLISH+port, data);
+	var message = {from:from, data:data};
+	client.publish(CHANNEL_PUBLISH+port, JSON.stringify(message));
 }
 
 exports.connectRedis = connectRedis;

@@ -3,11 +3,13 @@
 var xmpp = require('./xmpp_library.js').xmpp;
 var wxmpp = require('./wxmpp');
 var communication = require('./communication');
+var config = require ('./settings.js').config;
+var owner = config.networkConfig.owner;
 
 function sendMessage(id, port, data)
 {
 	var t = wxmpp.getConnection ();
-	var tag = new xmpp.Element('communication',{port:port}).t(data);
+	var tag = new xmpp.Element('communication',{port:port, from:owner}).t(data);
 	t.sendWyliodrin(id, tag, false);
 }
 
@@ -18,8 +20,9 @@ function messageStanza(t, from, to, es, error)
 		if(!es.attrs.err)
 		{
 			var port = es.attrs.port;
+			var from = es.attrs.from;
 			var data = es.getText();
-			communication.sendMessage(port, data);
+			communication.sendMessage(from, port, data);
 		}
 	}
 }
