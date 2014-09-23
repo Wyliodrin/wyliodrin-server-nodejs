@@ -23,7 +23,7 @@ var settings =
 		run: ['make'],
 		stop: ['kill -9'],
 		sudo:'',
-		board:"arduinogalileo"
+		board:"edison"
 	},
 	
 	arduinogalileo:{
