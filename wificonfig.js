@@ -78,7 +78,12 @@ function wifi(functie)
 	}
 	else if (config.board == 'edison')
 	{
-		child_process.exec ('configure-edison --changeWiFi WPA-PSK "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
+		var type = 'OPEN';
+		if (networkConfig.psk && networkConfig.psk.length > 0)
+		{
+			type = 'WPA-PSK';
+		}
+		child_process.exec ('configure-edison --changeWiFi '+type+' "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
 		{
 			console.log ('Setting up wifi');
 			console.log (stdout);
