@@ -15,7 +15,7 @@ var settings =
 	},
 	
 	edison:{
-		config_file: '/media/sdcard/wyliodrin.json',
+		config_file: '/media/storage/wyliodrin.json',
 		home: '/wyliodrin',
 		mountFile: '/wyliodrin/projects/mount',
 		buildFile: '/wyliodrin/projects/build',
