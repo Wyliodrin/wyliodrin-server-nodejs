@@ -78,6 +78,7 @@ function wifi(functie)
 	}
 	else if (config.board == 'edison')
 	{
+		child_process.exec ('rm -rf /var/log/journal/*');
 		var type = 'OPEN';
 		if (networkConfig.psk && networkConfig.psk.length > 0)
 		{
