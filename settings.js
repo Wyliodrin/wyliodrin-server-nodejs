@@ -2,6 +2,8 @@ var settings = require ('./conf/wyliodrin_settings.js');
 var child_process = require ('child_process');
 var fs = require ('fs');
 
+var log = require ('./log.js');
+
 var config = {config:null,
 				networkConfig:null};
 
@@ -9,6 +11,7 @@ var config = {config:null,
 		Step one. */
 function isRaspberry(functie)
 {
+	log.putLog ('Checking wether it is a Raspberry Pi');
 	var child  = child_process.exec('cat /proc/cpuinfo | grep BCM',
 		function(error, stdout, stderr)
 		{
@@ -27,6 +30,7 @@ function isRaspberry(functie)
 		Step one. */
 function isGalileo(functie)
 {
+	log.putLog ('Checking wether it is an Intel Galileo');
 	var child  = child_process.exec('cat /proc/cpuinfo | grep GenuineIntel',
 		function(error, stdout, stderr)
 		{
@@ -70,11 +74,13 @@ exports.load = function (start)
 	var board = null;
 	try
 	{
+		log.putLog ('Reading board type from board.type');
 		board = fs.readFileSync ('board.type', 'utf8');
+		log.putLog ('Board is '+board);
 	}
 	catch (ex)
 	{
-		console.error('Board type not found, trying autodetect');
+		log.putLog('Board type not found, trying autodetect');
 	}
 	if (board)
 	{
@@ -92,5 +98,7 @@ exports.load = function (start)
 		});	
 	}
 }
+
+log.putLog ('Loading settings');
 
 exports.config = config;
