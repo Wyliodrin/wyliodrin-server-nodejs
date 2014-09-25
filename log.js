@@ -25,11 +25,6 @@ var domain;
 
 function load()
 {
-	var arr = networkConfig.jid.split("@");
-	for(var i=0; i<arr.length; i++)
-	{
-		domain = arr[i];
-	}
 	setInterval (function ()
 	{
 		sendLogs ();
@@ -54,7 +49,14 @@ function sendLogs()
 	}
 	if (networkConfig && logs.length > 0)
 	{
-		if (!domain) load ();
+		if (!domain)
+		{
+			var arr = networkConfig.jid.split("@");
+			for(var i=0; i<arr.length; i++)
+			{
+				domain = arr[i];
+			}
+		}
 		var s = JSON.stringify ({str:logs.join ('\n')});
 		var options =
 		{
