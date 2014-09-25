@@ -52,14 +52,14 @@ function find_terminal_id()
 function find_terminal_by_id(id)
 {
 	var i=0;
-	log.putError ('Searching shell '+id);
+	// log.putLog ('Searching shell '+id);
 	while(i<terminals.length)
 	{
 		if(terminals[i])
 		{
 			if(terminals[i].id == id)
 			{
-				log.putError ('Found shell '+id);
+				// log.putLog ('Found shell '+id);
 				return terminals[i];
 			}
 		}
