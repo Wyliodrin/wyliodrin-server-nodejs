@@ -100,6 +100,8 @@ function putError(error)
 	console.error("error = "+error);
 }
 
+load ();
+
 exports.putLog = putLog;
 exports.putError = putError;
 exports.flush = flush;
