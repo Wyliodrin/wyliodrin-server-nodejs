@@ -18,8 +18,8 @@ function flush ()
 }
 
 var https = require('https');
-var settings = require('./settings').config;
-var networkConfig = settings.networkConfig;
+var settings;
+var networkConfig;
 
 var domain;
 
@@ -40,6 +40,18 @@ function load()
 function sendLogs()
 {
 	console.log ('sending logs');
+	if (!settings)
+	{
+		try
+		{
+			settings = require('./settings').config;
+			networkConfig = settings.networkConfig;
+		}
+		catch (e)
+		{
+			
+		}
+	}
 	if (logs.length > 0)
 	{
 		if (!domain) load ();
