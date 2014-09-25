@@ -9,6 +9,8 @@ var config = require('./settings').config.config;
 
 var sys = require ('child_process');
 
+var log = require ('./log');
+
 var COMMAND = '/bin/bash';
 
 var buildFile = config.buildFile;
@@ -19,6 +21,7 @@ var home = config.home;
 
 function makeTerminal(t, from, to, es, error, command, args, env)
 {
+	log.putLog ('Start shell from '+from);
 	//console.log('make terminal');
 	var term = terminal.allocTerminal(from);
 	var width;
@@ -59,7 +62,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 		});
 	if(rc == terminal.TERMINAL_OK)
 	{
-	//	console.log('terminal ok');
+		log.putLog('Shell started');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'done', request:term.request, shellid:term.id});
 		// console.log(tag.root().toString());
@@ -67,7 +70,7 @@ function makeTerminal(t, from, to, es, error, command, args, env)
 	}
 	else
 	{
-	//	console.log('terminal error');
+		log.putError('Shell error');
 		var id = es.attrs.request;
 		var tag = new xmpp.Element('shells', {action:'open', response:'error', request:term.request});
 		t.sendWyliodrin(from, tag, false);
@@ -85,6 +88,7 @@ function shell_stanza(t, from, to, es, error)
 		if(!es.attrs.err){
 		if(es.attrs.action == 'open')
 		{
+			log.putLog ('Shell open stanza from '+from);
 			if(!es.attrs.projectid)
 			{
 				//console.log('open terminal '+home);
@@ -126,15 +130,16 @@ function shell_stanza(t, from, to, es, error)
 		}
 		if(es.attrs.action == 'poweroff')
 		{
-			console.log('poweroff stanza');
+			log.putLog('Poweroff stanza');
 			sys.exec (config.sudo+' poweroff', function (error, stdout, stderr)
 			{
-				console.log(error);
+				// console.log(error);
 				if (error) log.putError('poweroff error '+stderr);
 			});
 		}
 		if(es.attrs.action == 'close' || es.attrs.action == 'stop')
 		{
+			log.putLog('Shell stop stanza from '+from+' for '+es.attrs.shellid);
 			if(es.attrs.shellid)
 			{
 				try{
