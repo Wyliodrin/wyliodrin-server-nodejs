@@ -78,7 +78,7 @@ function destroy_terminal(id,from,action, sendResponse)
 		//verific daca s-a facut terminalul sau doar s-a alocat
 		if(t.terminal != null)
 		{
-			if(action == 'close' || action == 'stop')
+			if(action == 'stop' || action == 'close')
 			{
 				// if(t.from.length > 1)
 				// {
