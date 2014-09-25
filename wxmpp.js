@@ -60,7 +60,7 @@ function connect()
 		loadSettings ();
 		xmpp.on ('error', function(error)
 		{
-			log.putLog ('XMPP error');
+			log.putLog ('XMPP error ');
 			log.putLog (error);
 			if (!connecting && xmpp.reconnect)
 			{
@@ -100,6 +100,7 @@ function connect()
 
 		xmpp.on ('online', function()
 		{
+			log.putLog ('online');
 			delay = 100;
 			isConnected = true;
 			connecting=false;
