@@ -6,13 +6,15 @@ var _ = require ('underscore');
 
 var WYLIODRIN_NAMESPACE = "wyliodrin";
 
+var log = require ('./log');
+
 var stanzas = [];
 var bufferSize = null;
 
 xmpp.Client.prototype.load = function (t, wother,buffer)
 {
         // t = this;
-        // console.log (this);
+        // log.putLog (this);
 
         t.other = wother;
         if(!bufferSize)
@@ -23,14 +25,14 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
         this.on ('stanza', function (stanza)
         {
                 t.ping = true;
-                // console.log ('received = '+stanza.toString());
+                // log.putLog ('received = '+stanza.toString());
                 if (stanza.is('iq'))
                 {
                         var p = stanza.getChild ('ping');
-                        // console.log (stanza);
+                        // log.putLog (stanza);
                         if (p && stanza.attrs.type == 'get')
                         {
-                                // console.log ('ping');
+                                // log.putLog ('ping');
                                 t.send (new xmpp.Element ('iq', {to:p.attrs.from, type:'result', id:p.attrs.id}).c('ping', {xmlns:'urn:xmpp:ping'}));
                         	
 			}
@@ -40,26 +42,26 @@ xmpp.Client.prototype.load = function (t, wother,buffer)
                 {
                         _.each (stanza.children, function (es)
                         {
-                            //console.log (es.toString());
-                                // console.log (es);
+                            //log.putLog (es.toString());
+                                // log.putLog (es);
                                 if (es.getNS() == WYLIODRIN_NAMESPACE)
                                 {
                                         var name = es.getName ();
-                                        //console.log (name);
+                                        //log.putLog (name);
                                         var error = stanza.attrs.type == 'error';
                                         try
                                         {
                                             if (t.tags().has(name)) 
                                             {
-                                                //console.log ('found tag');
+                                                //log.putLog ('found tag');
                                                 t.tags().get(name)(t, new xmpp.JID(stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), es, error);
-                                               // console.log ('sent tag');
+                                               // log.putLog ('sent tag');
                                             }
                                             else 
                                             {
-                                               // console.log ('others');
+                                               // log.putLog ('others');
                                                 if (t.other) t.other (new xmpp.JID (stanza.attrs.from).bare().toString().toLowerCase(), new xmpp.JID(stanza.attrs.to).bare().toString().toLowerCase(), es, error);
-                                               // console.log ('sent to others');
+                                               // log.putLog ('sent to others');
                                             }
                                         }
                                         catch (e)
@@ -85,13 +87,13 @@ xmpp.Client.prototype.tags = function ()
 {
         
         if (_.isUndefined (this.tagslist)) this.tagslist = dict ();
-        //console.log ('tags list '+this.tagslist.size);
+        //log.putLog ('tags list '+this.tagslist.size);
         return this.tagslist;
 }
 
 xmpp.Client.prototype.tag = function (name, namespace, activity)
 {
-        //console.log ('set tag '+name);
+        //log.putLog ('set tag '+name);
         this.tags().set (name, activity);
 }
 
@@ -99,11 +101,11 @@ xmpp.Client.prototype.sendWyliodrin = function (to, stanza, store)
 {
     stanza.attrs.xmlns = WYLIODRIN_NAMESPACE;
     var s=new xmpp.Element ('message', {to: to}).cnode(stanza);
-     //console.log ('sent = '+s.root().toString());
+     //log.putLog ('sent = '+s.root().toString());
     if(!store)
     {
     	this.ping = true;
-        // console.log('send');
+        // log.putLog('send');
     	this.send (s);
     }
     else
