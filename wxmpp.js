@@ -58,8 +58,8 @@ function connect()
 		loadSettings ();
 		xmpp.on ('error', function(error)
 		{
-			console.log ('XMPP error');
-			console.log (error);
+			log.debug ('XMPP error');
+			log.debug (error);
 			if (!connecting && xmpp.reconnect)
 			{
 				xmpp.reconnect = false;
@@ -72,7 +72,7 @@ function connect()
 
 		xmpp.on ('disconnect', function()
 		{
-			console.log ('XMPP disconnect');
+			log.debug ('XMPP disconnect');
 			if (!connecting)
 			{
 				clearInterval (xmpp.interval);
@@ -85,7 +85,7 @@ function connect()
 
 		xmpp.on ('close', function()
 		{
-			console.log ('XMPP close');
+			log.debug ('XMPP close');
 			if (!connecting && xmpp.reconnect)
 			{
 				xmpp.reconnect = false;
@@ -113,11 +113,11 @@ function connect()
 			    {
 			        xmpp.nr ++;
 			    }
-			    // console.log ('ping nr '+connection.nr);
+			    // log.debug ('ping nr '+connection.nr);
 			    if (!networkConfig.ping || networkConfig.ping == 0) networkConfig = 50;
 			    if (networkConfig.firewall == false && xmpp.nr > networkConfig.ping)
 			    {
-				console.log ('ping timeout');
+				log.debug ('ping timeout');
 			    	try
 			    	{
 			        	xmpp.nr = 0;
@@ -131,7 +131,7 @@ function connect()
 			        }
 			    }
 			}, 1000);
-		  //console.log (networkConfig.jid+"> online");
+		  //log.debug (networkConfig.jid+"> online");
 		  xmpp.send(new libxmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
@@ -139,7 +139,7 @@ function connect()
 		     );
 		  // if(functie != null)
 		  // {
-		  // 	console.log('functie != null');
+		  // 	log.debug('functie != null');
 		  // }
 		  xmpp.send(new libxmpp.Element('presence',
 		  {
@@ -151,12 +151,12 @@ function connect()
 
 		xmpp.on ('rawStanza', function (stanza)
 		{
-		  //console.log (networkConfig.jid+'>'+stanza.root().toString());
+		  //log.debug (networkConfig.jid+'>'+stanza.root().toString());
 		});
 		
 		xmpp.on ('end', function ()
 		{
-			console.log ('XMPP end');
+			log.debug ('XMPP end');
 			if (!connecting)
 			{
 				clearInterval (xmpp.interval);
@@ -168,13 +168,13 @@ function connect()
 		{
 			if (stanza.getName()=='presence')
 			{
-				//console.log('presence');
+				//log.debug('presence');
 				if (stanza.attrs.type == 'subscribe')
 				{
-					//console.log (networkConfig.owner+' '+stanza.toString());
+					//log.debug (networkConfig.owner+' '+stanza.toString());
 					if (from == networkConfig.owner)
 					{
-						//console.log ('sending subscribed to '+networkConfig.owner);
+						//log.debug ('sending subscribed to '+networkConfig.owner);
 						xmpp.send(new libxmpp.Element('presence',
 		  				{
 		  					type:'subscribed',
@@ -185,10 +185,10 @@ function connect()
 				}
 				else if(!stanza.attrs.type || stanza.attrs.type == 'available')
 				{
-					//console.log('available');
+					//log.debug('available');
 					available = true;
 					xmpp.emptyStanzaBuffer(); 
-					//console.log("wxmpp from start info = "+from);
+					//log.debug("wxmpp from start info = "+from);
 					// info.sendStartInfo(from);
 					//intervalID = setInterval(function(){	
 					//info.sendInfo(from);}, 2000);
@@ -196,7 +196,7 @@ function connect()
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{
-					//console.log('unavailable');
+					//log.debug('unavailable');
 					available = false;
 					ownerUnavailable();
 					// if(intervalID)
@@ -230,7 +230,7 @@ function ownerUnavailable()
 function reconnect ()
 {
 	connecting = true;
-	console.log ('reconnecting '+delay);
+	log.debug ('reconnecting '+delay);
 	setTimeout (function ()
 	{
 		delay = delay * 2;
