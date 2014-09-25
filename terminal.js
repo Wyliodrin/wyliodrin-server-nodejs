@@ -114,7 +114,7 @@ function destroy_terminal(id,from,action, sendResponse)
 
 function start_terminal(id, projectId, command, args, width, height, requestid, userid, env, send_data)
 {
-	log.putLog ('Start shell with project '+projectId+' command '+command+' args '+args.join(' '));
+	log.putLog ('Start shell with project '+projectId+' starting '+command+' '+args.join(' '));
 	var t = find_terminal_by_id(id);
 	var termWidth = TERMINAL_COLS;
 	var termHeight = TERMINAL_ROWS;
