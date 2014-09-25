@@ -37,14 +37,14 @@ function connect()
 	if(!isConnected)
 	{
 		if(networkConfig.firewall){
-			log.putLog ('XMPP (Firewall): 'networkConfig.jid);
+			log.putLog ('XMPP (Firewall): '+networkConfig.jid);
 			connection = new libxmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
 				reconnect:false, preferred:'PLAIN', 
 				websocket: {url: 'wss://wxmpp.wyliodrin.com/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
 		}
 		else
 		{
-			log.putLog ('XMPP: 'networkConfig.jid);
+			log.putLog ('XMPP: '+networkConfig.jid);
 			connection = new libxmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
 				reconnect:false, preferred:'PLAIN'});
 		}
