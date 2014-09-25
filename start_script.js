@@ -37,7 +37,6 @@ function start2()
 		signal_http.load();
 		var info = require('./info');
 		info.load();
-		//signal_http.sendSignal("skf");
 	});
 }
 
