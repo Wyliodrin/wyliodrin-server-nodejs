@@ -14,7 +14,7 @@ function start2()
 {
 	var wifi = require('./wificonfig');
 	wifi.init(function(){
-		if (networkConfig.debug)
+		if (!networkConfig.local)
 		{
 			log.load ();
 		}
