@@ -37,12 +37,14 @@ function connect()
 	if(!isConnected)
 	{
 		if(networkConfig.firewall){
+			log.putLog ('XMPP (Firewall): 'networkConfig.jid);
 			connection = new libxmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
 				reconnect:false, preferred:'PLAIN', 
 				websocket: {url: 'wss://wxmpp.wyliodrin.com/ws/server?username='+networkConfig.jid+'&password='+networkConfig.password+'&resource=wyliodrin'}});
 		}
 		else
 		{
+			log.putLog ('XMPP: 'networkConfig.jid);
 			connection = new libxmpp.Client({jid:networkConfig.jid,password:networkConfig.password,
 				reconnect:false, preferred:'PLAIN'});
 		}
@@ -58,26 +60,26 @@ function connect()
 		loadSettings ();
 		xmpp.on ('error', function(error)
 		{
-			log.debug ('XMPP error');
-			log.debug (error);
+			log.putLog ('XMPP error');
+			log.putLog (error);
 			if (!connecting && xmpp.reconnect)
 			{
 				xmpp.reconnect = false;
 				clearInterval (xmpp.interval);
 				reconnect ();
-				console.error (error);
+				log.putError (error);
 				isConnected = false;
 			}
 		});
 
 		xmpp.on ('disconnect', function()
 		{
-			log.debug ('XMPP disconnect');
+			log.putLog ('XMPP disconnect');
 			if (!connecting)
 			{
 				clearInterval (xmpp.interval);
 				reconnect ();
-		  		console.error ('disconnect');
+		  		log.putError ('disconnect');
 		  		isConnected = false;
 			}
 		});
@@ -85,13 +87,13 @@ function connect()
 
 		xmpp.on ('close', function()
 		{
-			log.debug ('XMPP close');
+			log.putLog ('XMPP close');
 			if (!connecting && xmpp.reconnect)
 			{
 				xmpp.reconnect = false;
 				clearInterval (xmpp.interval);
 				reconnect ();
-		  		console.error ('disconnect');
+		  		log.putError ('disconnect');
 		  		isConnected = false;
 			}
 		});
@@ -113,11 +115,11 @@ function connect()
 			    {
 			        xmpp.nr ++;
 			    }
-			    // log.debug ('ping nr '+connection.nr);
+			    // log.putLog ('ping nr '+connection.nr);
 			    if (!networkConfig.ping || networkConfig.ping == 0) networkConfig = 50;
 			    if (networkConfig.firewall == false && xmpp.nr > networkConfig.ping)
 			    {
-				log.debug ('ping timeout');
+				log.putLog ('ping timeout');
 			    	try
 			    	{
 			        	xmpp.nr = 0;
@@ -131,7 +133,7 @@ function connect()
 			        }
 			    }
 			}, 1000);
-		  //log.debug (networkConfig.jid+"> online");
+		  //log.putLog (networkConfig.jid+"> online");
 		  xmpp.send(new libxmpp.Element('presence',
 		           {}).
 		      c('priority').t('50').up().
@@ -139,7 +141,7 @@ function connect()
 		     );
 		  // if(functie != null)
 		  // {
-		  // 	log.debug('functie != null');
+		  // 	log.putLog('functie != null');
 		  // }
 		  xmpp.send(new libxmpp.Element('presence',
 		  {
@@ -151,12 +153,12 @@ function connect()
 
 		xmpp.on ('rawStanza', function (stanza)
 		{
-		  //log.debug (networkConfig.jid+'>'+stanza.root().toString());
+		  //log.putLog (networkConfig.jid+'>'+stanza.root().toString());
 		});
 		
 		xmpp.on ('end', function ()
 		{
-			log.debug ('XMPP end');
+			log.putLog ('XMPP end');
 			if (!connecting)
 			{
 				clearInterval (xmpp.interval);
@@ -168,13 +170,13 @@ function connect()
 		{
 			if (stanza.getName()=='presence')
 			{
-				//log.debug('presence');
+				//log.putLog('presence');
 				if (stanza.attrs.type == 'subscribe')
 				{
-					//log.debug (networkConfig.owner+' '+stanza.toString());
+					//log.putLog (networkConfig.owner+' '+stanza.toString());
 					if (from == networkConfig.owner)
 					{
-						//log.debug ('sending subscribed to '+networkConfig.owner);
+						//log.putLog ('sending subscribed to '+networkConfig.owner);
 						xmpp.send(new libxmpp.Element('presence',
 		  				{
 		  					type:'subscribed',
@@ -185,10 +187,10 @@ function connect()
 				}
 				else if(!stanza.attrs.type || stanza.attrs.type == 'available')
 				{
-					//log.debug('available');
+					//log.putLog('available');
 					available = true;
 					xmpp.emptyStanzaBuffer(); 
-					//log.debug("wxmpp from start info = "+from);
+					//log.putLog("wxmpp from start info = "+from);
 					// info.sendStartInfo(from);
 					//intervalID = setInterval(function(){	
 					//info.sendInfo(from);}, 2000);
@@ -196,7 +198,7 @@ function connect()
 				}
 				else if(stanza.attrs.type == 'unavailable')
 				{
-					//log.debug('unavailable');
+					//log.putLog('unavailable');
 					available = false;
 					ownerUnavailable();
 					// if(intervalID)
@@ -230,7 +232,7 @@ function ownerUnavailable()
 function reconnect ()
 {
 	connecting = true;
-	log.debug ('reconnecting '+delay);
+	log.putLog ('reconnecting '+delay);
 	setTimeout (function ()
 	{
 		delay = delay * 2;
