@@ -40,45 +40,48 @@ function load()
 function sendLogs()
 {
 	console.log ('sending logs');
-	if (!domain) load ();
-	var s = JSON.stringify ({str:logs.join ('\n')});
-	var options =
+	if (logs.length > 0)
 	{
-	  hostname: domain,
-	  port: 443,
-	  path: '/gadgets/logs/'+networkConfig.jid,
-	  method: 'POST',
-	  headers: {
-          'Content-Type': 'application/json',
-          'Content-Length': s.length,
-          'Connection': 'close'
-      }
-	};
-
-	var req = https.request(options, function(res) {
-		//console.log("codul de eroare :"+res.statusCode);
-	  // functie(false, res.statusCode);
-	  if (res.statusCode == 200)
-	  {
-	  	logs = [];
-	  }
-	});
-
-	req.on('socket', function (socket) {
-	    socket.setTimeout(2000);  
-	    	socket.on('timeout', function() {
-        		//console.log ('socket timeout');
-        		req.abort();
-    		});
-	});
-
-	req.write(s);
-	req.end();
-
-	req.on('error', function(e) {
-	  console.error(e);
-	  // functie (e);
-	});
+		if (!domain) load ();
+		var s = JSON.stringify ({str:logs.join ('\n')});
+		var options =
+		{
+		  hostname: domain,
+		  port: 443,
+		  path: '/gadgets/logs/'+networkConfig.jid,
+		  method: 'POST',
+		  headers: {
+	          'Content-Type': 'application/json',
+	          'Content-Length': s.length,
+	          'Connection': 'close'
+	      }
+		};
+	
+		var req = https.request(options, function(res) {
+			//console.log("codul de eroare :"+res.statusCode);
+		  // functie(false, res.statusCode);
+		  if (res.statusCode == 200)
+		  {
+		  	logs = [];
+		  }
+		});
+	
+		req.on('socket', function (socket) {
+		    socket.setTimeout(2000);  
+		    	socket.on('timeout', function() {
+	        		//console.log ('socket timeout');
+	        		req.abort();
+	    		});
+		});
+	
+		req.write(s);
+		req.end();
+	
+		req.on('error', function(e) {
+		  console.error(e);
+		  // functie (e);
+		});
+	}
 }
 
 function send (type, str, timestamp)
