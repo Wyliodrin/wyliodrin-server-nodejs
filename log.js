@@ -23,7 +23,7 @@ var networkConfig;
 
 var domain;
 
-function load()
+function runlogs()
 {
 	setInterval (function ()
 	{
@@ -120,3 +120,4 @@ function putError(error)
 exports.putLog = putLog;
 exports.putError = putError;
 exports.flush = flush;
+exports.runlogs = runlogs;
