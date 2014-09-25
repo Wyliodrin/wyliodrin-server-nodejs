@@ -1,4 +1,5 @@
 "use strict";
+
 var fs = require('fs');
 var path = require('path');
 var E_NO_CONF = -1;
