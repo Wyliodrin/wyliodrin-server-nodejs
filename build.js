@@ -41,7 +41,7 @@ function validatePath(id, returnPath)
 
 function startBuildProcess(command, args, path, sendOutput, done, id, userid)
 {
-	log.putLog ('Building '+command+' '+args.join(' '));
+	log.putLog ('Running '+command+' '+args.join(' '));
 	var makeProcess = child_process.spawn(command,args,{cwd:path, env:_.extend(process.env,{wyliodrin_project:id,
 		wyliodrinport:port, wyliodrin_userid:userid})});
 	processArray[id] = makeProcess;
