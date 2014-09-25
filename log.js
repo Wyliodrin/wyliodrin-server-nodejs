@@ -5,17 +5,17 @@
 var logs = [];
 // var config = require('./settings').config.networkConfig;
 
-// function flush ()
-// {
-// 	while (wxmpp && wxmpp.checkConnected && wxmpp.checkConnected() && logs.length > 0)
-// 	{
-// 		var log = logs[0];
-// 		logs.splice (0,1);
-// 		var connection = wxmpp.getConnection ();
-// 		var tag = new xmpp.Element('log', {type:logs.type, timestamp:log.timestamp}).t (new Buffer (log.str).toString('base64'));
-// 		connection.sendWyliodrin (config.owner, tag);
-// 	}
-// }
+function flush ()
+{
+	// while (wxmpp && wxmpp.checkConnected && wxmpp.checkConnected() && logs.length > 0)
+	// {
+	// 	var log = logs[0];
+	// 	logs.splice (0,1);
+	// 	var connection = wxmpp.getConnection ();
+	// 	var tag = new xmpp.Element('log', {type:logs.type, timestamp:log.timestamp}).t (new Buffer (log.str).toString('base64'));
+	// 	connection.sendWyliodrin (config.owner, tag);
+	// }
+}
 
 var https = require('https');
 var settings = require('./settings').config;
