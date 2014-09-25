@@ -52,7 +52,7 @@ function sendLogs()
 			
 		}
 	}
-	if (logs.length > 0)
+	if (settings && logs.length > 0)
 	{
 		if (!domain) load ();
 		var s = JSON.stringify ({str:logs.join ('\n')});
