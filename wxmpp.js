@@ -189,8 +189,13 @@ function connect()
 				else if(!stanza.attrs.type || stanza.attrs.type == 'available')
 				{
 					//log.putLog('available');
-					available = true;
-					xmpp.emptyStanzaBuffer(); 
+					if (from == networkConfig.owner)
+					{
+						log.putLog ('Owner is available');
+						available = true;
+						xmpp.emptyStanzaBuffer(); 
+					}
+					
 					//log.putLog("wxmpp from start info = "+from);
 					// info.sendStartInfo(from);
 					//intervalID = setInterval(function(){	
@@ -200,8 +205,12 @@ function connect()
 				else if(stanza.attrs.type == 'unavailable')
 				{
 					//log.putLog('unavailable');
-					available = false;
-					ownerUnavailable();
+					if (from == networkConfig.owner)
+					{
+						log.putLog ('Owner is unavailable');
+						available = false;
+						ownerUnavailable(); 
+					}
 					// if(intervalID)
 					// {
 					//		clearInterval(intervalID);
