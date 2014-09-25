@@ -65,7 +65,7 @@ function find_terminal_by_id(id)
 		}
 		i++;
 	}
-	log.putError ('Shell not found '+id);
+	// log.putError ('Shell not found '+id);
 	return null;
 }
 
