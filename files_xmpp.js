@@ -113,15 +113,10 @@ function getAttr(path, sendResult)
 	if(wxmpp.checkConnected() && wxmpp.ownerIsAvailable())
 	{
 		log.putLog ('Attributes request for '+path);
-		if(wxmpp.ownerIsAvailable())
-		{
-			var t = wxmpp.getConnection();
-			var tag = new xmpp.Element('files',{action:"attributes", path:path});
-			t.sendWyliodrin(owner, tag, false);
-			addToRequests('attributes '+path, sendResult);	
-		}
-		else
-			sendResult(-2, null);
+		var t = wxmpp.getConnection();
+		var tag = new xmpp.Element('files',{action:"attributes", path:path});
+		t.sendWyliodrin(owner, tag, false);
+		addToRequests('attributes '+path, sendResult);	
 	}
 	else
 	{
@@ -135,15 +130,10 @@ function readDir(path, sendResult)
 	if(wxmpp.checkConnected() && wxmpp.ownerIsAvailable())
 	{
 		log.putLog ('Read directory request for '+path);
-		if(wxmpp.ownerIsAvailable())
-		{
-			var t = wxmpp.getConnection();
-			var tag = new xmpp.Element('files', {action:'list', path:path});
-			t.sendWyliodrin(owner, tag, false);
-			addToRequests('list '+path, sendResult);
-		}
-		else
-			sendResult(-2,null);
+		var t = wxmpp.getConnection();
+		var tag = new xmpp.Element('files', {action:'list', path:path});
+		t.sendWyliodrin(owner, tag, false);
+		addToRequests('list '+path, sendResult);
 	}
 	else
 	{
@@ -179,7 +169,7 @@ function open(path, sendResult)
 
 function ownerUnavailable()
 {
-	log.putLog ('Requests fail, user offline');
+	log.putError ('Requests fail, user offline');
 	requests.forEach(function(value,key){
 		for(var i=0; i<value.length; i++)
 			value[i](-2);
