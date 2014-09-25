@@ -5,6 +5,8 @@ var xmpp = require('./xmpp_library.js').xmpp;
 var wxmpp = require('./wxmpp');
 var requests = dict();
 
+var log = require ('./log');
+
 var config = require ('./settings.js').config;
 var mountFile = config.mountFile;
 var owner = config.networkConfig.owner;
