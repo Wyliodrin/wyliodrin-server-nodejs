@@ -7,6 +7,8 @@ var files_xmpp = require('./files_xmpp');
 var fuse = require('./fuse');
 var ERROR = -2;
 
+var log = require ('./log');
+
 var config = require ('./settings.js').config.config;
 var mountFile = config.mountFile;
 
@@ -23,6 +25,7 @@ function canMount()
  */
 function getattr(path, cb) 
 {    
+  log.putLog ('Get attributes of '+path);
    var stat = {};
 
    files_xmpp.getAttr(path,function(err, attrs){
@@ -47,6 +50,7 @@ function getattr(path, cb)
  */
 function readdir(path, cb) 
 {
+  log.putLog ('Read directory '+path);
   files_xmpp.readDir(path,function(err, names){
   	if(err != 0)
   		err = ERROR;
@@ -82,6 +86,7 @@ function open(path, flags, cb) {
  */
 
 function read(path, offset, len, buf, fh, cb) {
+  log.putLog ('Read file '+path+' offset '+offset+' len '+len);
   files_xmpp.read(path,offset,len, function(err,data,length){
     if(err == 0)
     {
