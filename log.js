@@ -28,13 +28,13 @@ function load()
 	setInterval (function ()
 	{
 		sendLogs ();
-	}, 3000);
-	console.log ('loaded');
+	}, 1000);
+	// console.log ('loaded');
 }
 
 function sendLogs()
 {
-	console.log ('sending logs');
+	// console.log ('sending logs');
 	if (!settings)
 	{
 		try
@@ -116,8 +116,6 @@ function putError(error)
 	send ('error', error, new Date());
 	console.error("error = "+error);
 }
-
-load ();
 
 exports.putLog = putLog;
 exports.putError = putError;
