@@ -14,9 +14,11 @@ function files_stanza(t, from, to, es, error)
 {
 	if(!error)
 	{
+		log.putLog ('Files stanza from '+from);
 		var action = es.attrs.action;
 		if(action == 'attributes')
 		{
+			log.putLog ('Attributes for '+es.attrs.path);
 			if(requests.has('attributes '+es.attrs.path))
 			{
 				err = parseInt(es.attrs.error);
@@ -49,6 +51,7 @@ function files_stanza(t, from, to, es, error)
 		}
 		else if(action == 'list')
 		{
+			log.putLog ('Directory list for '+es.attrs.path);
 			if(requests.has('list '+es.attrs.path))
 			{
 				try{
@@ -70,6 +73,7 @@ function files_stanza(t, from, to, es, error)
 		}
 		else if(action == 'open')
 		{
+			log.putLog ('Open for '+es.attrs.path);
 			if(requests.has('open '+es.attrs.path))
 			{
 				err = parseInt(es.attrs.error);
@@ -81,6 +85,7 @@ function files_stanza(t, from, to, es, error)
 		}
 		else if(action == 'read')
 		{
+			log.putLog ('Read for '+es.attrs.path);
 			if(requests.has('read '+es.attrs.path))
 			{
 				err = parseInt(es.attrs.error);
@@ -95,12 +100,17 @@ function files_stanza(t, from, to, es, error)
 			}
 		}
 	}
+	else
+	{
+		log.putError ('Files stanza error from '+from);
+	}
 }
 
 function getAttr(path, sendResult)
 {
-	if(wxmpp.checkConnected())
+	if(wxmpp.checkConnected() && wxmpp.ownerIsAvailable())
 	{
+		log.putLog ('Attributes request for '+path);
 		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
@@ -113,14 +123,16 @@ function getAttr(path, sendResult)
 	}
 	else
 	{
+		log.putError ('Attributes request for '+path+' user offline');
 		sendResult(-2);
 	}
 }
 
 function readDir(path, sendResult)
 {
-	if(wxmpp.checkConnected())
+	if(wxmpp.checkConnected() && wxmpp.ownerIsAvailable())
 	{
+		log.putLog ('Read directory request for '+path);
 		if(wxmpp.ownerIsAvailable())
 		{
 			var t = wxmpp.getConnection();
@@ -133,6 +145,7 @@ function readDir(path, sendResult)
 	}
 	else
 	{
+		log.putError ('Attributes request for '+path+' user offline');
 		sendResult(-2);
 	}
 }
@@ -147,26 +160,24 @@ function addToRequests(key, value)
 
 function open(path, sendResult)
 {
-	if(wxmpp.checkConnected())
+	if(wxmpp.checkConnected() && wxmpp.ownerIsAvailable())
 	{
-		if(wxmpp.ownerIsAvailable())
-		{
-			var t = wxmpp.getConnection();
-			var tag = new xmpp.Element('files', {action:'open', path:path});
-			t.sendWyliodrin(owner, tag, false);
-			addToRequests('open '+path, sendResult);
-		}
-		else
-			sendResult(-2);
+		log.putLog ('Open request for '+path);
+		var t = wxmpp.getConnection();
+		var tag = new xmpp.Element('files', {action:'open', path:path});
+		t.sendWyliodrin(owner, tag, false);
+		addToRequests('open '+path, sendResult);
 	}
 	else
 	{
+		log.putError ('Read directory request for '+path+' user offline');
 		sendResult(-2);
 	}
 }
 
 function ownerUnavailable()
 {
+	log.putLog ('Requests fail, user offline');
 	requests.forEach(function(value,key){
 		for(var i=0; i<value.length; i++)
 			value[i](-2);
@@ -177,20 +188,17 @@ function ownerUnavailable()
 
 function read(path,offset,len,sendResult)
 {
-	if(wxmpp.checkConnected())
+	if(wxmpp.checkConnected() && wxmpp.ownerIsAvailable())
 	{
-		if(wxmpp.ownerIsAvailable())
-		{
-			var t = wxmpp.getConnection();
-			var tag = new xmpp.Element('files', {action:'read', path:path, offset:offset, length:len});
-			t.sendWyliodrin(owner, tag, false);
-			addToRequests('read '+path, sendResult);
-		}
-		else
-			sendResult(-2,null,null);
+		log.putLog ('Read request for '+path);
+		var t = wxmpp.getConnection();
+		var tag = new xmpp.Element('files', {action:'read', path:path, offset:offset, length:len});
+		t.sendWyliodrin(owner, tag, false);
+		addToRequests('read '+path, sendResult);
 	}
 	else
 	{
+		log.putError ('Read request for '+path+' user offline');
 		sendResult(-2);
 	}
 }
