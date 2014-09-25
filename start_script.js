@@ -14,6 +14,10 @@ function start2()
 {
 	var wifi = require('./wificonfig');
 	wifi.init(function(){
+		if (networkConfig.debug)
+		{
+			log.load ();
+		}
 		if (networkConfig.nameserver && networkConfig.nameserver.length > 0)
 		{
 			log.putLog ('Setting nameserver to '+networkConfig.nameserver);
