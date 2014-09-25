@@ -2,13 +2,16 @@
 var xmpp = require('./xmpp_library.js').xmpp;
 var build = require('./build');
 var wxmpp = require('./wxmpp');
+var log = require ('./log');
 
 function buildStanza(t, from, to, es, error)
 {
 	if(error == 0)
 	{
+		log.putLog ('Make stanza from '+from);
 		if(es.attrs.action == "build")
 		{
+			log.putLog ('Build project');
 			build.make(es.attrs.projectid, "make", ["build"], es.attrs.address, es.attrs.userid,
 				function(data,source, code)
 			{
@@ -35,6 +38,7 @@ function buildStanza(t, from, to, es, error)
 		}
 		else if(es.attrs.action == "close")
 		{
+			log.putLog ('Stop project');
 			if(build.buildArray[es.attrs.projectid] != null)
 			{
 				build.killProcess();
