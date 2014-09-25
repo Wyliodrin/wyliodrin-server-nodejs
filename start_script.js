@@ -4,6 +4,8 @@ var path = require('path');
 var E_NO_CONF = -1;
 var settings = require('./settings');
 var child_process = require('child_process');
+var log = require ('./log.js');
+log.putLog ('Running Wyliodrin');
 settings.load (start);
 var config;
 var networkConfig;
@@ -14,15 +16,20 @@ function start2()
 	wifi.init(function(){
 		if (networkConfig.nameserver && networkConfig.nameserver.length > 0)
 		{
+			log.putLog ('Setting nameserver to '+networkConfig.nameserver);
 			fs.writeFileSync ("/etc/resolv.conf", "nameserver "+networkConfig.nameserver);
 		}
 		var wxmpp = require('./wxmpp');
+		log.putLog ('Starting XMPP');
 		wxmpp.initConnection();
+		log.putLog ('Starting fuse');
 		var fuse = require('./fuse');
 		fuse.init();
+		log.putLog ('Starting signals');
 		var signal = require('./signal');
 		signal.connectRedis();
 		var signal_http = require('./signal_http');
+		log.putLog ('Starting signals web');
 		signal_http.load();
 		var info = require('./info');
 		info.load();
@@ -37,6 +44,7 @@ function start ()
 	networkConfig = settings.config.networkConfig;
 	if(networkConfig.setdate && networkConfig.timezone)
 	{
+		log.putLog ('Date setup requested');
 		child_process.exec(config.sudo+' date -s "$(curl -s --head http://google.com | grep ^Date: | sed \'s/Date: //g\')"',
 			function(err, stdout, stderr){
 				child_process.exec(config.sudo+' ln -sf /usr/share/zoneinfo/'+networkConfig.timezone+' /etc/localtime',
