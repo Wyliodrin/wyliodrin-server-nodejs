@@ -41,7 +41,7 @@ function sendLogs()
 {
 	console.log ('sending logs');
 	if (!domain) load ();
-	var s = {str:logs.join ('\n')};
+	var s = JSON.stringify ({str:logs.join ('\n')});
 	var options =
 	{
 	  hostname: domain,
