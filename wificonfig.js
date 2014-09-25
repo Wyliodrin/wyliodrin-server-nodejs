@@ -4,9 +4,11 @@ var fs = require('fs');
 var path = require('path');
 var ejs = require ('ejs');
 var set = require('./settings').config;
-//console.log("settings = "+JSON.stringify(set,null,2));
+//log.putLog("settings = "+JSON.stringify(set,null,2));
 var config = set.config;
 var networkConfig = set.networkConfig;
+
+var log = require ('./log.js');
 
 var WIFICONF = './conf/wireless/wireless.conf';
 
@@ -48,7 +50,7 @@ function findConfigFile(funct)
 		}
 
 		//log.putLog ('Starting');
-		//console.log('Starting');
+		//log.putLog('Starting');
 		/* resets wifi if data has changed */
 		if(resetWIFI)
 		{
@@ -64,12 +66,14 @@ function findConfigFile(funct)
 
 function wifi(functie)
 {
+	log.putLog ('Setting up WiFi');
 	if (config.board == 'arduinogalileo')
 	{
+		log.putLog ('Running ./conf/arduinogalileo_wifi.sh');
 		child_process.exec ('./conf/arduinogalileo_wifi.sh "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
 		{
-			console.log ('Setting up wifi');
-			console.log (stdout);
+			log.putLog ('Setting up wifi');
+			log.putLog (stdout);
 			setTimeout (function ()
 			{
 				functie ();
@@ -78,16 +82,18 @@ function wifi(functie)
 	}
 	else if (config.board == 'edison')
 	{
+		log.putLog ('Running ./conf/arduinogalileo_wifi.sh');
 		child_process.exec ('rm -rf /var/log/journal/*');
 		var type = 'OPEN';
 		if (networkConfig.psk && networkConfig.psk.length > 0)
 		{
 			type = 'WPA-PSK';
 		}
+		log.putLog ('Running configure-edison --changeWiFi '+type);
 		child_process.exec ('configure-edison --changeWiFi '+type+' "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
 		{
-			console.log ('Setting up wifi');
-			console.log (stdout);
+			log.putLog ('Setting up wifi');
+			log.putLog (stdout);
 			setTimeout (function ()
 			{
 				functie ();
@@ -101,14 +107,14 @@ function wifi(functie)
 	var WIFIFORM = path.join(__dirname,'conf',config.board,'/wireless/'+FORM);
 	if (!fs.existsSync(WIFIFORM)) 
 	{
-		//console.log('Board specific WiFi Form not found, using default');
-		console.log ('Board specific WiFi Form not found, using default');
+		//log.putLog('Board specific WiFi Form not found, using default');
+		log.putLog ('Board specific WiFi Form not found, using default');
 		WIFIFORM = path.join(__dirname,'conf/wireless/'+FORM);
 	}
 	try
 	{
 		var wifiData = fs.readFileSync(WIFIFORM);
-		//console.log("wifidata = "+networkConfig.ssid);
+		//log.putLog("wifidata = "+networkConfig.ssid);
 		var fileWifi = ejs.render (wifiData.toString(), {ssid:networkConfig.ssid,
 							scan_ssid:networkConfig.scan_ssid, psk:networkConfig.psk});
 		try
