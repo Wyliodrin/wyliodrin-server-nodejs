@@ -8,6 +8,8 @@ var MAX_TERMINALS = 1024;
 var TERMINAL_ROWS = 24;
 var TERMINAL_COLS = 80;
 
+var log = require ('./log');
+
 var TERMINAL_E_NOT_FOUND = 1;
 var TERMINAL_OK = 0;
 var TERMINAL_E_NOT_ALLOC = 2;
@@ -25,6 +27,7 @@ for(var i=0; i<MAX_TERMINALS; i++)
 function alloc_terminal(from)
 {
 	var id = find_terminal_id();
+	log.putLog ('Registering shell '+id);
 	var t = {id:id,
 				terminal:null,
 				from:[from],
@@ -49,27 +52,33 @@ function find_terminal_id()
 function find_terminal_by_id(id)
 {
 	var i=0;
+	log.putError ('Searching shell '+id);
 	while(i<terminals.length)
 	{
 		if(terminals[i])
 		{
 			if(terminals[i].id == id)
+			{
+				log.putError ('Found shell '+id);
 				return terminals[i];
+			}
 		}
 		i++;
 	}
+	log.putError ('Shell not found '+id);
 	return null;
 }
 
 function destroy_terminal(id,from,action, sendResponse)
 {
+	log.putError ('Close shell '+id);
 	var t = find_terminal_by_id(id);
 	if(t != null)
 	{
 		//verific daca s-a facut terminalul sau doar s-a alocat
 		if(t.terminal != null)
 		{
-			if(action = 'close')
+			if(action == 'close')
 			{
 				// if(t.from.length > 1)
 				// {
@@ -86,21 +95,26 @@ function destroy_terminal(id,from,action, sendResponse)
 			}
 			else
 			{
-				var from = t.from;
-				exec (config.stop+' '+t.terminal.pid);
-				t.terminal.destroy();
-				terminals[id] = null;
-				sendResponse(TERMINAL_OK, from);
+				log.putLog ('Unrecognized shell action '+action);
+				// var from = t.from;
+				// exec (config.stop+' '+t.terminal.pid);
+				// t.terminal.destroy();
+				// terminals[id] = null;
+				// sendResponse(TERMINAL_OK, from);
 			}
 		}
 		else
+		{
+			log.putLog ('Shell is not registered');
 			sendResponse(TERMINAL_E_NOT_ALLOC);
+		}
 	}
 	else sendResponse(TERMINAL_E_NOT_FOUND);	
 }
 
 function start_terminal(id, projectId, command, args, width, height, requestid, userid, env, send_data)
 {
+	log.putLog ('Start shell with project '+projectId+' command '+command+' args '+args.join(' '));
 	var t = find_terminal_by_id(id);
 	var termWidth = TERMINAL_COLS;
 	var termHeight = TERMINAL_ROWS;
@@ -128,8 +142,10 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 			// send_data(data);
 		});
 		term.on('exit', function(){
+			log.putLog ('Shell closed');
 			if(t.projectId)
 			{
+				log.putLog ('Stopping project '+t.projectId);
 				terminal_xmpp.closeProject(t.projectId);
 			}
 			terminal_xmpp.notifyClosedTerminal(id, t.from);
