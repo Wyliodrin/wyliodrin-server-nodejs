@@ -14,10 +14,12 @@ function canMount()
   var fuse;
   try
   {
+    log.putLog ('Stat /dev/fuse '+mountFile);
     fuse = fs.existsSync ('/dev/fuse');
   }
   catch(e)
   {
+    log.putLog ('Fuse driver is not present ');
     fuse = false;
   }
   return fuse;
