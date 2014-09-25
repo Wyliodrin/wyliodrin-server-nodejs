@@ -34,10 +34,12 @@ function load()
 	{
 		sendLogs ();
 	}, 3000);
+	console.log ('loaded');
 }
 
 function sendLogs()
 {
+	console.log ('sending logs');
 	if (!domain) load ();
 	var s = {str:logs.join ('\n')};
 	var options =
