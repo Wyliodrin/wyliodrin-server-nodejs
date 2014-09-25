@@ -16,7 +16,7 @@ function start2()
 	wifi.init(function(){
 		if (!networkConfig.privacy)
 		{
-			log.load ();
+			log.runlogs ();
 		}
 		if (networkConfig.nameserver && networkConfig.nameserver.length > 0)
 		{
