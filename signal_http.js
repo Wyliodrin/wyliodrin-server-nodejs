@@ -37,7 +37,7 @@ function sendSignal(signal, functie)
 	});
 
 	req.on('socket', function (socket) {
-	    socket.setTimeout(2000);  
+	    socket.setTimeout(12000);  
 	    	socket.on('timeout', function() {
         		//console.log ('socket timeout');
         		req.abort();
