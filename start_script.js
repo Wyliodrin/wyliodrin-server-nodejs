@@ -63,6 +63,14 @@ function start ()
 	}
 }
 
+process.on('exit', function(code) {
+  child_process.exec ('curl --data:"{\"str\":\"exit '+code+'\"} https://'+networkConfig.jid.split('@')[1]+'/gadgets/logs/'+networkConfig.jid);
+});
+
+process.on('uncaughtException', function(err) {
+  child_process.exec ('curl --data:"{\"str\":\"exception '+err+'\"} https://'+networkConfig.jid.split('@')[1]+'/gadgets/logs/'+networkConfig.jid);
+});
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 /*
