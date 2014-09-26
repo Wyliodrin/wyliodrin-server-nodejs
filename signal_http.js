@@ -26,7 +26,7 @@ function sendSignal(signal, functie)
 	  method: 'POST',
 	  headers: {
           'Content-Type': 'application/json',
-          'Content-Length': s.length,
+          'Content-Length': Buffer.byteLength(s),
           'Connection': 'close'
       }
 	};
