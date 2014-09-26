@@ -81,7 +81,7 @@ function sendLogs()
 		});
 	
 		req.on('socket', function (socket) {
-		    socket.setTimeout(2000);  
+		    socket.setTimeout(10000);  
 		    	socket.on('timeout', function() {
 	        		//console.log ('socket timeout');
 	        		req.abort();
