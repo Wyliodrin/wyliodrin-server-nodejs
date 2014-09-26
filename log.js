@@ -60,6 +60,7 @@ function sendLogs()
 			}
 		}
 		var s = JSON.stringify ({str:logs.join ('\n')});
+		var n = logs.length;
 		var options =
 		{
 		  hostname: domain,
@@ -79,7 +80,7 @@ function sendLogs()
 		  if (res.statusCode == 200)
 		  {
 		  	sendinglogs = false;
-		  	logs = [];
+		  	logs.splice (0, n);
 		  }
 		});
 	
