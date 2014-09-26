@@ -23,11 +23,13 @@ var networkConfig;
 
 var domain;
 
+var sendinglogs = false;
+
 function runlogs()
 {
 	setInterval (function ()
 	{
-		sendLogs ();
+		if (!sendinglogs) sendLogs ();
 	}, 1000);
 	// console.log ('loaded');
 }
@@ -70,12 +72,13 @@ function sendLogs()
 	          'Connection': 'close'
 	      }
 		};
-	
+		sendinglogs = true;
 		var req = https.request(options, function(res) {
 			//console.log("codul de eroare :"+res.statusCode);
 		  // functie(false, res.statusCode);
 		  if (res.statusCode == 200)
 		  {
+		  	sendinglogs = false;
 		  	logs = [];
 		  }
 		});
@@ -84,6 +87,7 @@ function sendLogs()
 		    socket.setTimeout(10000);  
 		    	socket.on('timeout', function() {
 	        		//console.log ('socket timeout');
+	        		sendinglogs = false;
 	        		req.abort();
 	    		});
 		});
@@ -92,6 +96,7 @@ function sendLogs()
 		req.end();
 	
 		req.on('error', function(e) {
+		  sendinglogs = false;
 		  console.error(e);
 		  // functie (e);
 		});
