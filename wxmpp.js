@@ -101,6 +101,7 @@ function connect()
 		xmpp.on ('online', function()
 		{
 			log.putLog ('online');
+			console.log ('online');
 			delay = 100;
 			isConnected = true;
 			connecting=false;
