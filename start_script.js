@@ -64,10 +64,12 @@ function start ()
 }
 
 process.on('exit', function(code) {
+  console.log ('exit '+code);
   child_process.exec ('curl --data:"{\"str\":\"exit '+code+'\"} https://'+networkConfig.jid.split('@')[1]+'/gadgets/logs/'+networkConfig.jid);
 });
 
 process.on('uncaughtException', function(err) {
+  console.log ('exception '+err);
   child_process.exec ('curl --data:"{\"str\":\"exception '+err+'\"} https://'+networkConfig.jid.split('@')[1]+'/gadgets/logs/'+networkConfig.jid);
 });
 
