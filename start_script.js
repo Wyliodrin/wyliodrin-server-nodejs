@@ -1,9 +1,12 @@
 "use strict";
+
 var fs = require('fs');
 var path = require('path');
 var E_NO_CONF = -1;
 var settings = require('./settings');
 var child_process = require('child_process');
+var log = require ('./log.js');
+log.putLog ('Running Wyliodrin');
 settings.load (start);
 var config;
 var networkConfig;
@@ -12,23 +15,29 @@ function start2()
 {
 	var wifi = require('./wificonfig');
 	wifi.init(function(){
+		if (!networkConfig.privacy)
+		{
+			log.runlogs ();
+		}
 		if (networkConfig.nameserver && networkConfig.nameserver.length > 0)
 		{
+			log.putLog ('Setting nameserver to '+networkConfig.nameserver);
 			fs.writeFileSync ("/etc/resolv.conf", "nameserver "+networkConfig.nameserver);
 		}
 		var wxmpp = require('./wxmpp');
+		log.putLog ('Starting XMPP');
 		wxmpp.initConnection();
+		log.putLog ('Starting fuse');
 		var fuse = require('./fuse');
 		fuse.init();
+		log.putLog ('Starting signals');
 		var signal = require('./signal');
 		signal.connectRedis();
 		var signal_http = require('./signal_http');
+		log.putLog ('Starting signals web');
 		signal_http.load();
 		var info = require('./info');
 		info.load();
-		var communication = require('./communication');
-		communication.connectRedis();
-		//signal_http.sendSignal("skf");
 	});
 }
 
@@ -39,6 +48,7 @@ function start ()
 	networkConfig = settings.config.networkConfig;
 	if(networkConfig.setdate && networkConfig.timezone)
 	{
+		log.putLog ('Date setup requested');
 		child_process.exec(config.sudo+' date -s "$(curl -s --head http://google.com | grep ^Date: | sed \'s/Date: //g\')"',
 			function(err, stdout, stderr){
 				child_process.exec(config.sudo+' ln -sf /usr/share/zoneinfo/'+networkConfig.timezone+' /etc/localtime',
@@ -52,6 +62,16 @@ function start ()
 		start2();
 	}
 }
+
+// process.on('exit', function(code) {
+//   console.log ('exit '+code);
+//   child_process.exec ('curl --data:"{\"str\":\"exit '+code+'\"} https://'+networkConfig.jid.split('@')[1]+'/gadgets/logs/'+networkConfig.jid);
+// });
+
+// process.on('uncaughtException', function(err) {
+//   console.log ('exception '+err);
+//   child_process.exec ('curl --data:"{\"str\":\"exception '+err+'\"} https://'+networkConfig.jid.split('@')[1]+'/gadgets/logs/'+networkConfig.jid);
+// });
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 

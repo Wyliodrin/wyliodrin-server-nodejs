@@ -4,8 +4,8 @@ var redis = require("redis");
 var log = require("./log");
 var communication_xmpp = require("./communication_xmpp");
 
-var CHANNEL = "communication:*"
-var CHANNEL_PUBLISH = "communication:";
+var CHANNEL = "communication_server:*"
+var CHANNEL_PUBLISH = "communication_client:";
 
 var client;
 
@@ -23,6 +23,7 @@ function connectRedis()
    		 });
 
 		channelClient.on("pmessage", function(pattern, channel, m){
+			console.log("new message"+m);
 			var message = JSON.parse(m);
 			var port = channel.split(':')[1];
 			var id = message["id"];

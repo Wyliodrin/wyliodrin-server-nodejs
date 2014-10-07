@@ -26,7 +26,7 @@ function sendSignal(signal, functie)
 	  method: 'POST',
 	  headers: {
           'Content-Type': 'application/json',
-          'Content-Length': s.length,
+          'Content-Length': Buffer.byteLength(s),
           'Connection': 'close'
       }
 	};
@@ -37,7 +37,7 @@ function sendSignal(signal, functie)
 	});
 
 	req.on('socket', function (socket) {
-	    socket.setTimeout(2000);  
+	    socket.setTimeout(10000);  
 	    	socket.on('timeout', function() {
         		//console.log ('socket timeout');
         		req.abort();

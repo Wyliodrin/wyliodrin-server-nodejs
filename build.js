@@ -41,6 +41,7 @@ function validatePath(id, returnPath)
 
 function startBuildProcess(command, args, path, sendOutput, done, id, userid)
 {
+	log.putLog ('Running '+command+' '+args.join(' '));
 	var makeProcess = child_process.spawn(command,args,{cwd:path, env:_.extend(process.env,{wyliodrin_project:id,
 		wyliodrinport:port, wyliodrin_userid:userid})});
 	processArray[id] = makeProcess;
@@ -61,19 +62,23 @@ function startBuildProcess(command, args, path, sendOutput, done, id, userid)
 
 function make(id, command, args, address, userid, sendOutput)
 {
+	log.putLog ('Validating path for project '+id);
 	validatePath(id, function(buildPath,id)
 	{
 		if(buildPath)
-		if(true)
 		{
+			log.putLog ('Building project in '+buildPath);
+			log.putLog ('Running rm -rf '+buildPath);
 			child_process.exec('rm -rf '+buildPath, {maxBuffer:10*1024, cwd:buildFile},
 				function(error, stdout, stderr){
 					if(files.canMount())
 					{
+						log.putLog ('Running cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile);
 						child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
 						function(error, stdout, stderr){
 							if (!error)
-							{	
+							{
+								log.putLog ('Running ln -s Makefile.'+gadget+' Makefile');
 								child_process.exec ('ln -s Makefile.'+gadget+' Makefile', {cwd: buildPath}, function (err, stdout, stderr)
 								{
 									if (!error)
@@ -148,9 +153,11 @@ function make(id, command, args, address, userid, sendOutput)
 
 function killProcess(id)
 {
+	log.putLog ('Stopping project '+id);
 	var process = processArray[id];
 	if(process)
 	{
+		log.putLog ('Stopping process '+process.pid);
 		process.kill(process.pid, 'SIGTERM');
 		setTimeout(function(){
 			if(processArray[id])
