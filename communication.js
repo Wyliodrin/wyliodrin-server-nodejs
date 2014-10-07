@@ -9,6 +9,8 @@ var CHANNEL_PUBLISH = "communication_client:";
 
 var client;
 
+console.log("communication");
+
 function connectRedis()
 {
 	try
@@ -23,7 +25,6 @@ function connectRedis()
    		 });
 
 		channelClient.on("pmessage", function(pattern, channel, m){
-			console.log("new message"+m);
 			var message = JSON.parse(m);
 			var port = channel.split(':')[1];
 			var id = message["id"];

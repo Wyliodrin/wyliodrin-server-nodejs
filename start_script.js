@@ -38,6 +38,8 @@ function start2()
 		signal_http.load();
 		var info = require('./info');
 		info.load();
+		var communication = require('./communication');
+		communication.connectRedis();
 	});
 }
 
