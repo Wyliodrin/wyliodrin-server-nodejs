@@ -104,7 +104,7 @@ sudo apt-get -y install arduino minicom picocom
 sudo pip install ino 
 sudo npm install -g serialport
 
-
+sudo apt-get install -y mc vim
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
