@@ -2,7 +2,10 @@
 
 # redis
 #install redis
-sudo apt-get install redis-server libhiredis-dev
+sudo apt-get -y install redis-server libhiredis-dev
+
+#install tools
+sudo apt-get -y install -y mc vim
 
 # raspberry pi user
 USER=pi
@@ -103,8 +106,6 @@ sudo install_social
 sudo apt-get -y install arduino minicom picocom
 sudo pip install ino 
 sudo npm install -g serialport
-
-sudo apt-get install -y mc vim
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
