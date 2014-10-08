@@ -21,7 +21,7 @@ echo Installing Server
 wget https://gist.github.com/raw/3245130/v0.10.24/node-v0.10.24-linux-arm-armv6j-vfp-hard.tar.gz
 cd /usr/local
 sudo tar xzvf /home/pi/node-v0.10.24-linux-arm-armv6j-vfp-hard.tar.gz --strip=1
-sudo ln -s /usr/local/node /usr/local/node_modules
+sudo ln -s /usr/local/lib/node_modules /usr/local/lib/node
 cd
 
 sudo apt-get -y install libfuse-dev redis-server libicu-dev
