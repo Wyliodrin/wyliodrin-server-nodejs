@@ -108,7 +108,7 @@ sudo pip install ino
 sudo npm install -g serialport
 
 sudo adduser pi i2c
-sudo apt-get install i2c-tools
+sudo apt-get -y install i2c-tools
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
