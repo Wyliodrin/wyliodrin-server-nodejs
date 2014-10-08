@@ -2,8 +2,7 @@
 
 # redis
 #install redis
-sudo apt-get install redis-server
-sudo apt-get install libhiredis-dev
+sudo apt-get install redis-server libhiredis-dev
 
 # raspberry pi user
 USER=pi
@@ -40,6 +39,8 @@ git clone https://github.com/wyliodrin/wiringPi.git
 cd wiringPi
 ./build
 cd
+
+sudo apt-get -y install libi2c-dev
 
 sudo apt-get -y install cmake libhiredis-dev libjansson-dev python-dev
 
@@ -84,10 +85,9 @@ cd BrickPi_Python
 sudo python setup.py install
 cd
 
-sudo apt-get -y install libi2c-dev
-
 sudo mkdir /wyliodrin
 sudo chown pi /wyliodrin
+cp .bashrc /wyliodrin/
 
 sudo usermod -a -G fuse pi
 
@@ -104,7 +104,7 @@ sudo apt-get -y install arduino minicom picocom
 sudo pip install ino 
 sudo npm install -g serialport
 
-cp .bashrc /wyliodrin/
+
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
