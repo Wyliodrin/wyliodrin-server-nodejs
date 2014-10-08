@@ -14,34 +14,97 @@ FUSE=fuse
 # gadget
 GADGET=raspberrypi
 
-mkdir download
-
 echo Installing Server
-source wyliodrin-server-install.sh
+# install nodejs
+wget https://gist.github.com/raw/3245130/v0.10.24/node-v0.10.24-linux-arm-armv6j-vfp-hard.tar.gz
+cd /usr/local
+sudo tar xzvf /home/pi/node-v0.10.24-linux-arm-armv6j-vfp-hard.tar.gz --strip=1
+sudo ln -s /usr/local/node /usr/local/node_modules
+cd
+
+sudo apt-get -y install libfuse-dev redis-server libicu-dev
+
+git clone https://github.com/Wyliodrin/wyliodrin-server-nodejs
+cd wyliodrin-server-nodejs
+git checkout development
+npm install
+chmod a+x patch.sh
+./patch.sh
+cd
 
 echo Installing Raspberry Pi Libraries
 
 # install wiringpi
 echo Installing WiringPi
-cd download
-git clone https://github.com/Wyliodrin/wiringPi.git
+git clone https://github.com/wyliodrin/wiringPi.git
 cd wiringPi
 ./build
-cd ..
+cd
+
+sudo apt-get -y install cmake libhiredis-dev libjansson-dev python-dev
+
+wget http://prdownloads.sourceforge.net/swig/swig-3.0.2.tar.gz
+tar xvfz swig-3.0.2.tar.gz
+wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.35.tar.gz
+tar xvfz pcre-8.35.tar.gz
+
+cd pcre-8.35
+./configure
+make
+sudo make install
+cd
+
+sudo ldconfig
+
+cd swig-3.0.2
+./configure
+make
+sudo make install
+cd
+
+sudo apt-get install -y gcc-4.7 g++-4.7
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.7
+sudo update-alternatives --config gcc 
 
 # install libwyliodrin
 echo Installing libwyliodrin
-cd download
-git clone https://github.com/Wyliodrin/libwyliodrin.git
+git clone https://github.com/wyliodrin/libwyliodrin
 cd libwyliodrin
 mkdir build
 cd build
-cmake -DRASPBERRYPI=ON ..
+cmake -DRASPBERRYPI=ON .. 
 make
 sudo make install
-cd ..
-cd ..
+cd
+
+git clone https://github.com/DexterInd/BrickPi_Python.git
+sudo apt-get -y install python-setuptools
+cd BrickPi_Python
+sudo python setup.py install
+cd
+
+sudo apt-get -y install libi2c-dev
+
+sudo mkdir /wyliodrin
+sudo chown pi /wyliodrin
+
+sudo usermod -a -G fuse pi
+
+sudo apt-get -y install python python-dev python-setuptools python-pip
+
+git clone https://github.com/DexterInd/BrickPi_Python.git
+cd BrickPi_Python
+sudo python setup.py install
+cd
+
 sudo install_social
+
+sudo apt-get -y install arduino minicom picocom
+sudo pip install ino 
+sudo npm install -g serialport
+
+cp .bashrc /wyliodrin/
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
@@ -72,8 +135,13 @@ sudo cp wyliodrin-server.conf /etc/init/wyliodrin.conf
 
 fi
 
+#/etc/inittab
+echo please comment this line "T0:23:respawn:/sbin/getty -L ttyAMA0 115200 vt100" in /etc/inittab
+echo please enable i2c following the tutorial https://www.abelectronics.co.uk/i2c-raspbian-wheezy/info.aspx
+
 echo You need to restart your Raspberry Pi
 
-sudo rm -rf download
+
+
 
 
