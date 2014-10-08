@@ -127,7 +127,7 @@ author \"Ioana Culic\"
 
 start on runlevel [2345]
 stop on runlevel [016]
-chdir `pwd`
+chdir `pwd`/wyliodrin-server-nodejs
 script
         export NODE_PATH=\"/usr/local/lib/node_modules\"
         sudo -E -u $USER /usr/local/bin/npm start
