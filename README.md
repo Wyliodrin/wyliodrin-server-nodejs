@@ -31,5 +31,5 @@ to use wyliodrin configuration
     iface wlan0 inet manual                                                                                                                     
     #wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf                                                                                           
                                                                                                                                             
-    wpa-roam /usr/local/lib/wyliodrin/wireless/wireless.conf                                                                        
+    wpa-roam /home/pi/wyliodrin-server-nodejs/conf/wireless/wireless.conf                                                                        
     iface default inet dhcp  
