@@ -189,10 +189,10 @@ function closeProject(projectId)
 	}
 }
 
-function notifyClosedTerminal(id, from, term)
+function notifyClosedTerminal(id, from, request)
 {
 	var t = wxmpp.getConnection();
-	var tag = new xmpp.Element('shells',{action:'close', status:'done', request: term.request, shellid:id});
+	var tag = new xmpp.Element('shells',{action:'close', status:'done', request: request, shellid:id});
 	for(var i=0; i<from.length; i++)
 	{
 		t.sendWyliodrin(from[i], tag);
