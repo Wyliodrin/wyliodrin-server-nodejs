@@ -101,7 +101,8 @@ cd BrickPi_Python
 sudo python setup.py install
 cd
 
-sudo install_social
+export wyliodrin_board=raspberrypi
+sudo -E install_social
 
 sudo apt-get -y install arduino minicom picocom
 sudo pip install ino 
