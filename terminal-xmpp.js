@@ -111,7 +111,7 @@ function shell_stanza(t, from, to, es, error)
 						var id = projectsDict.get(es.attrs.projectid);
 						// terminal.attachTerminal(from, id);	
 						terminal.destroyTerminal(id, from, 'stop', function(code, from){
-							var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, code:code});
+							var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, code:code, request:term.request});
 							t.sendWyliodrin(from, tag);
 							var term = makeTerminal(t, from, to, es, error, settings.run[0], settings.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
 							projectsDict.set(es.attrs.projectid,term.id);
