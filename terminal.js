@@ -17,7 +17,6 @@ var settings = require('./settings').config;
 var config = settings.config;
 var networkConfig = settings.networkConfig;
 var terminals=[];
-var port = parseInt(networkConfig.port);
 var home = config.home;
 for(var i=0; i<MAX_TERMINALS; i++)
 {
@@ -129,7 +128,7 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 		  cols: termWidth,
 		  rows: termHeight,
 		  cwd: env,
-		  env:_.extend(process.env,{HOME:home,wyliodrin_project:projectId, wyliodrin_port:port,
+		  env:_.extend(process.env,{HOME:home,wyliodrin_project:projectId, wyliodrin_port:6379,
 		  		wyliodrin_session:requestid, wyliodrin_userid:userid, wyliodrin_board:config.board})
 		});
 	

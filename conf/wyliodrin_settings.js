@@ -13,6 +13,18 @@ var settings =
 		sudo: 'sudo',
 		board:"raspberrypi"
 	},
+
+	beaglebone:{
+		config_file: '/boot/uboot/wyliodrin.json',
+		home: '/wyliodrin',
+		mountFile: '/wyliodrin/projects/mount',
+		buildFile: '/wyliodrin/projects/build',
+		umount: 'sudo umount -f',
+		run: ['sudo', '-E', 'make'],
+		stop: ['sudo kill -9'],
+		sudo: 'sudo',
+		board:"beaglebone"
+	},
 	
 	edison:{
 		config_file: '/media/storage/wyliodrin.json',

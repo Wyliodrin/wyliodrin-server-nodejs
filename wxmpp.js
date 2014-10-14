@@ -5,7 +5,7 @@ var fs = require('fs');
 var terminal_xmpp = require('./terminal_xmpp');
 var build_xmpp = require('./build_xmpp');
 var files_xmpp = require('./files_xmpp');
-
+var communication_xmpp = require('./communication_xmpp');
 var isConnected = false;
 var connecting = false;
 
@@ -230,6 +230,7 @@ function loadSettings()
 	connection.tag('files', XMPP.WYLIODRIN_NAMESPACE, files_xmpp.filesStanza);
 	connection.tag('info', XMPP.WYLIODRIN_NAMESPACE, info.info_stanza);
 	connection.tag('ps', XMPP.WYLIODRIN_NAMESPACE, info.info_stanza);
+	connection.tag('communication', XMPP.WYLIODRIN_NAMESPACE, communication_xmpp.messageStanza);
 }
 
 function ownerUnavailable()
