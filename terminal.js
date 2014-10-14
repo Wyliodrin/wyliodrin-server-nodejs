@@ -147,7 +147,7 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 				log.putLog ('Stopping project '+t.projectId);
 				terminal_xmpp.closeProject(t.projectId);
 			}
-			terminal_xmpp.notifyClosedTerminal(id, t.from, term);
+			terminal_xmpp.notifyClosedTerminal(id, t.from, requestid);
 			terminals[id] = null;
 
 		});
