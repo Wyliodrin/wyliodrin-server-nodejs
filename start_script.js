@@ -40,6 +40,7 @@ function start2()
 		info.load();
 		var communication = require('./communication');
 		communication.connectRedis();
+	});
 }
 
 
