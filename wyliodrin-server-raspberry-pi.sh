@@ -7,6 +7,9 @@ sudo apt-get -y install redis-server libhiredis-dev
 #install tools
 sudo apt-get -y install -y mc vim
 
+# mpg123
+sudo apt-get install -y mpg123
+
 # raspberry pi user
 USER=pi
 
