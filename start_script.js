@@ -19,27 +19,38 @@ function start2()
 		{
 			log.runlogs ();
 		}
+		var run = function ()
+		{
+			var wxmpp = require('./wxmpp');
+			log.putLog ('Starting XMPP');
+			wxmpp.initConnection();
+			log.putLog ('Starting fuse');
+			var fuse = require('./fuse');
+			fuse.init();
+			log.putLog ('Starting signals');
+			var signal = require('./signal');
+			signal.connectRedis();
+			var signal_http = require('./signal_http');
+			log.putLog ('Starting signals web');
+			signal_http.load();
+			var info = require('./info');
+			info.load();
+			var communication = require('./communication');
+			communication.connectRedis();
+		};
 		if (networkConfig.nameserver && networkConfig.nameserver.length > 0)
 		{
 			log.putLog ('Setting nameserver to '+networkConfig.nameserver);
 			fs.writeFileSync ("/etc/resolv.conf", "nameserver "+networkConfig.nameserver);
+			setTimeout (function ()
+			{
+				run ();
+			}, 4000);
 		}
-		var wxmpp = require('./wxmpp');
-		log.putLog ('Starting XMPP');
-		wxmpp.initConnection();
-		log.putLog ('Starting fuse');
-		var fuse = require('./fuse');
-		fuse.init();
-		log.putLog ('Starting signals');
-		var signal = require('./signal');
-		signal.connectRedis();
-		var signal_http = require('./signal_http');
-		log.putLog ('Starting signals web');
-		signal_http.load();
-		var info = require('./info');
-		info.load();
-		var communication = require('./communication');
-		communication.connectRedis();
+		else
+		{
+			run ();
+		}
 	});
 }
 
