@@ -107,6 +107,14 @@ cd
 export wyliodrin_board=raspberrypi
 sudo -E install_social
 
+# chipKIT
+cd /tmp
+wget https://chipkit.s3.amazonaws.com/builds/mpide-0023-raspberrypi-20140316.tgz
+tar xvfz mpide-0023-raspberrypi-20140316.tgz
+sudo mv mpide-0023-raspberrypi-20140316 /usr/share/mpide
+rm mpide-0023-raspberrypi-20140316.tgz
+sudo git clone https://github.com/sudar/Arduino-Makefile.git /usr/share/Arduino-Makefile
+
 sudo apt-get -y install arduino minicom picocom
 sudo pip install ino 
 sudo npm install -g serialport
