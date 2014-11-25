@@ -61,7 +61,7 @@ function connect()
 		xmpp.on ('error', function(error)
 		{
 			log.putLog ('XMPP error ');
-			log.putLog (error);
+			log.putLog (JSON.stringify (error));
 			if (!connecting && xmpp.reconnect)
 			{
 				xmpp.reconnect = false;
