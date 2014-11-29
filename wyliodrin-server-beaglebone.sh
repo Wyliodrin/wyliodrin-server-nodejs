@@ -33,17 +33,16 @@ sudo apt-get -y install cmake
 
 git clone https://github.com/Wyliodrin/libwyliodrin.git
 cd libwyliodrin
-git checkout beaglebone
 mkdir build
 cd build
-cmake -DBEAGLEBONE=ON ..
-ln -s /usr/include/nodejs/src /usr/include/node
-mv -r /usr/include/nodejs/deps/uv/include/* /usr/include/node
+cmake -DNODE_ROOT_DIR=/usr/include -DBEAGLEBONE=ON ..
+sudo ln -s /usr/include/nodejs/src /usr/include/node
+sudo mv /usr/include/nodejs/deps/uv/include/* /usr/include/node
 make
 sudo make install
 cd ../..
 
-sudo apt-get install python-redis arduino ino firmata
+sudo apt-get install python-redis arduino
 
 echo "
 [Unit]
@@ -66,5 +65,5 @@ WantedBy=multi-user.target
 " > wyliodrin.service
 
 sudo cp wyliodrin.service /etc/systemd/system/wyliodrin.service
-ln -s /etc/systemd/system/wyliodrin.service /etc/systemd/system/multi-user.target.wants
+sudo ln -s /etc/systemd/system/wyliodrin.service /etc/systemd/system/multi-user.target.wants
 
