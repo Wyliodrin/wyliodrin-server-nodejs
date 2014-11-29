@@ -25,7 +25,8 @@ sudo ln -s /usr/local/bin/swig-3.0.2 /usr/bin/swig-3.0.2
 
 sudo mkdir /wyliodrin 
 sudo groupadd fuse
-#make debian /wyliodrin owner. it might need to be changed with root
+
+#make debian /wyliodrin owner.
 sudo chown -R debian /wyliodrin
 sudo usermod -a -G fuse debian
 
@@ -66,4 +67,6 @@ WantedBy=multi-user.target
 
 sudo cp wyliodrin.service /etc/systemd/system/wyliodrin.service
 sudo ln -s /etc/systemd/system/wyliodrin.service /etc/systemd/system/multi-user.target.wants
+
+echo -n beaglebone > board.type
 
