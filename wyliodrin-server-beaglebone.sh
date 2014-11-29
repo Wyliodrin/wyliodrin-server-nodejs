@@ -56,6 +56,7 @@ Type=simple
 ExecStart=/usr/bin/node /home/debian/wyliodrin-server-nodejs/start_script.js
 #ExecStart=/usr/bin/node /usr/lib/node/wyliodrin-server-nodejs/start_script.js
 Restart=always
+User=debian
 ExecStop=/bin/kill -15 $MAINPID
 WorkingDirectory=/home/debian/wyliodrin-server-nodejs
 #WorkingDirectory=/usr/lib/node/wyliodrin-server-nodejs
