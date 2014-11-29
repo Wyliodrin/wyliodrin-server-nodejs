@@ -1,34 +1,21 @@
 #!/bin/bash
 
-#install gcc
-sudo apt-get -y install gcc g++ automake make
-sudo apt-get install ntpd
-
-#install node
-wget http://nodejs.org/dist/v0.10.28/node-v0.10.28.tar.gz
-tar xvfz node-v0.10.28.tar.gz
-cd node-v0.10.28
-./configure --without-snapshot
-make
-sudo make install
-cd ..
-
-sudo apt-get install vim mc subversion ldconfig redis-server
-sudo apt-get install libfuse-dev libicu-dev libhiredis-dev
-sudo apt-get install pkg-config
+sudo apt-get -y install mc redis-server
+sudo apt-get -y install libfuse-dev libicu-dev libhiredis-dev
 npm install
-./patch
-
-sudo apt-get install libevent-dev libjansson-dev python-dev python-pip
+./patch.sh
+cd ..
+sudo apt-get -y install libevent-dev libjansson-dev python-dev libi2c-dev
 
 #install swig
 wget http://prdownloads.sourceforge.net/swig/swig-3.0.2.tar.gz
-tar -xvfz swig-3.0.2.tar.gz
+tar -xvf swig-3.0.2.tar.gz
 wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.35.tar.gz
-tar -xvfz pcre-8.35.tar.gz
+tar -xvf pcre-8.35.tar.gz
 cd pcre-8.35
 ./configure
-make sudo make install
+make
+sudo make install
 cd ../swig-3.0.2
 ./configure
 make
@@ -42,7 +29,7 @@ sudo groupadd fuse
 sudo chown -R debian /wyliodrin
 sudo usermod -a -G fuse debian
 
-sudo apt-get install cmake
+sudo apt-get -y install cmake
 
 git clone https://github.com/Wyliodrin/libwyliodrin.git
 cd libwyliodrin
