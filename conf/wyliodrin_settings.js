@@ -14,7 +14,7 @@ var settings =
 		board:"raspberrypi"
 	},
 
-	beaglebone:{
+	beagleboneblack:{
 		config_file: '/boot/uboot/wyliodrin.json',
 		home: '/wyliodrin',
 		mountFile: '/wyliodrin/projects/mount',
@@ -23,7 +23,7 @@ var settings =
 		run: ['sudo', '-E', 'make'],
 		stop: ['sudo kill -9'],
 		sudo: 'sudo',
-		board:"beaglebone"
+		board:"beagleboneblack"
 	},
 	
 	edison:{
