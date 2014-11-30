@@ -6,6 +6,7 @@ npm install
 ./patch.sh
 cd ..
 sudo apt-get -y install libevent-dev libjansson-dev python-dev libi2c-dev
+sudo pip install redis
 
 #install swig
 wget http://prdownloads.sourceforge.net/swig/swig-3.0.2.tar.gz
