@@ -44,7 +44,7 @@ make
 sudo make install
 cd ../..
 
-sudo apt-get install python-redis arduino
+sudo apt-get -y install python-redis arduino
 
 echo "
 [Unit]
