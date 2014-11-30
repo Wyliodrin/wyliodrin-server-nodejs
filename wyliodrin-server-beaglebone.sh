@@ -70,5 +70,5 @@ WantedBy=multi-user.target
 sudo cp wyliodrin.service /etc/systemd/system/wyliodrin.service
 sudo ln -s /etc/systemd/system/wyliodrin.service /etc/systemd/system/multi-user.target.wants
 
-echo -n beaglebone > wyliodrin-server-nodejs/board.type
+echo -n beagleboneblack > wyliodrin-server-nodejs/board.type
 
