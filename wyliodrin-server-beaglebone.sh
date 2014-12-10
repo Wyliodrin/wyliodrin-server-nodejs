@@ -40,6 +40,7 @@ cd build
 cmake -DNODE_ROOT_DIR=/usr/include -DBEAGLEBONE=ON ..
 sudo ln -s /usr/include/nodejs/src /usr/include/node
 sudo mv /usr/include/nodejs/deps/uv/include/* /usr/include/node
+sudo ln -s /usr/lib/nodejs /usr/local/lib/node_modules
 make
 sudo make install
 cd ../..
