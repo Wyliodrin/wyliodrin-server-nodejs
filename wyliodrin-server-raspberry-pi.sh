@@ -106,6 +106,7 @@ cd
 
 export wyliodrin_board=raspberrypi
 sudo -E install_social
+sudo -E update_streams
 
 # chipKIT
 cd /tmp
