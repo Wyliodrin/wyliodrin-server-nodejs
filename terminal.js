@@ -7,6 +7,7 @@ var terminal_xmpp = require('./terminal_xmpp');
 var MAX_TERMINALS = 1024;
 var TERMINAL_ROWS = 24;
 var TERMINAL_COLS = 80;
+var SCREEN_COMMAND = "/usr/bin/screen"
 
 var log = require ('./log');
 
@@ -79,6 +80,8 @@ function destroy_terminal(id,from,action, sendResponse)
 		{
 			if(action == 'stop' || action == 'close')
 			{
+
+				console.log("closing project");
 				// if(t.from.length > 1)
 				// {
 				// 	t.from.pop(from);
@@ -86,7 +89,7 @@ function destroy_terminal(id,from,action, sendResponse)
 				// }
 				// else
 				// {
-					exec (config.stop+' '+t.terminal.pid);
+					exec ("screen -X -S screen"+id+" kill");
 					t.terminal.destroy();
 					terminals[id] = null;
 					sendResponse(TERMINAL_OK, [from]);
@@ -123,7 +126,8 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 			termWidth = width;
 		if(height != 0)
 			termHeight = height;
-		var term = pty.spawn(command, args, {
+		args.splice(0,0,"-S","screen"+id,command);
+		var term = pty.spawn(SCREEN_COMMAND, args, {
 		  name: 'xterm',
 		  cols: termWidth,
 		  rows: termHeight,
