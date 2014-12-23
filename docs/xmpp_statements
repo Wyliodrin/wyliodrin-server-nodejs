@@ -9,8 +9,13 @@
 <--	<shells xmlns="wyliodrin" id="" action="keys">data</shell>
 
 --> <shells xmlns="wyliodrin" action="list" request="id"/>
-<-- <shellsxmlns="wyliodrin" action="list" request="id">
+<-- <shells xmlns="wyliodrin" action="list" request="id">
 		<project projectid=""/>
+	</shells>
+
+--> <shells xmlns="wyliodrin" action="listbackground" request="id"/>
+<-- <shells xmlns="wyliodrin" action="listbackground" request="id">
+	<shell id=""/>
 	</shells>
 
 ------------------------------------------------------------------------------------------------------

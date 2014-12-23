@@ -109,7 +109,7 @@ function shell_stanza(t, from, to, es, error)
 							var tag = new xmpp.Element('shells', {shellid:id, action:es.attrs.action, code:code, request:term.request, projectid:es.attrs.projectid});
 							t.sendWyliodrin(from, tag);
 							try{
-							var term = makeTerminal(t, from, to, es, error, config.run[0], config.run.slice (1).concat ('run'), buildFile+'/'+es.attrs.projectid);
+							var term = makeTerminal(t, from, to, es, error, config.run[0], config.run.slice(1).concat('run'), buildFile+'/'+es.attrs.projectid);
 							}catch(e){throw e;}
 							projectsDict.set(es.attrs.projectid,term.id);
 						});

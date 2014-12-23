@@ -4,10 +4,12 @@ var exec = require ('child_process').exec;
 var _ = require('underscore');
 
 var terminal_xmpp = require('./terminal_xmpp');
+
 var MAX_TERMINALS = 1024;
 var TERMINAL_ROWS = 24;
 var TERMINAL_COLS = 80;
-var SCREEN_COMMAND = "/usr/bin/screen"
+var SCREEN_COMMAND = "/usr/bin/screen";
+var BASH_COMMAND="/bin/bash";
 
 var log = require ('./log');
 
@@ -19,10 +21,23 @@ var config = settings.config;
 var networkConfig = settings.networkConfig;
 var terminals=[];
 var home = config.home;
+
 for(var i=0; i<MAX_TERMINALS; i++)
 {
 	terminals[i] = null;
 }
+
+getScreens(function(ids){
+	for(var i=0; i<ids.length; i++)
+	{
+		var id = ids[i];
+		var t = {id:id,
+				terminal:null,
+				from:null,
+				projectId:null};
+		terminals[id] = t;
+	}
+	});	
 
 function alloc_terminal(from)
 {
@@ -89,7 +104,7 @@ function destroy_terminal(id,from,action, sendResponse)
 				// }
 				// else
 				// {
-					exec ("screen -X -S screen"+id+" kill");
+					exec ("screen -X -S wyliodrin_screen"+id+" kill");
 					t.terminal.destroy();
 					terminals[id] = null;
 					sendResponse(TERMINAL_OK, [from]);
@@ -120,13 +135,23 @@ function start_terminal(id, projectId, command, args, width, height, requestid, 
 	var t = find_terminal_by_id(id);
 	var termWidth = TERMINAL_COLS;
 	var termHeight = TERMINAL_ROWS;
+	//var my_args;
 	if(t != null)
 	{
 		if(width != 0)
 			termWidth = width;
 		if(height != 0)
 			termHeight = height;
-		args.splice(0,0,"-S","screen"+id,command);
+		// if(!projectId)
+		// {
+			args.splice(0,0,"-S","wyliodrin_screen"+id,command);
+		// 	my_args = args;
+		// }
+		// else
+		// {
+		// 	my_args = ["-S", "screen"+id, BASH_COMMAND, "-c", "'"+command+' '+args.join(' ')+";"+BASH_COMMAND+"'"];
+		// }
+		// console.log("starting "+my_args.join(" ")+" in "+env);
 		var term = pty.spawn(SCREEN_COMMAND, args, {
 		  name: 'xterm',
 		  cols: termWidth,
@@ -187,6 +212,24 @@ function attachTerminal(from, id)
 	}
 }
 
+function getScreens(callbackFunction)
+{
+	exec("screen -ls | grep wyliodrin", function(error, stdout, stderr){
+		var ids = [];
+		var results = stdout.match(/wyliodrin_screen[0-9]+/g);
+		if(results)
+		{
+			for(var i=0; i<results.length; i++)
+			{
+				var pos = "wyliodrin_screen".length;
+				ids.push(results[i].substring(pos));
+			}
+		}
+		callbackFunction(ids);
+	});
+
+}
+
 exports.allocTerminal = alloc_terminal;
 exports.destroyTerminal = destroy_terminal;
 exports.startTerminal = start_terminal;
@@ -194,5 +237,6 @@ exports.sendKeysToTerminal = sendKeysToTerminal;
 exports.TERMINAL_OK = TERMINAL_OK;
 exports.MAX_TERMINALS = MAX_TERMINALS;
 exports.attachTerminal = attachTerminal;
+exports.getScreens = getScreens;
 
 
