@@ -173,6 +173,28 @@ function shell_stanza(t, from, to, es, error)
 			catch(e){}
 			var rc = terminal.sendKeysToTerminal(id, new Buffer(es.getText(),'base64').toString());
 		}
+		if (es.attrs.action == 'listrunning')
+		{
+			var tag = new xmpp.Element('shells',{action:'listrunning', request:es.attrs.request});
+			var ids = terminal.getScreens(function(ids){
+				for(var i=0; i<ids.length; i++)
+				{
+					tag = tag.c('shell',{id:ids[i]});
+				}
+				t.sendWyliodrin(from.tag);
+			});
+		}
+		if( es.attrs.action == 'foreground')
+		{
+			var id = es.attrs.shellid;
+			terminal.foreground(id, es.attrs.from, function(error){
+				if(error)
+					var tag = new xmpp.Element('shells',{action:'foreground', request:es.attrs.request, shellid:id, response:'error'});
+				else
+					var tag = new xmpp.Element('shells',{action:'foreground', request:es.attrs.request, shellid:id, response:'done'});					
+				t.sendWyliodrin(from, tag);
+			});
+		}
 	}
 
 }

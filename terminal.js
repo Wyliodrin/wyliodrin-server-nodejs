@@ -227,9 +227,47 @@ function getScreens(callbackFunction)
 		}
 		callbackFunction(ids);
 	});
-
 }
 
+function foreground(id, from, callbackFunction)
+{
+	var t = find_terminal_by_id(id);
+	if(t != null)
+	{
+		console.log
+		var args = ['-r','wyliodrin_screen'+id];
+		var term = pty.spawn(SCREEN_COMMAND, args, {
+		  name: 'xterm',
+		  cols: TERMINAL_COLS,
+		  rows: TERMINAL_ROWS,
+		  cwd: '/wyliodrin'
+		});	
+		t.terminal = term;
+		t.from = [from];
+		callbackFunction(null);
+		term.on('data', function(data)
+		{
+			var data64 = new Buffer(data).toString('base64');
+			send_data(data64, t.from);
+						// send_data(data);
+		});
+		term.on('exit', function(){
+			log.putLog ('Shell closed');
+			if(t.projectId)
+			{
+				log.putLog ('Stopping project '+t.projectId);
+				terminal_xmpp.closeProject(t.projectId);
+			}
+			terminal_xmpp.notifyClosedTerminal(id, t.from, requestid);
+			terminals[id] = null;
+
+		});
+	}
+	else
+		callbackFunction(1);
+}
+
+exports.foreground = foreground;
 exports.allocTerminal = alloc_terminal;
 exports.destroyTerminal = destroy_terminal;
 exports.startTerminal = start_terminal;

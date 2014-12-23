@@ -13,10 +13,13 @@
 		<project projectid=""/>
 	</shells>
 
---> <shells xmlns="wyliodrin" action="listbackground" request="id"/>
-<-- <shells xmlns="wyliodrin" action="listbackground" request="id">
+--> <shells xmlns="wyliodrin" action="listrunning" request="id"/>
+<-- <shells xmlns="wyliodrin" action="listrunning" request="id">
 	<shell id=""/>
 	</shells>
+
+--> <shells xmlns="wyliodrin" action="foreground" request="id" shellid="id"/>
+<-- <shells xmlns="wyliodrin" action="foreground" request="id" shellid="id" response="done/error"/>
 
 ------------------------------------------------------------------------------------------------------
 
