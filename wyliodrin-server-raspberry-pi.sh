@@ -2,13 +2,15 @@
 
 # redis
 #install redis
-sudo apt-get -y install redis-server libhiredis-dev
+sudo apt-get -y --no-install-recommend install redis-server libhiredis-dev
 
 #install tools
-sudo apt-get -y install -y mc vim
+sudo apt-get -y install --no-install-recommend -y mc vim
 
 # mpg123
-sudo apt-get install -y mpg123
+sudo apt-get install --no-install-recommend -y mpg123
+
+sudo apt-get install -y --no-install-recommend install mariadb-server
 
 # raspberry pi user
 USER=pi
@@ -27,7 +29,7 @@ sudo tar xzvf /home/pi/node-v0.10.24-linux-arm-armv6j-vfp-hard.tar.gz --strip=1
 sudo ln -s /usr/local/lib/node_modules /usr/local/lib/node
 cd
 
-sudo apt-get -y install libfuse-dev redis-server libicu-dev
+sudo apt-get -y install --no-install-recommend install libfuse-dev redis-server libicu-dev
 
 git clone https://github.com/Wyliodrin/wyliodrin-server-nodejs
 cd wyliodrin-server-nodejs
@@ -46,9 +48,9 @@ cd wiringPi
 ./build
 cd
 
-sudo apt-get -y install libi2c-dev
+sudo apt-get -y install --no-install-recommend install libi2c-dev
 
-sudo apt-get -y install cmake libhiredis-dev libjansson-dev python-dev
+sudo apt-get -y install --no-install-recommend install cmake libhiredis-dev libjansson-dev python-dev
 
 wget http://prdownloads.sourceforge.net/swig/swig-3.0.2.tar.gz
 tar xvfz swig-3.0.2.tar.gz
@@ -69,7 +71,7 @@ make
 sudo make install
 cd
 
-sudo apt-get install -y gcc-4.7 g++-4.7
+sudo apt-get install -y --no-install-recommend install gcc-4.7 g++-4.7
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.7
 sudo update-alternatives --config gcc 
@@ -86,7 +88,7 @@ sudo make install
 cd
 
 git clone https://github.com/DexterInd/BrickPi_Python.git
-sudo apt-get -y install python-setuptools
+sudo apt-get -y install --no-install-recommend install python-setuptools
 cd BrickPi_Python
 sudo python setup.py install
 cd
@@ -97,7 +99,7 @@ cp .bashrc /wyliodrin/
 
 sudo usermod -a -G fuse pi
 
-sudo apt-get -y install python python-dev python-setuptools python-pip
+sudo apt-get -y install --no-install-recommend install python python-dev python-setuptools python-pip
 
 git clone https://github.com/DexterInd/BrickPi_Python.git
 cd BrickPi_Python
@@ -116,12 +118,12 @@ sudo mv mpide-0023-raspberrypi-20140316 /usr/share/mpide
 rm mpide-0023-raspberrypi-20140316.tgz
 sudo git clone https://github.com/sudar/Arduino-Makefile.git /usr/share/Arduino-Makefile
 
-sudo apt-get -y install arduino minicom picocom
+sudo apt-get -y install --no-install-recommend install arduino minicom picocom
 sudo pip install ino 
 sudo npm install -g serialport
 
 sudo adduser pi i2c
-sudo apt-get -y install i2c-tools
+sudo apt-get -y install --no-install-recommend install i2c-tools
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
