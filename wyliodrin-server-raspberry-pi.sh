@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # redis
+# update
+sudo apt-get update
 #install redis
 sudo apt-get -y install --no-install-recommends redis-server libhiredis-dev
 
