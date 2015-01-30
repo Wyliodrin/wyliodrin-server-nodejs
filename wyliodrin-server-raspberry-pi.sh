@@ -96,6 +96,7 @@ cp .bashrc /wyliodrin/
 sudo usermod -a -G fuse pi
 
 sudo apt-get -y install --no-install-recommends python python-dev python-setuptools python-pip
+sudo apt-get -y install --no-install-recommends libudev-dev
 
 # redis python
 sudo pip install redis
