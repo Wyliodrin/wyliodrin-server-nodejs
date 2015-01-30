@@ -112,6 +112,7 @@ cd /wyliodrin
 export wyliodrin_board=raspberrypi
 sudo -E install_social
 sudo -E update_streams
+sudo chown -R $USER:$USER /wyliodrin/node-red
 
 # chipKIT
 cd /tmp
