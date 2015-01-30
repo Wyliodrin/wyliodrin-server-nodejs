@@ -96,7 +96,7 @@ cp .bashrc /wyliodrin/
 sudo usermod -a -G fuse pi
 
 sudo apt-get -y install --no-install-recommends python python-dev python-setuptools python-pip
-sudo apt-get -y install --no-install-recommends libudev-dev
+sudo apt-get -y install --no-install-recommends libudev-dev libusb-1.0-0-dev
 
 # redis python
 sudo pip install redis
@@ -134,7 +134,7 @@ sudo adduser pi i2c
 sudo apt-get -y install --no-install-recommends i2c-tools
 
 # bluetooth
-sudo apt-get -y install --no-install-recommends bluez-utils bluez-compat bluez-hcidump libusb-dev  libbluetooth-dev bluetooth joystick
+sudo apt-get -y install --no-install-recommends bluez-utils bluez-compat bluez-hcidump libusb-dev libbluetooth-dev bluetooth joystick
 
 # ps3
 cd /tmp
