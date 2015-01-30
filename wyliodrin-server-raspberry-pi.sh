@@ -134,6 +134,20 @@ sudo apt-get -y install --no-install-recommends i2c-tools
 # bluetooth
 sudo apt-get -y install --no-install-recommends bluez-utils bluez-compat bluez-hcidump libusb-dev  libbluetooth-dev bluetooth joystick
 
+# ps3
+cd /tmp
+sudo apt-get install --no-install-recommends pyqt4-dev-tool
+wget http://www.pabr.org/sixlinux/sixpair.c
+gcc -o sixpair sixpair.c -lusb
+wget http://sourceforge.net/projects/qtsixa/files/QtSixA%201.5.1/QtSixA-1.5.1-src.tar.gz
+tar xfvz QtSixA-1.5.1-src.tar.gz
+cd QtSixA-1.5.1/sixad
+make
+sudo mkdir -p /var/lib/sixad/profiles
+sudo make install
+cd ../..
+sudo cp sixad /usr/bin/sixad
+
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
 echo This will replace system init
