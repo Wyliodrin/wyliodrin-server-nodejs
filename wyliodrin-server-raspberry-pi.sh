@@ -31,7 +31,7 @@ sudo tar xzvf /home/pi/node-v0.10.24-linux-arm-armv6j-vfp-hard.tar.gz --strip=1
 sudo ln -s /usr/local/lib/node_modules /usr/local/lib/node
 cd
 
-sudo apt-get -y install --no-install-recommends libfuse-dev redis-server libicu-dev
+sudo apt-get -y install --no-install-recommends libfuse-dev libicu-dev
 
 git clone https://github.com/Wyliodrin/wyliodrin-server-nodejs
 cd wyliodrin-server-nodejs
@@ -89,12 +89,6 @@ make
 sudo make install
 cd
 
-git clone https://github.com/DexterInd/BrickPi_Python.git
-sudo apt-get -y install --no-install-recommends python-setuptools
-cd BrickPi_Python
-sudo python setup.py install
-cd
-
 sudo mkdir /wyliodrin
 sudo chown pi /wyliodrin
 cp .bashrc /wyliodrin/
@@ -103,11 +97,17 @@ sudo usermod -a -G fuse pi
 
 sudo apt-get -y install --no-install-recommends python python-dev python-setuptools python-pip
 
+# redis python
+sudo pip install redis
+
 git clone https://github.com/DexterInd/BrickPi_Python.git
 cd BrickPi_Python
 sudo python setup.py install
 cd
 
+sudo echo init_uart_clock=32000000 >> /boot/config.txt
+
+cd /wyliodrin
 export wyliodrin_board=raspberrypi
 sudo -E install_social
 sudo -E update_streams
