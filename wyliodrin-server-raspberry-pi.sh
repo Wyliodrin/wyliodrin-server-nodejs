@@ -50,9 +50,11 @@ cd wiringPi
 ./build
 cd
 
-sudo apt-get -y install --no-install-recommends libi2c-dev
+sudo apt-get -y install --no-install-recommends i2c-tools libi2c-dev
 
 sudo apt-get -y install --no-install-recommends cmake libhiredis-dev libjansson-dev python-dev
+
+sudo apt-get clean
 
 wget http://prdownloads.sourceforge.net/swig/swig-3.0.2.tar.gz
 tar xvfz swig-3.0.2.tar.gz
@@ -72,6 +74,9 @@ cd swig-3.0.2
 make
 sudo make install
 cd
+
+sudo rm -rf pcre*
+sudo rm -rf swig*
 
 sudo apt-get install -y --no-install-recommends gcc-4.7 g++-4.7
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
