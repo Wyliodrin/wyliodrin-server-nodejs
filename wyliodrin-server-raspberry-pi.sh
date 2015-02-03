@@ -113,6 +113,9 @@ cd
 
 sudo echo init_uart_clock=32000000 >> /boot/config.txt
 
+# bluetooth
+sudo apt-get -y install --no-install-recommends bluez-utils bluez-compat bluez-hcidump libusb-dev libbluetooth-dev bluetooth joystick
+
 cd /wyliodrin
 export wyliodrin_board=raspberrypi
 sudo -E install_social
@@ -137,9 +140,6 @@ sudo npm install -g serialport
 
 sudo adduser pi i2c
 sudo apt-get -y install --no-install-recommends i2c-tools
-
-# bluetooth
-sudo apt-get -y install --no-install-recommends bluez-utils bluez-compat bluez-hcidump libusb-dev libbluetooth-dev bluetooth joystick
 
 # ps3
 cd /tmp
