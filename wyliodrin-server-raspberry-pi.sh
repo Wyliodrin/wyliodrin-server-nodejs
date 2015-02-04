@@ -154,6 +154,7 @@ sudo mkdir -p /var/lib/sixad/profiles
 sudo make install
 cd ../..
 sudo cp sixad /usr/bin/sixad
+cd
 
 # installing upstart
 echo Wyliodrin uses upstart for starting the service
