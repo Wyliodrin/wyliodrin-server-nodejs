@@ -146,6 +146,7 @@ cd /tmp
 sudo apt-get install --no-install-recommends pyqt4-dev-tool
 wget http://www.pabr.org/sixlinux/sixpair.c
 gcc -o sixpair sixpair.c -lusb
+sudo cp sixpair /usr/bin/sixpair
 wget http://sourceforge.net/projects/qtsixa/files/QtSixA%201.5.1/QtSixA-1.5.1-src.tar.gz
 tar xfvz QtSixA-1.5.1-src.tar.gz
 cd QtSixA-1.5.1/sixad
