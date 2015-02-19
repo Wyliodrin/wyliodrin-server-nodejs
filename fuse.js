@@ -1,6 +1,7 @@
-var f4js = require('fuse4js');
-var fs = require('fs');
 var child_process = require('child_process');
+
+var f4js   = require('fuse4js');
+var fs     = require('fs');
 var mkdirp = require ('mkdirp');
 
 function canMount()
@@ -21,38 +22,44 @@ function canMount()
 
 function init(modules, functie)
 {
-	var config = modules.config;
-  var settings = modules.settings;
-	var mountFile = settings.mountFile;
-  var wxmpp = modules.wxmpp;
-  var log = modules.log;
+	var config      = modules.config;
+  var settings    = modules.settings;
+	var mountFile   = settings.mountFile;
+  var wxmpp       = modules.wxmpp;
+  var log         = modules.log;
   var didFunction = false;
+
   if(canMount())
   {
-  	child_process.exec(settings.umount+' '+mountFile, function (err, stdout, stderr)
-    {
-      if (err == 0)
+  	child_process.exec(settings.umount+' '+mountFile, 
+      function (err, stdout, stderr)
       {
-        log.putLog ('Creating fuse mounting directory in '+mountFile);
-        mkdirp.sync (mountFile);
-         if(wxmpp.checkConnected)
+        if (err == 0)
         {
-          if(wxmpp.ownerIsAvailable())
+          log.putLog ('Creating fuse mounting directory in '+mountFile);
+          mkdirp.sync (mountFile);
+          if(wxmpp.checkConnected)
           {
-            var t = wxmpp.getConnection();
-            var tag = new xmpp.Element('status',{fuse:canMount()});
-            if(xmpp.ownerIsAvailable())
-              t.sendWyliodrin(owner, tag, false);
-            else
-              t.sendWyliodrin(owner, tag, true);
+            if(wxmpp.ownerIsAvailable())
+            {
+              var t = wxmpp.getConnection();
+              var tag = new xmpp.Element('status',{fuse:canMount()});
+              if(xmpp.ownerIsAvailable())
+              {
+                t.sendWyliodrin(owner, tag, false);
+              }
+              else
+              {
+                t.sendWyliodrin(owner, tag, true);
+              }
+            }
           }
         }
-      }
-      modules.files.start();
-      functie();
-    });
+        modules.files.start();
+        functie();
+      });
   }
 }
 
-exports.init = init;
+exports.init     = init;
 exports.canMount = canMount;
