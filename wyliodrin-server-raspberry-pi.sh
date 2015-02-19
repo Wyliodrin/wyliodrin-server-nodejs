@@ -50,8 +50,6 @@ pinmapmode=PROGRAM" > wiringpi.ini
 sudo cp wiringpi.ini /etc/php5/conf.d/
 cd ../..
 
-
-
 # node-wiringpi
 echo Installing Node WiringPi
 sudo npm install -g wiring-pi
@@ -96,5 +94,3 @@ fi
 echo You need to restart your Raspberry Pi
 
 sudo rm -rf download
-
-

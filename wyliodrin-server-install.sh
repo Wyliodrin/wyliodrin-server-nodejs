@@ -24,12 +24,12 @@ wget http://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION.tar.gz
 tar xvfz node-$NODE_VERSION.tar.gz
 if cd node-$NODE_VERSION
 then
-	./configure
-	make
-	sudo make install
-	cd ..
+  ./configure
+  make
+  sudo make install
+  cd ..
 else
-	echo failed to install nodejs
+  echo failed to install nodejs
 fi
 cd ..
 
@@ -65,18 +65,17 @@ sudo apt-get -y install python python-dev python-setuptools
 cd download
 if git clone https://github.com/baudm/mplayer.py.git
 then
-	cd mplayer.py
-	sudo python setup.py install
-	cd ..
+  cd mplayer.py
+  sudo python setup.py install
+  cd ..
 fi
 cd ..
 
 cd download
 if git clone https://github.com/Wyliodrin/pybass.git
 then
-	cd pybass
-	sudo python setup.py install
-	cd ..
+  cd pybass
+  sudo python setup.py install
+  cd ..
 fi
 cd ..
-
