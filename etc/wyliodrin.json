@@ -1,0 +1,13 @@
+{
+  "jid": "matei94_mybeagle@wyliodrin.org",
+  "password": "vabisatolu",
+  "socketpassword": "xebaniwoce",
+  "owner": "Matei94@wyliodrin.com",
+  "timeout": 2000,
+  "maxBuffer": 200,
+  "firewall": false,
+  "ping": 50,
+  "ssid": "",
+  "scan_ssid": 1,
+  "psk": ""
+}
