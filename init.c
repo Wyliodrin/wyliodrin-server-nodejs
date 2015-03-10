@@ -8,6 +8,7 @@
 #include <unistd.h>  /* sleep */
 
 #include "wyliodrin_json/wyliodrin_json.h"
+#include "internals/internals.h"
 
 #define SLEEP_NO_CONFIG 10 * 60 /* 10 minutes of sleep in case of no config file */
 
