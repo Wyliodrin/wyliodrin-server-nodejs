@@ -1,5 +1,5 @@
 {
-	"config_file": "",
+	"config_file": "/home/matei/Dropbox/Wyliodrin/Work/wyliodrin-server-nodejs/etc/wyliodrin.json",
 	"home": "/wyliodrin",
 	"mountFile": "/wyliodrin/projects/mount",
 	"buildFile": "/wyliodrin/projects/build",
