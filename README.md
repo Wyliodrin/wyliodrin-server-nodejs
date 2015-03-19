@@ -33,3 +33,9 @@ to use wyliodrin configuration
                                                                                                                                             
     wpa-roam /home/pi/wyliodrin-server-nodejs/conf/wireless/wireless.conf                                                                        
     iface default inet dhcp  
+
+License
+-------
+This is released under a dual license. 
+For non comercial use, the GPL v2 is valid.
+For comercial usesage, please contact Wyliodrin SRL.
