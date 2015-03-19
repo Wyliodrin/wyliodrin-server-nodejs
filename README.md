@@ -43,4 +43,4 @@ Licesne
 -------
 This is released under a dual license. 
 For non comercial use, the GPL v2 is valid.
-For comercial usesage, please contact Wyliodrin SRL
+For comercial usesage, please contact Wyliodrin SRL.
