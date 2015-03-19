@@ -38,3 +38,9 @@ to use wyliodrin configuration
                                                                                                                                             
     wpa-roam /usr/local/lib/wyliodrin/wireless/wireless.conf                                                                        
     iface default inet dhcp  
+
+Licesne
+-------
+This is released under a dual license. 
+For non comercial use, the GPL v2 is valid.
+For comercial usesage, please contact Wyliodrin SRL
