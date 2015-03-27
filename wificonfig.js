@@ -89,7 +89,7 @@ function wifi(functie)
 		{
 			type = 'WPA-PSK';
 		}
-		log.putLog ('Running configure-edison --changeWiFi '+type);
+		log.putLog ('Running /usr/bin/configure-edison --changeWiFi '+type);
 		child_process.exec ('/usr/bin/configure-edison --changeWiFi '+type+' "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
 		{
 			log.putLog ('Setting up wifi');
