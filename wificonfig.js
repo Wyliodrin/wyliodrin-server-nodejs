@@ -82,15 +82,15 @@ function wifi(functie)
 	}
 	else if (config.board == 'edison')
 	{
-		log.putLog ('Running ./conf/arduinogalileo_wifi.sh');
+		// log.putLog ('Running ./conf/arduinogalileo_wifi.sh');
 		child_process.exec ('rm -rf /var/log/journal/*');
 		var type = 'OPEN';
 		if (networkConfig.psk && networkConfig.psk.length > 0)
 		{
 			type = 'WPA-PSK';
 		}
-		log.putLog ('Running /usr/bin/configure-edison --changeWiFi '+type);
-		child_process.exec ('/usr/bin/configure-edison --changeWiFi '+type+' "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
+		log.putLog ('Running configure_edison --changeWiFi '+type);
+		child_process.exec ('configure_edison --changeWiFi '+type+' "'+networkConfig.ssid+'" "'+networkConfig.psk+'"', function (error, stdout, stderr)
 		{
 			log.putLog ('Setting up wifi');
 			log.putLog (stdout);
