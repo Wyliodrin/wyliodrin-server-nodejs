@@ -94,6 +94,7 @@ function wifi(functie)
 		{
 			log.putLog ('Setting up wifi');
 			log.putLog (stdout);
+			log.putLog (stderr);
 			setTimeout (function ()
 			{
 				functie ();
