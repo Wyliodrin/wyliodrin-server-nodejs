@@ -37,13 +37,13 @@ function send (type, str, timestamp)
 function putLog(log)
 {
 	send ('debug', log, new Date());
-	console.log(log);
+	console.log ('debug '+new Date()+' '+log);
 }
 
 function putError(error)
 {
 	send ('error', error, new Date());
-	console.error("error = "+error);
+	console.error('error '+new Date()+' '+error);
 }
 
 exports.putLog = putLog;
