@@ -71,16 +71,22 @@ function make(id, command, args, address, userid, sendOutput)
 			log.putLog ('Running rm -rf '+buildPath);
 			child_process.exec('rm -rf '+buildPath, {maxBuffer:10*1024, cwd:buildFile},
 				function(error, stdout, stderr){
+					if (stdout) log.putLog (stdout);
+					if (stderr) log.putLog (stdout);
 					if(files.canMount())
 					{
 						log.putLog ('Running cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile);
 						child_process.exec('cp -rfv '+mountPath+'/'+id+' '+buildFile+' && chmod -R u+w '+buildFile, {maxBuffer: 30*1024, cwd:buildFile}, 
 						function(error, stdout, stderr){
+							if (stdout) log.putLog (stdout);
+							if (stderr) log.putLog (stdout);
 							if (!error)
 							{
 								log.putLog ('Running ln -s Makefile.'+gadget+' Makefile');
 								child_process.exec ('ln -s Makefile.'+gadget+' Makefile', {cwd: buildPath}, function (err, stdout, stderr)
 								{
+									if (stdout) log.putLog (stdout);
+									if (stderr) log.putLog (stdout);
 									if (!error)
 									{
 										startBuildProcess(command,args,buildPath,sendOutput, id, userid);
@@ -109,18 +115,23 @@ function make(id, command, args, address, userid, sendOutput)
 					else
 					{
 						child_process.exec('wget --no-check-certificate '+address, {maxBuffer:30*1024, cwd:buildFile},function(error,stdout,stderr){
+							if (stdout) log.putLog (stdout);
+							if (stderr) log.putLog (stdout);
 							if(!error)
 							{
 								child_process.exec('tar xf '+path.basename(address), {maxBuffer:30*1024, cwd:buildFile},
 									function(error, stdout, stderr){
 										child_process.exec('rm -rf '+path.basename(address), {maxBuffer:30*1024, cwd:buildFile},
 											function(error,stdout,stderr){
-
+												if (stdout) log.putLog (stdout);
+												if (stderr) log.putLog (stdout);
 											});
 										if(!error)
 										{
 											child_process.exec ('ln -s Makefile.'+gadget+' Makefile', {cwd: buildPath}, function (err, stdout, stderr)
 											{
+												if (stdout) log.putLog (stdout);
+												if (stderr) log.putLog (stdout);
 												if (!error)
 												{
 													startBuildProcess(command,args,buildPath,sendOutput, id, userid);
