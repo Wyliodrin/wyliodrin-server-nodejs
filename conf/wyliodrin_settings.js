@@ -22,7 +22,7 @@ var settings =
 		run: ['sudo', '-E', 'make'],
 		stop: ['sudo kill -9'],
 		sudo: 'sudo',
-		board:"server"
+		board:"server",
 	},
 	redpitaya:{
 		config_file: '/boot/wyliodrin.json',

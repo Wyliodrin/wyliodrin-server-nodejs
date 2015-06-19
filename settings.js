@@ -64,7 +64,7 @@ exports.load = function (start)
 		if (!config.config) setTimeout (function ()
 		{
 			process.exit (0);
-		}, 10000);
+		}, (board!='server')?10000:1000);
 		else
 		{
 			exports.config = config;

@@ -243,6 +243,7 @@ function ownerUnavailable()
 
 function reconnect ()
 {
+	if (config.config.board == "server") process.exit (0);
 	connecting = true;
 	log.putLog ('reconnecting '+delay);
 	setTimeout (function ()
