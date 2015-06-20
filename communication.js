@@ -26,10 +26,13 @@ function connectRedis()
 
 		channelClient.on("pmessage", function(pattern, channel, m){
 			var message = JSON.parse(m);
-			var port = channel.split(':')[1];
-			var id = message["id"];
-			var data = message["data"];
-			communication_xmpp.sendMessage(id, port, data);
+			if (channel.indexOf (':')>0 && channel.indexOf (':') < channel.length-1)
+			{
+				var port = channel.substring (channel.indexOf (':')+1);
+				var id = message["id"];
+				var data = message["data"];
+				communication_xmpp.sendMessage(id, port, data);
+			}
 		});
 	}
 	catch (e)
