@@ -20,7 +20,7 @@ function sendSignal(signal, functie)
 	var s = JSON.stringify(signal);
 	var options =
 	{
-	  hostname: domain,
+	  hostname: "projects."+domain,
 	  port: 443,
 	  path: '/signals/send',
 	  method: 'POST',
