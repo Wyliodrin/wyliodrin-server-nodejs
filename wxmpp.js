@@ -58,7 +58,13 @@ function connect()
 		connecting = false;
 		xmpp.reconnect = true;
 		loadSettings ();
-		xmpp.on ('error', function(error)
+		xmpp.on ('error', function(error){
+		if( error.errno === 'ENOTFOUND')
+		{
+console.log('enot');
+			process.exit();
+		}
+		else
 		{
 			log.putLog ('XMPP error ');
 			log.putLog (JSON.stringify (error));
@@ -70,6 +76,7 @@ function connect()
 				log.putError (error);
 				isConnected = false;
 			}
+		}
 		});
 
 		xmpp.on ('disconnect', function()
