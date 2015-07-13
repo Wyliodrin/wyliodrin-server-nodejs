@@ -114,6 +114,7 @@ function make(id, command, args, address, userid, sendOutput)
 					}
 					else
 					{
+						log.putLog ('Running wget --no-check-certificate '+address);
 						child_process.exec('wget --no-check-certificate '+address, {maxBuffer:30*1024, cwd:buildFile},function(error,stdout,stderr){
 							if (stdout) log.putLog (stdout);
 							if (stderr) log.putLog (stdout);

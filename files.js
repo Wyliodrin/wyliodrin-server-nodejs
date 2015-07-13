@@ -14,6 +14,7 @@ var mountFile = config.mountFile;
 
 function canMount()
 {
+  if (config.board == 'server') return false;
   return fuse.canMount();
 }
 

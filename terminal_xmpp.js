@@ -129,13 +129,20 @@ function shell_stanza(t, from, to, es, error)
 			}
 		}
 		if(es.attrs.action == 'poweroff')
-		{
-			log.putLog('Poweroff stanza');
-			sys.exec (config.sudo+' poweroff', function (error, stdout, stderr)
+		{	
+			if (config.board != "server")
 			{
-				// console.log(error);
-				if (error) log.putError('poweroff error '+stderr);
-			});
+				log.putLog('Poweroff stanza');
+				sys.exec (config.sudo+' poweroff', function (error, stdout, stderr)
+				{
+					// console.log(error);
+					if (error) log.putError('poweroff error '+stderr);
+				});
+			}
+			else
+			{
+				process.exit (0);
+			}
 		}
 		if(es.attrs.action == 'close' || es.attrs.action == 'stop')
 		{
